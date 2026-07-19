@@ -323,9 +323,52 @@ detected and MLflow was truthfully reported as disabled. Two consecutive runs at
 `0b0738757fbade763be9688c60592c33c9b2978114c2f79daf7e7a3f8081cb52`; the second changed zero of
 ten files. Milestone 8 remains incomplete until the real MLflow profile and API catalog are proven.
 
-## Milestones 9–14
+## Milestone 9 — grounded AI
 
-- [ ] Milestone 9 — grounded AI.
+- [x] Define frozen, portfolio-scoped evidence, request, brief, refusal, and trace schemas.
+- [x] Implement a fixed ten-tool read-only protocol with call, time, and response-size budgets.
+- [x] Provide a useful no-key deterministic provider and an isolated optional OpenAI-compatible port.
+- [x] Add bounded workflow, one repair, deterministic fallback, and safe refusal behavior.
+- [x] Add approved-scope keyword retrieval with prompt-injection isolation and relevance thresholds.
+- [x] Validate schemas, citations, evidence scope, canonical numbers/rounding, and prohibited content.
+- [x] Version 44 labeled evaluation cases covering every one of the 20 required categories.
+- [x] Store a machine-readable evaluation report and document the system boundary.
+- [ ] Exercise pgvector retrieval and the optional provider against configured external services.
+- [ ] Expose deterministic briefs and evaluations through the application API and live UI client.
+
+Verified grounded-AI gates:
+
+```text
+.venv\Scripts\pytest.exe -c packages/ai_engine/pyproject.toml packages/ai_engine/tests \
+  --cov=quantops_ai --cov-branch -q
+# exit 0; 110 passed; 97% combined branch-aware coverage
+# citation and numerical validator modules: 100% statements and branches
+
+.venv\Scripts\ruff.exe check packages/ai_engine
+.venv\Scripts\ruff.exe format --check packages/ai_engine
+# both exit 0; 25 files formatted
+
+.venv\Scripts\mypy.exe --config-file packages/ai_engine/pyproject.toml \
+  -p quantops_ai -p packages.ai_engine.tests
+# exit 0; 24 source files, no issues
+
+.venv\Scripts\uv.exe build packages/ai_engine --offline
+# exit 0; sdist and wheel built; wheel contains evals/v1/cases.jsonl
+
+.venv\Scripts\python.exe -m quantops_ai evaluate \
+  --cases packages/ai_engine/evals/v1/cases.jsonl \
+  --output $env:TEMP\quantops-ai-evaluation-root.json
+# exit 0; 44 passed, 0 failed across 20 categories
+```
+
+All deterministic schema, citation, numerical, refusal, tool-selection, and groundedness rates were
+`1.0`; 23 tool calls were made. Seven deliberately invalid-provider cases used the safe fallback.
+External cost/token fields are null because no provider call occurred. Evaluation latency is a
+local observation and is not a portable benchmark. Milestone 9 remains incomplete until API/live
+client integration and configured pgvector/external-provider profiles are separately proven.
+
+## Milestones 10–14
+
 - [ ] Milestone 10 — read-only MCP.
 - [ ] Milestone 11 — operations and infrastructure.
 - [ ] Milestone 12 — CI, security, and full testing.

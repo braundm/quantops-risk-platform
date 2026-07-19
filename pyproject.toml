@@ -24,6 +24,7 @@ package = false
 members = [
   "apps/api",
   "ml",
+  "packages/ai_engine",
   "packages/data_contracts",
   "packages/domain",
   "packages/risk_engine",
@@ -85,10 +86,10 @@ explicit_package_bases = true
 mypy_path = [
   "apps/api",
   "ml/src",
+  "packages/ai_engine/src",
   "packages/domain",
   "packages/risk_engine/src",
   "packages/data_contracts/src",
-  "packages/ai_engine",
   "packages/shared",
   "pipelines",
 ]

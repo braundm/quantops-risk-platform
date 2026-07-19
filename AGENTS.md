@@ -13,6 +13,7 @@ QuantOps is a market-risk research and observability platform. It is not a tradi
 - `apps/api`: FastAPI application, application services, SQLAlchemy adapters, migrations, and observability.
 - `apps/web`: React/TypeScript dashboard.
 - `packages/data_contracts`: versioned Pydantic event envelopes and payloads.
+- `packages/ai_engine`: bounded grounded-risk workflow, read-only tools, validators, and evaluations.
 - `pipelines`: reusable CLI-first ingestion and data-quality services.
 - `apps/stream_worker`, `apps/mcp_server`, and `apps/scheduler`: asynchronous and integration boundaries.
 - `ml`: leakage-safe regime features, training, evaluation, and monitoring.
