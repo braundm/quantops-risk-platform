@@ -4,7 +4,7 @@ Last updated: 2026-07-19
 
 ## Current state
 
-The repository began empty. The authoritative master specification has been read in full. Milestone 0 is committed as `102406d`, domain as `af3ac48`, risk as `1027ef2`, deterministic data as `f747731`, PostgreSQL persistence as `9bdd210`, and event contracts as `764b545`. The complete deterministic frontend route set passes 14 tests and production build, and its risk/scenario values match the current API fixture. A real clean-database migration remains unverified because PostgreSQL/Docker is unavailable.
+The repository began empty. The authoritative master specification has been read in full. Milestone 0 is committed as `102406d`, domain as `af3ac48`, risk as `1027ef2`, deterministic data as `f747731`, PostgreSQL persistence as `9bdd210`, event contracts as `764b545`, and the deterministic frontend as `3aefae6`. The application API now implements all 31 required paths with deterministic risk/scenario behavior, RFC 9457 responses, concurrency/idempotency controls, and a checked OpenAPI snapshot. The frontend passes 14 tests and production build, and its values match the API fixture. A real clean-database migration remains unverified because PostgreSQL/Docker is unavailable.
 
 ## Architecture in force
 
@@ -31,7 +31,7 @@ C:\Users\domin\.cache\codex-runtimes\codex-primary-runtime\dependencies\bin\fall
 .venv\Scripts\uv.exe sync --locked --all-packages
 .venv\Scripts\ruff.exe check apps/api scripts
 .venv\Scripts\mypy.exe apps/api
-.venv\Scripts\pytest.exe apps/api/tests -m "not integration" -q
+.venv\Scripts\pytest.exe apps/api/tests -q
 PYTHONPATH=apps/api;packages/domain .venv\Scripts\alembic.exe -c apps/api/alembic.ini upgrade head --sql
 .venv\Scripts\uv.exe build apps/api --offline
 .venv\Scripts\pytest.exe -c packages/data_contracts/pyproject.toml packages/data_contracts/tests --cov=quantops_contracts --cov-branch -q
@@ -51,12 +51,12 @@ pnpm --filter @quantops/web build
 
 ## Exact next action
 
-Commit the verified frontend foundation, then finish reviewing and commit the application API and
-offline ML lifecycle. Connect idempotent database seeding and live persistence integration when
-PostgreSQL is available.
+Commit the reviewed application API, then restore and commit the verified offline ML lifecycle.
+Review and integrate the grounded-AI package when its isolated gates finish. Connect idempotent
+database seeding and live persistence integration when PostgreSQL is available.
 
 ## Uncommitted changes
 
-The frontend foundation and this handoff update are uncommitted. Application API, ML lifecycle,
-security/architecture documents, root workspace/lock changes, and grounded-AI work are separate
-in-progress scopes; inspect `git status` before modifying them.
+Application API, ML lifecycle, security/architecture documents, root workspace/lock changes,
+namespace markers, and grounded-AI work are separate in-progress scopes; inspect `git status`
+before modifying them.

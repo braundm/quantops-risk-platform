@@ -1,6 +1,10 @@
 version = 1
 revision = 3
 requires-python = ">=3.12, <3.15"
+resolution-markers = [
+    "python_full_version >= '3.14'",
+    "python_full_version < '3.14'",
+]
 
 [manifest]
 members = [
@@ -1220,7 +1224,9 @@ dependencies = [
     { name = "pgvector" },
     { name = "pydantic" },
     { name = "pydantic-settings" },
+    { name = "quantops-contracts" },
     { name = "quantops-domain" },
+    { name = "quantops-risk" },
     { name = "sqlalchemy", extra = ["asyncio"] },
     { name = "uvicorn", extra = ["standard"] },
 ]
@@ -1234,7 +1240,9 @@ requires-dist = [
     { name = "pgvector", specifier = "==0.5.0" },
     { name = "pydantic", specifier = "==2.13.4" },
     { name = "pydantic-settings", specifier = ">=2.12,<3" },
+    { name = "quantops-contracts", editable = "packages/data_contracts" },
     { name = "quantops-domain", editable = "packages/domain" },
+    { name = "quantops-risk", editable = "packages/risk_engine" },
     { name = "sqlalchemy", extras = ["asyncio"], specifier = "==2.0.51" },
     { name = "uvicorn", extras = ["standard"], specifier = ">=0.36,<1" },
 ]

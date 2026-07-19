@@ -23,6 +23,8 @@ class Settings(BaseSettings):
     database_url: str = "postgresql+asyncpg://quantops:quantops_local@localhost:5432/quantops"
     cors_origins: str = "http://localhost:5173"
     ai_provider: str = "deterministic"
+    expensive_rate_limit: int = Field(default=20, ge=1, le=1_000)
+    expensive_rate_window_seconds: int = Field(default=60, ge=1, le=3_600)
 
     @property
     def cors_origin_list(self) -> tuple[str, ...]:

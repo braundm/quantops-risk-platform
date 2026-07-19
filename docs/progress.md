@@ -188,7 +188,38 @@ The benchmark is a local observation, not a universal SLA.
 
 ## Milestone 4 — application API
 
-- [ ] Milestone 4 — application API.
+- [x] Expose all 31 required versioned `/api/v1` paths with validated request/response schemas.
+- [x] Compute deterministic portfolio risk, evidence, and scenario responses through the domain,
+  contract, and risk-engine packages.
+- [x] Add RFC 9457 problem details, request/correlation IDs, CORS allowlisting, bounded pagination,
+  date validation, and rate limiting.
+- [x] Protect demo writes, enforce ETag/`If-Match` concurrency, and detect idempotency-key conflicts.
+- [x] Export JSON/CSV reports and check a deterministic OpenAPI snapshot for contract drift.
+- [ ] Move the critical application path from the process-local adapter to PostgreSQL repositories.
+- [ ] Generate the TypeScript client and complete live frontend integration.
+
+Verified application-API gates:
+
+```text
+.venv\Scripts\pytest.exe apps/api/tests -q
+# exit 0; 33 passed, 1 skipped (PostgreSQL integration unavailable)
+
+.venv\Scripts\ruff.exe check apps/api
+.venv\Scripts\ruff.exe format --check apps/api
+# both exit 0
+
+.venv\Scripts\mypy.exe apps/api
+# exit 0; no issues
+
+.venv\Scripts\uv.exe build apps/api --offline
+# exit 0; sdist and wheel built
+```
+
+The process-local fallback contains 41 dates for each of four instruments (164 accepted bars),
+distinct from the canonical 2,088-bar database fixture. It returns truthful empty, `404`, or `503`
+responses for unavailable ML/AI capabilities. Dockerfile structure is tested, but a container build
+and live PostgreSQL execution remain unverified because Docker is unavailable. Milestone 4 is not
+complete until the persistence critical path and generated live client are connected.
 
 ## Milestone 5 — frontend product
 
@@ -269,6 +300,6 @@ consumer/outbox behavior is exercised against Redpanda.
 
 ## Next work
 
-Continue the application API against explicit ports, then connect the deterministic seed/upsert
-path when an isolated PostgreSQL database is available. Keep broker/database-dependent exit
-evidence unchecked until the real services can be exercised.
+Commit the verified API and offline ML scopes, then integrate the grounded-AI workflow. Connect the
+deterministic seed/upsert path when an isolated PostgreSQL database is available. Keep broker- and
+database-dependent exit evidence unchecked until the real services can be exercised.

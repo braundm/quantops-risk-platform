@@ -4,7 +4,7 @@
 
 QuantOps is a production-style portfolio project for ingesting deterministic synthetic market data, computing reproducible portfolio risk, inspecting lineage and quality, and generating evidence-grounded risk explanations through bounded read-only tools.
 
-> **Current status:** foundation development is in progress. The operational health/version API and tested landing-page shell exist; financial workflows and infrastructure-backed features are not yet claimed. See [implementation progress](docs/progress.md).
+> **Current status:** the deterministic domain, risk, synthetic-data, event-contract, application-API, and frontend research flows are implemented and tested. The browser UI currently uses a typed local adapter, while the API uses a process-local deterministic service. PostgreSQL, streaming, scheduling, ML/AI API integration, and clean-room infrastructure evidence remain in progress and are not claimed. See [implementation progress](docs/progress.md).
 
 ## Product boundary
 
@@ -23,7 +23,7 @@ The synchronous product is a modular FastAPI monolith backed by PostgreSQL. Fram
 
 Run `python scripts/doctor.py` (or `powershell -File scripts/dev.ps1 doctor`) for actionable diagnostics.
 
-## Foundation quickstart
+## Local quickstart
 
 ```bash
 uv sync --all-packages
@@ -34,7 +34,7 @@ pnpm --filter @quantops/web build
 uv run uvicorn quantops_api.main:app --app-dir apps/api --reload
 ```
 
-Then open API docs at `http://localhost:8000/docs`. The dashboard shell runs with `pnpm --filter @quantops/web dev` at `http://localhost:5173`.
+Then open API docs at `http://localhost:8000/docs`. The deterministic research UI runs with `pnpm --filter @quantops/web dev` at `http://localhost:5173`. Its current adapter is deliberately local and typed; it does not imply that PostgreSQL or an external provider is connected.
 
 ## Quality commands
 
