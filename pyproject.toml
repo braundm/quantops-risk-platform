@@ -23,6 +23,7 @@ package = false
 [tool.uv.workspace]
 members = [
   "apps/api",
+  "ml",
   "packages/data_contracts",
   "packages/domain",
   "packages/risk_engine",
@@ -30,7 +31,7 @@ members = [
 ]
 
 [tool.pytest.ini_options]
-addopts = "--strict-config --strict-markers -ra"
+addopts = "--strict-config --strict-markers --import-mode=importlib -ra"
 testpaths = ["apps", "packages", "pipelines", "ml", "tests"]
 xfail_strict = true
 filterwarnings = ["error"]
@@ -83,6 +84,7 @@ namespace_packages = true
 explicit_package_bases = true
 mypy_path = [
   "apps/api",
+  "ml/src",
   "packages/domain",
   "packages/risk_engine/src",
   "packages/data_contracts/src",

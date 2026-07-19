@@ -1,0 +1,60 @@
+[build-system]
+requires = ["hatchling>=1.27"]
+build-backend = "hatchling.build"
+
+[project]
+name = "quantops-ml"
+version = "0.1.0"
+description = "Leakage-safe synthetic risk-regime lifecycle for QuantOps"
+readme = "README.md"
+requires-python = ">=3.12"
+license = { text = "MIT" }
+authors = [{ name = "QuantOps contributors" }]
+dependencies = []
+
+[project.optional-dependencies]
+mlflow = ["mlflow>=2.19,<4"]
+test = [
+  "hypothesis>=6.139,<7",
+  "mypy>=2.3,<3",
+  "pytest>=9.1,<10",
+  "pytest-cov>=7,<8",
+  "ruff>=0.15,<0.16",
+]
+
+[project.scripts]
+quantops-ml = "quantops_ml.cli:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/quantops_ml"]
+
+[tool.pytest.ini_options]
+addopts = "--strict-config --strict-markers -ra"
+testpaths = ["tests"]
+pythonpath = ["src"]
+
+[tool.coverage.run]
+branch = true
+source = ["quantops_ml"]
+
+[tool.coverage.report]
+fail_under = 90
+show_missing = true
+skip_covered = true
+
+[tool.ruff]
+target-version = "py312"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM", "RUF", "S", "PTH"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["S101", "S105", "S106"]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+mypy_path = ["src", "tests"]
+warn_unreachable = true
+show_error_codes = true

@@ -282,10 +282,49 @@ finite Decimal values, canonical JSON, stable idempotency keys, and explicit syn
 They intentionally have no broker dependency. Milestone 6 remains incomplete until replay and
 consumer/outbox behavior is exercised against Redpanda.
 
-## Milestones 7–14
+## Milestone 7 — Airflow and adapters
 
 - [ ] Milestone 7 — Airflow and adapters.
-- [ ] Milestone 8 — ML lifecycle.
+
+## Milestone 8 — ML lifecycle
+
+- [x] Build ten point-in-time risk-regime features with explicit provenance and leakage tests.
+- [x] Implement a documented deterministic rule baseline and pure-Python K-Means candidate.
+- [x] Use chronological partitions and report every fixed seed under a median-validation policy.
+- [x] Evaluate macro F1, adjusted Rand index, stress false-negative rate, and calibration error.
+- [x] Enforce automated promotion gates, retain the baseline on rejection, and generate a model card.
+- [x] Produce deterministic, content-addressed lifecycle artifacts with dataset and code revisions.
+- [x] Monitor PSI, missingness change, and Jensen-Shannon regime drift.
+- [ ] Exercise the optional MLflow adapter against a real tracking service.
+- [ ] Expose the lifecycle catalog and active model through the application API.
+
+Verified ML gates:
+
+```text
+.venv\Scripts\pytest.exe -c ml/pyproject.toml ml/tests --cov=quantops_ml --cov-branch -q
+# exit 0; 42 passed; 93% combined branch coverage
+
+.venv\Scripts\ruff.exe check ml
+.venv\Scripts\ruff.exe format --check ml
+# both exit 0; 25 files formatted
+
+.venv\Scripts\mypy.exe --config-file ml/pyproject.toml -p quantops_ml -p ml.tests
+# exit 0; 24 source files, no issues
+
+.venv\Scripts\uv.exe build ml --offline
+# exit 0; sdist and wheel built
+```
+
+The lifecycle produced 462 feature rows from the canonical synthetic dataset. Seed `7` was selected
+by the declared median-validation policy, not by test performance. The candidate failed relative
+macro-F1 and calibration gates, so `rule-baseline-v1` remains active. Operational drift was
+detected and MLflow was truthfully reported as disabled. Two consecutive runs at code revision
+`72cfa241760ffb02e682ef58caab176bedab41d1` produced artifact hash
+`0b0738757fbade763be9688c60592c33c9b2978114c2f79daf7e7a3f8081cb52`; the second changed zero of
+ten files. Milestone 8 remains incomplete until the real MLflow profile and API catalog are proven.
+
+## Milestones 9–14
+
 - [ ] Milestone 9 — grounded AI.
 - [ ] Milestone 10 — read-only MCP.
 - [ ] Milestone 11 — operations and infrastructure.

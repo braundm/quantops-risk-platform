@@ -4,7 +4,7 @@ Last updated: 2026-07-19
 
 ## Current state
 
-The repository began empty. The authoritative master specification has been read in full. Milestone 0 is committed as `102406d`, domain as `af3ac48`, risk as `1027ef2`, deterministic data as `f747731`, PostgreSQL persistence as `9bdd210`, event contracts as `764b545`, and the deterministic frontend as `3aefae6`. The application API now implements all 31 required paths with deterministic risk/scenario behavior, RFC 9457 responses, concurrency/idempotency controls, and a checked OpenAPI snapshot. The frontend passes 14 tests and production build, and its values match the API fixture. A real clean-database migration remains unverified because PostgreSQL/Docker is unavailable.
+The repository began empty. The authoritative master specification has been read in full. Milestone 0 is committed as `102406d`, domain as `af3ac48`, risk as `1027ef2`, deterministic data as `f747731`, PostgreSQL persistence as `9bdd210`, event contracts as `764b545`, the deterministic frontend as `3aefae6`, and the application API as `72cfa24`. The API implements all 31 required paths with deterministic risk/scenario behavior, RFC 9457 responses, concurrency/idempotency controls, and a checked OpenAPI snapshot. The offline ML lifecycle now passes 42 tests at 93% branch coverage; its candidate is truthfully rejected, `rule-baseline-v1` remains active, and observed drift is reported. A real clean-database migration remains unverified because PostgreSQL/Docker is unavailable.
 
 ## Architecture in force
 
@@ -34,6 +34,9 @@ C:\Users\domin\.cache\codex-runtimes\codex-primary-runtime\dependencies\bin\fall
 .venv\Scripts\pytest.exe apps/api/tests -q
 PYTHONPATH=apps/api;packages/domain .venv\Scripts\alembic.exe -c apps/api/alembic.ini upgrade head --sql
 .venv\Scripts\uv.exe build apps/api --offline
+.venv\Scripts\pytest.exe -c ml/pyproject.toml ml/tests --cov=quantops_ml --cov-branch -q
+.venv\Scripts\mypy.exe --config-file ml/pyproject.toml -p quantops_ml -p ml.tests
+.venv\Scripts\python.exe -m quantops_ml run --prices data/synthetic/canonical/price_bars.csv --manifest data/synthetic/manifest.json --output ml/artifacts/demo --code-revision 72cfa241760ffb02e682ef58caab176bedab41d1
 .venv\Scripts\pytest.exe -c packages/data_contracts/pyproject.toml packages/data_contracts/tests --cov=quantops_contracts --cov-branch -q
 .venv\Scripts\mypy.exe --config-file packages/data_contracts/pyproject.toml packages/data_contracts/src/quantops_contracts packages/data_contracts/tests
 pnpm --filter @quantops/web lint
@@ -51,12 +54,11 @@ pnpm --filter @quantops/web build
 
 ## Exact next action
 
-Commit the reviewed application API, then restore and commit the verified offline ML lifecycle.
-Review and integrate the grounded-AI package when its isolated gates finish. Connect idempotent
-database seeding and live persistence integration when PostgreSQL is available.
+Commit the verified offline ML lifecycle. Review and integrate the grounded-AI package when its
+isolated gates finish, then expose the truthful ML/AI results through application services.
+Connect idempotent database seeding and live persistence integration when PostgreSQL is available.
 
 ## Uncommitted changes
 
-Application API, ML lifecycle, security/architecture documents, root workspace/lock changes,
-namespace markers, and grounded-AI work are separate in-progress scopes; inspect `git status`
-before modifying them.
+ML lifecycle, security/architecture documents, root workspace/lock changes, namespace markers,
+and grounded-AI work are separate in-progress scopes; inspect `git status` before modifying them.
