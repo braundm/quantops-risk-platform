@@ -4,7 +4,7 @@ Last updated: 2026-07-19
 
 ## Current state
 
-The repository began empty. The authoritative master specification has been read in full. Milestone 0 code and verification gates are complete; the first scoped commit remains to be created. Framework-independent domain and risk packages are under active implementation and root verification.
+The repository began empty. The authoritative master specification has been read in full. Milestone 0 is complete and committed as `102406d`. The framework-independent domain package passes its unit, coverage, lint, format, type, and build gates. Persistence is under active implementation; the risk package is verified but not yet committed.
 
 ## Architecture in force
 
@@ -47,7 +47,7 @@ pnpm --filter @quantops/web build
 
 ## Exact next action
 
-Inspect and commit the verified Milestone 0 foundation, then finish strict type/lint/coverage verification for the domain and risk packages before starting persistence adapters.
+Finish strict type/lint/coverage verification for the domain and risk packages, commit each verified scope, then implement persistence adapters and migrations.
 
 ## Uncommitted changes
 

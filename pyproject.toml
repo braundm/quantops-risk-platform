@@ -21,7 +21,7 @@ dev = [
 package = false
 
 [tool.uv.workspace]
-members = ["apps/api"]
+members = ["apps/api", "packages/domain"]
 
 [tool.pytest.ini_options]
 addopts = "--strict-config --strict-markers -ra"

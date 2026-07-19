@@ -16,7 +16,7 @@ This file records observed results only. An unchecked item is not implemented or
 - [x] Verify pnpm install, peer dependencies, frontend lint/type checks/tests/build.
 - [x] Verify repository hygiene and targeted secret-pattern scan.
 - [x] Initialize Git on `main`.
-- [ ] Create the first scoped commit.
+- [x] Create the first scoped commit (`102406d`).
 
 Observed commands:
 
@@ -77,11 +77,30 @@ Targeted scans found no known private-key, AWS, GitHub, OpenAI-style, or Slack t
 
 ## Milestone 1 — domain and persistence
 
-- [ ] Framework-independent value objects, entities, and repository ports.
+- [x] Framework-independent value objects, entities, and repository ports.
 - [ ] SQLAlchemy mappings and asynchronous repositories.
 - [ ] Clean-database Alembic migration and PostgreSQL constraints/indexes.
 - [ ] Optimistic concurrency, audit, and transactional outbox integration tests.
 - [ ] ER model documentation.
+
+Verified domain-package gates:
+
+```text
+.venv\Scripts\pytest.exe packages/domain/tests --cov=quantops_domain --cov-branch -q
+# exit 0; 34 passed, 6 subtests passed; 84% combined branch coverage
+
+.venv\Scripts\ruff.exe check packages/domain
+.venv\Scripts\ruff.exe format --check packages/domain
+# both exit 0
+
+.venv\Scripts\mypy.exe packages/domain/quantops_domain packages/domain/tests
+# exit 0; 15 source files, no issues
+
+.venv\Scripts\uv.exe build --package quantops-domain --offline
+# exit 0; sdist and wheel built
+```
+
+Persistence, migrations, database constraints, and PostgreSQL integration evidence remain pending; therefore Milestone 1 is not complete.
 
 ## Milestone 2 — synthetic market and data quality
 
