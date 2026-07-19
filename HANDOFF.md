@@ -4,7 +4,7 @@ Last updated: 2026-07-19
 
 ## Current state
 
-The repository began empty. The authoritative master specification has been read in full. Milestone 0 is committed as `102406d`, domain as `af3ac48`, and the verified risk engine as `1027ef2`. The deterministic fixture/data-quality package passes 19 tests and 92% combined branch coverage; database seed/upsert is still pending. Persistence is under active implementation.
+The repository began empty. The authoritative master specification has been read in full. Milestone 0 is committed as `102406d`, domain as `af3ac48`, risk as `1027ef2`, and deterministic data as `f747731`. The PostgreSQL schema, Alembic revision, async adapters, and persistence tests are implemented locally and ready for the next focused commit. A real clean-database migration remains unverified because PostgreSQL/Docker is unavailable.
 
 ## Architecture in force
 
@@ -31,7 +31,9 @@ C:\Users\domin\.cache\codex-runtimes\codex-primary-runtime\dependencies\bin\fall
 .venv\Scripts\uv.exe sync --locked --all-packages
 .venv\Scripts\ruff.exe check apps/api scripts
 .venv\Scripts\mypy.exe apps/api
-.venv\Scripts\pytest.exe apps/api/tests -q
+.venv\Scripts\pytest.exe apps/api/tests -m "not integration" -q
+PYTHONPATH=apps/api;packages/domain .venv\Scripts\alembic.exe -c apps/api/alembic.ini upgrade head --sql
+.venv\Scripts\uv.exe build apps/api --offline
 pnpm --filter @quantops/web lint
 pnpm --filter @quantops/web typecheck
 pnpm --filter @quantops/web test
@@ -47,8 +49,12 @@ pnpm --filter @quantops/web build
 
 ## Exact next action
 
-Commit the verified synthetic fixture/data-quality foundation, then finish persistence adapters/migrations and connect idempotent database seeding.
+Commit the verified persistence slice, then integrate the versioned event-contract package. After
+that, continue application services/API and connect idempotent database seeding when PostgreSQL is
+available.
 
 ## Uncommitted changes
 
-Foundation files are intentionally uncommitted until Milestone 0 gates pass.
+Persistence schema/adapters/tests, `docs/data-model.md`, dependency-lock updates, and the separate
+`packages/data_contracts` package are currently uncommitted. Frontend Milestone 5 work may also be
+in progress; inspect `git status` before modifying `apps/web`.

@@ -4,10 +4,15 @@ version = "0.1.0"
 description = "QuantOps FastAPI application"
 requires-python = ">=3.12,<3.15"
 dependencies = [
+  "alembic==1.18.5",
+  "asyncpg==0.31.0",
   "fastapi==0.139.2",
   "httpx>=0.28,<1",
+  "pgvector==0.5.0",
   "pydantic==2.13.4",
   "pydantic-settings>=2.12,<3",
+  "quantops-domain==0.1.0",
+  "sqlalchemy[asyncio]==2.0.51",
   "uvicorn[standard]>=0.36,<1",
 ]
 
@@ -17,3 +22,6 @@ build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.wheel]
 packages = ["quantops_api"]
+
+[tool.uv.sources]
+quantops-domain = { workspace = true }

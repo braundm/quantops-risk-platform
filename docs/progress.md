@@ -78,10 +78,10 @@ Targeted scans found no known private-key, AWS, GitHub, OpenAI-style, or Slack t
 ## Milestone 1 — domain and persistence
 
 - [x] Framework-independent value objects, entities, and repository ports.
-- [ ] SQLAlchemy mappings and asynchronous repositories.
+- [x] SQLAlchemy mappings and asynchronous repositories.
 - [ ] Clean-database Alembic migration and PostgreSQL constraints/indexes.
 - [ ] Optimistic concurrency, audit, and transactional outbox integration tests.
-- [ ] ER model documentation.
+- [x] ER model documentation.
 
 Verified domain-package gates:
 
@@ -100,7 +100,32 @@ Verified domain-package gates:
 # exit 0; sdist and wheel built
 ```
 
-Persistence, migrations, database constraints, and PostgreSQL integration evidence remain pending; therefore Milestone 1 is not complete.
+Verified persistence gates:
+
+```text
+.venv\Scripts\pytest.exe apps/api/tests -m "not integration" -q
+# exit 0; 22 passed, 1 deselected
+
+.venv\Scripts\ruff.exe check apps/api
+.venv\Scripts\ruff.exe format --check apps/api
+# both exit 0; 22 files formatted
+
+.venv\Scripts\mypy.exe apps/api
+# exit 0; 21 source files, no issues
+
+PYTHONPATH=apps/api;packages/domain .venv\Scripts\alembic.exe -c apps/api/alembic.ini upgrade head --sql
+# exit 0; PostgreSQL DDL compiled through revision 0001, including vector extension,
+# semantic scenario versions, named constraints/indexes, and transactional outbox
+
+.venv\Scripts\uv.exe build apps/api --offline
+# exit 0; sdist and wheel built
+```
+
+The adapters include latest-per-instrument position reads, guarded portfolio updates, exact
+`NUMERIC(38,12)` prevalidation, safe UTC handling, and same-transaction audit/outbox staging.
+Their offline behavior and SQL shape are tested. A live clean-database upgrade, constraint
+execution, pgvector/HNSW creation, and transaction/concurrency integration tests still require an
+isolated PostgreSQL database. Therefore Milestone 1 is not complete.
 
 ## Milestone 2 — synthetic market and data quality
 
@@ -182,4 +207,6 @@ The benchmark is a local observation, not a universal SLA.
 
 ## Next work
 
-Complete and verify Milestone 0, then continue with domain/persistence, deterministic data, and the risk engine while keeping the core runnable without optional services.
+Connect the deterministic seed/upsert path to PostgreSQL when an isolated database is available.
+In parallel, continue the application API against explicit ports and keep broker/database-dependent
+exit evidence unchecked until the real services can be exercised.

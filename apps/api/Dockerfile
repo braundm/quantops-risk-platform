@@ -4,9 +4,13 @@ ENV PIP_DISABLE_PIP_VERSION_CHECK=1 \
     PIP_NO_CACHE_DIR=1
 
 WORKDIR /build
-COPY apps/api/pyproject.toml ./pyproject.toml
-COPY apps/api/quantops_api ./quantops_api
-RUN python -m pip wheel --wheel-dir /wheels .
+COPY packages/domain/pyproject.toml /build/domain/pyproject.toml
+COPY packages/domain/quantops_domain /build/domain/quantops_domain
+RUN python -m pip wheel --wheel-dir /wheels /build/domain
+
+COPY apps/api/pyproject.toml /build/api/pyproject.toml
+COPY apps/api/quantops_api /build/api/quantops_api
+RUN python -m pip wheel --find-links /wheels --wheel-dir /wheels /build/api
 
 FROM python:3.12.11-slim-bookworm AS runtime
 
