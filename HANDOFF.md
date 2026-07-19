@@ -4,7 +4,7 @@ Last updated: 2026-07-19
 
 ## Current state
 
-The repository began empty. The authoritative master specification has been read in full. Milestone 0 is committed as `102406d`, domain as `af3ac48`, risk as `1027ef2`, deterministic data as `f747731`, PostgreSQL persistence as `9bdd210`, event contracts as `764b545`, the deterministic frontend as `3aefae6`, the application API as `72cfa24`, offline ML as `2718de5`, and grounded AI as `d70cc69`. The broker-neutral stream worker passes 29 tests; deterministic grounded-AI API integration passes 39 tests plus one PostgreSQL skip; the official-SDK read-only MCP server passes 10 client/server and safety tests. Live Redpanda and PostgreSQL execution are not claimed.
+The repository began empty. The authoritative master specification has been read in full. Milestone 0 is committed as `102406d`, domain as `af3ac48`, risk as `1027ef2`, deterministic data as `f747731`, PostgreSQL persistence as `9bdd210`, event contracts as `764b545`, the deterministic frontend as `3aefae6`, the application API as `72cfa24`, offline ML as `2718de5`, grounded AI as `d70cc69`, and the AI/stream/MCP integration boundaries as `aa7d31e`. The no-service monorepo gate passes 428 tests and 20 subtests. Live Redpanda and PostgreSQL execution are not claimed.
 
 ## Architecture in force
 
@@ -44,6 +44,8 @@ PYTHONPATH=apps/api;packages/domain .venv\Scripts\alembic.exe -c apps/api/alembi
 .venv\Scripts\mypy.exe --config-file apps/stream_worker/pyproject.toml apps/stream_worker/src apps/stream_worker/tests
 .venv\Scripts\pytest.exe -c apps/mcp_server/pyproject.toml apps/mcp_server/tests -q
 .venv\Scripts\mypy.exe --config-file apps/mcp_server/pyproject.toml -p quantops_mcp -p apps.mcp_server.tests
+.venv\Scripts\pytest.exe -m "not integration and not e2e" -q
+.venv\Scripts\python.exe scripts/security_scan.py
 .venv\Scripts\pytest.exe -c packages/data_contracts/pyproject.toml packages/data_contracts/tests --cov=quantops_contracts --cov-branch -q
 .venv\Scripts\mypy.exe --config-file packages/data_contracts/pyproject.toml packages/data_contracts/src/quantops_contracts packages/data_contracts/tests
 pnpm --filter @quantops/web lint
@@ -61,12 +63,12 @@ pnpm --filter @quantops/web build
 
 ## Exact next action
 
-Commit the reviewed stream-worker, deterministic AI API, and read-only MCP integration boundary.
-Then complete CI/security gates and developer commands. Connect idempotent database seeding and live
-persistence integration when PostgreSQL is available.
+Commit the reviewed security/architecture/runbook evidence and API image dependency correction.
+Then review and commit the in-progress CI/developer commands and scheduler slice. Connect idempotent
+database seeding and live persistence integration when PostgreSQL is available.
 
 ## Uncommitted changes
 
-Grounded-AI API integration, stream-worker, MCP, security/architecture/ADR/runbook work, security
-scan, and root workspace/lock changes are separate in-progress scopes; inspect `git status` before
-modifying them.
+Security/architecture/ADR/runbook work, security scan, API Dockerfile correction, CI/developer
+commands, and scheduler work are separate in-progress scopes; inspect `git status` before modifying
+them.

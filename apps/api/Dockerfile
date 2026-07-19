@@ -18,6 +18,12 @@ COPY packages/risk_engine/README.md /build/risk_engine/README.md
 COPY packages/risk_engine/src /build/risk_engine/src
 RUN python -m pip wheel --find-links /wheels --wheel-dir /wheels /build/risk_engine
 
+COPY packages/ai_engine/pyproject.toml /build/ai_engine/pyproject.toml
+COPY packages/ai_engine/README.md /build/ai_engine/README.md
+COPY packages/ai_engine/src /build/ai_engine/src
+COPY packages/ai_engine/evals /build/ai_engine/evals
+RUN python -m pip wheel --find-links /wheels --wheel-dir /wheels /build/ai_engine
+
 COPY apps/api/pyproject.toml /build/api/pyproject.toml
 COPY apps/api/quantops_api /build/api/quantops_api
 RUN python -m pip wheel --find-links /wheels --wheel-dir /wheels /build/api

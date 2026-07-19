@@ -55,4 +55,7 @@ On Windows without GNU Make, use `scripts/dev.ps1`. Never make live providers, e
 
 After meaningful changes, run the narrowest relevant checks, record exact outcomes in `docs/progress.md`, and update `HANDOFF.md`. A milestone is complete only when its exit evidence is actually verified. Before a commit, inspect the diff and scan for secrets and generated junk.
 
+Run `python scripts/security_scan.py` for the deterministic repository hygiene/secret-pattern gate;
+never print a matched credential value in diagnostics.
+
 Do not publish to GitHub until Milestone 14 and the Definition of Done have been met. Preserve any existing remote; never create paid resources.

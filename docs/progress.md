@@ -433,10 +433,54 @@ environment, raw database, prompt, sampling, or arbitrary-resource capability ex
 is complete for the required local stdio boundary. Authenticated multi-tenant remote transport is a
 future design and is not claimed.
 
-## Milestones 11–14
+## Milestone 11 — operations and infrastructure
 
-- [ ] Milestone 11 — operations and infrastructure.
-- [ ] Milestone 12 — CI, security, and full testing.
+- [x] Document system, batch, streaming, risk/evidence, AI, and ML architecture flows.
+- [x] Add eight incident runbooks with detection, impact, diagnosis, safe mitigation, recovery, and
+  verification.
+- [x] Keep API image multi-stage/non-root and build the grounded-AI wheel before the dependent API.
+- [ ] Add structured telemetry, bounded metrics, traces, and a verified optional observability profile.
+- [ ] Run core/optional Docker profiles and verify health, readiness, and graceful shutdown.
+
+Static Dockerfile tests cover the builder/runtime split, all five required workspace wheels,
+grounded-AI evaluation-data inclusion, and non-root runtime identity. Docker remains unavailable in
+this environment, so image build/start evidence is intentionally unchecked. Kubernetes/Terraform
+remain P2 and no resource or paid service has been created.
+
+## Milestone 12 — CI, security, and full testing
+
+- [x] Add a deterministic high-confidence secret, sensitive-filename, and oversized-file scanner.
+- [x] Test scanner behavior without rendering matched secret values.
+- [x] Add a STRIDE-style threat model covering the required data, event, AI/MCP, supply-chain,
+  container, denial-of-service, and financial-misinterpretation threats.
+- [x] Record the minimum ADR set plus the local demo-auth boundary.
+- [x] Map major engineering claims to inspectable files/tests/commands.
+- [ ] Add and validate least-privilege CI, dependency updates, artifacts, service integration, and
+  container smoke gates.
+- [ ] Complete live PostgreSQL/Redpanda, automated browser accessibility/e2e, and clean-room tests.
+
+Verified no-service repository gates after AI/stream/MCP integration:
+
+```text
+.venv\Scripts\pytest.exe -m "not integration and not e2e" -q
+# exit 0; 428 passed, 1 integration test deselected, 20 subtests passed
+
+.venv\Scripts\ruff.exe check .
+.venv\Scripts\ruff.exe format --check .
+# both exit 0; 187 files formatted
+
+.venv\Scripts\python.exe scripts/docs_check.py
+# exit 0; 45 Markdown files checked at the time of the gate
+
+.venv\Scripts\python.exe scripts/security_scan.py
+# exit 0; no high-confidence secret or hygiene findings
+```
+
+The scanner explicitly permits the committed 1.16 MiB canonical synthetic JSON fixture while its
+manifest/hash checks remain authoritative; other repository files over 1 MiB fail the gate.
+
+## Milestones 13–14
+
 - [ ] Milestone 13 — portfolio polish.
 - [ ] Milestone 14 — clean-room verification and publication.
 

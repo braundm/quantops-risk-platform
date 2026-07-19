@@ -15,4 +15,5 @@ Do not open a public issue containing an exploitable vulnerability, credentials,
 - QuantOps never requires brokerage credentials and has no order-execution capability.
 - Synthetic fixtures must not be confused with live or exchange-grade market data.
 
-See `docs/security/threat-model.md` once the application attack surface is implemented and verified.
+See `docs/security/threat-model.md` for the current attack-surface analysis, implemented controls,
+and explicitly unverified integration boundaries.

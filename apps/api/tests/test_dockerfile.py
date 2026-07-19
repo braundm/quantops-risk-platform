@@ -11,7 +11,10 @@ def test_dockerfile_builds_workspace_wheels_and_runs_as_non_root() -> None:
     assert "packages/data_contracts" in dockerfile
     assert "packages/domain" in dockerfile
     assert "packages/risk_engine" in dockerfile
-    assert dockerfile.count("python -m pip wheel") == 4
+    assert "packages/ai_engine" in dockerfile
+    assert "COPY packages/ai_engine/evals" in dockerfile
+    assert dockerfile.index("/build/ai_engine") < dockerfile.index("/build/api")
+    assert dockerfile.count("python -m pip wheel") == 5
     assert "adduser --system" in dockerfile
     assert "USER quantops" in dockerfile
     assert "COPY --from=builder /wheels /wheels" in dockerfile

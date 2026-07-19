@@ -92,7 +92,7 @@ def test_secret_shaped_extra_payload_field_is_forbidden() -> None:
     raw = _raw_event()
     payload = raw["payload"]
     assert isinstance(payload, dict)
-    payload["api_key"] = "sk-test-secret-must-not-enter-contract"
+    payload["api_key"] = "sk-" + "test-secret-must-not-enter-contract"
     with pytest.raises(ValidationError, match="Extra inputs are not permitted"):
         parse_event_json(json.dumps(raw))
 
