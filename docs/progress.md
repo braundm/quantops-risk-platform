@@ -554,11 +554,27 @@ pnpm --filter @quantops/web build
 ## Current blockers
 
 - Docker is unavailable, so PostgreSQL/Redpanda integration gates cannot yet be claimed.
-- The initial GitHub-hosted CI run is in progress and is not yet counted as passing evidence.
+- GitHub Actions run `29689753000` passed nine jobs but exposed a frontend container startup
+  failure: nginx could not create `/var/cache/nginx/client_temp` while running as UID 101. The image
+  now prepares and assigns the required cache and PID paths to that unprivileged runtime user.
+- The container fix has been validated statically and with the frontend production build, but must
+  still be confirmed by a fresh Docker-capable GitHub-hosted CI run.
+
+Scoped verification for the frontend container permission fix:
+
+```text
+pnpm --filter @quantops/web build
+# exit 0; Vite 8.1.5 production build completed
+
+.venv\Scripts\python.exe scripts/docs_check.py
+.venv\Scripts\python.exe scripts/security_scan.py
+# both exit 0; 48 Markdown files; no high-confidence secret or hygiene findings
+```
 
 ## Next work
 
-Observe/fix the initial hosted CI run without creating a release tag. Then use a Docker-capable
+Push the scoped container fix and observe the resulting hosted CI run without creating a release
+tag. Then use a Docker-capable
 clean host to run PostgreSQL migrations, persistence/Redpanda integration, image and
 Compose smoke tests, and browser e2e/accessibility. Keep service-dependent evidence unchecked until
 those real integrations pass.

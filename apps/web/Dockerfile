@@ -14,6 +14,9 @@ RUN pnpm --filter @quantops/web build
 FROM nginx:1.29.4-alpine AS runtime
 COPY apps/web/nginx.conf /etc/nginx/conf.d/default.conf
 COPY --from=builder /workspace/apps/web/dist /usr/share/nginx/html
+RUN mkdir -p /var/cache/nginx \
+    && touch /var/run/nginx.pid \
+    && chown -R 101:101 /var/cache/nginx /var/run/nginx.pid
 USER 101
 EXPOSE 8080
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \

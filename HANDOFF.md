@@ -64,15 +64,16 @@ does not include it in `PATH`. Docker, GNU Make, and Terraform remain absent fro
 ## Honest blockers and limitations
 
 - Docker-backed clean PostgreSQL, pgvector, Redpanda, image, and Compose gates were not runnable.
-- GitHub Actions is defined and statically validated; its first hosted run was in progress at the
-  publication handoff and must be observed to completion.
+- GitHub Actions run `29689753000` passed nine jobs; the container job failed because nginx lacked
+  permission to create its cache directory under runtime UID 101. `apps/web/Dockerfile` now assigns
+  the nginx cache and PID paths to that unprivileged user. A fresh hosted run must verify the fix.
 - Live Airflow/MLflow/provider/observability profiles, generated UI client integration, and browser
   e2e/accessibility remain unverified.
 - The full master-spec Definition of Done remains open; do not create the `v0.1.0` release tag yet.
 
 ## Exact next action
 
-Observe and, if needed, fix the initial CI run at
+Push the scoped frontend container permission fix and observe its CI run at
 https://github.com/braundm/quantops-risk-platform/actions. On a Docker-capable clean host, run the remaining
 PostgreSQL/Redpanda/container/browser gates before creating a release tag or calling the project
 complete.
