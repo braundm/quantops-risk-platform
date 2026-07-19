@@ -26,6 +26,10 @@ Redpanda, Airflow, MLflow, external LLM providers, and observability remain opti
 current UI and API run deterministic local adapters independently, so live integration must not be
 claimed.
 
+Milestone 13 now includes `docs/interview-guide.md` and
+`docs/ai/ai-assisted-development.md`; both separate observed Codex verification from personal owner
+review and keep unavailable integrations explicitly qualified.
+
 ## Last successful local gates
 
 ```text
@@ -50,7 +54,7 @@ pnpm --filter @quantops/web build
 
 .venv\Scripts\python.exe scripts/docs_check.py
 .venv\Scripts\python.exe scripts/security_scan.py
-# exit 0; 48 Markdown files; no high-confidence secret/hygiene findings
+# exit 0; 50 Markdown files; no high-confidence secret/hygiene findings
 
 .venv\Scripts\pytest.exe -c apps/scheduler/pyproject.toml apps/scheduler/tests -q
 .venv\Scripts\uv.exe --cache-dir .uv-cache build --package quantops-scheduler --offline
@@ -64,21 +68,21 @@ does not include it in `PATH`. Docker, GNU Make, and Terraform remain absent fro
 ## Honest blockers and limitations
 
 - Docker-backed clean PostgreSQL, pgvector, Redpanda, image, and Compose gates were not runnable.
-- GitHub Actions run `29689753000` passed nine jobs; the container job failed because nginx lacked
-  permission to create its cache directory under runtime UID 101. `apps/web/Dockerfile` now assigns
-  the nginx cache and PID paths to that unprivileged user. A fresh hosted run must verify the fix.
+- GitHub Actions run `29694259171` passed on `main` after the unprivileged nginx cache/PID permission
+  correction in commit `4f7627b`.
 - Live Airflow/MLflow/provider/observability profiles, generated UI client integration, and browser
   e2e/accessibility remain unverified.
 - The full master-spec Definition of Done remains open; do not create the `v0.1.0` release tag yet.
 
 ## Exact next action
 
-Push the scoped frontend container permission fix and observe its CI run at
-https://github.com/braundm/quantops-risk-platform/actions. On a Docker-capable clean host, run the remaining
-PostgreSQL/Redpanda/container/browser gates before creating a release tag or calling the project
-complete.
+Complete the remaining ADR topics for MLflow reproducibility and optional infrastructure profiles,
+then add browser accessibility/critical-path automation if dependencies can be introduced safely.
+On a Docker-capable clean host, run the remaining PostgreSQL/Redpanda/container gates before creating
+a release tag or calling the project complete.
 
 ## Working tree expectation
 
-The working tree should be clean after the final scoped commit. Preserve any existing remote and
-inspect `git status --short --branch` before future edits.
+The current work belongs to `agent/portfolio-polish`. Commit and push the interview/AI-development
+documentation as one scope, preserve `origin`, and inspect `git status --short --branch` before
+future edits.

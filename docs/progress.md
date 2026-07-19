@@ -537,7 +537,10 @@ pnpm --filter @quantops/web build
   grounded brief, model/drift, and data-quality views.
 - [x] Keep architecture diagrams, methodology, model/AI cards, engineering evidence, runbooks,
   threat model, and core ADRs linked and factual.
-- [ ] Add the interview guide and AI-assisted-development record required by the full specification.
+- [x] Add the interview guide with pitch, walkthrough, demo, domain explanations, 30 technical
+  questions, ten trade-off questions, concepts, and personal owner exercises.
+- [x] Add a truthful AI-assisted-development record with observed verification, concrete corrected
+  errors, review limits, and separate owner-review actions.
 - [ ] Complete automated browser accessibility and Playwright critical-path coverage.
 
 ## Milestone 14 — clean-room verification and publication
