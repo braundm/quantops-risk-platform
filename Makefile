@@ -49,8 +49,8 @@ test-integration:
 
 test-contract: event-test mcp-test
 
-# The repository currently has deterministic Vitest UI tests, not a browser E2E harness.
-test-e2e: web-test
+test-e2e:
+	$(PNPM) --filter @quantops/web test:e2e
 
 test-performance:
 	$(PYTHON) packages/risk_engine/benchmarks/benchmark_risk_engine.py

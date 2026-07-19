@@ -230,7 +230,7 @@ until the persistence critical path and generated live client are connected.
 - [x] Loading, empty, error, stale, partial, insufficient-history, and offline states.
 - [x] Frontend fixture risk/scenario values reconciled to the current API demo service.
 - [ ] Generated OpenAPI client and live API integration.
-- [ ] Automated accessibility scan and full keyboard/browser end-to-end suite.
+- [x] Automated accessibility scan and keyboard/browser critical-path end-to-end suite.
 
 Verified frontend gates:
 
@@ -242,15 +242,22 @@ pnpm --filter @quantops/web typecheck
 pnpm --filter @quantops/web test
 # exit 0; 2 files, 14 tests passed
 
+pnpm --filter @quantops/web test:e2e
+# exit 0; 14 Playwright tests passed across desktop Chromium and a Pixel 7 viewport
+# six representative product routes passed automated WCAG A/AA axe scans in each project
+
 pnpm --filter @quantops/web build
-# exit 0; 29 modules; JS 280.31 kB (80.75 kB gzip), CSS 48.38 kB (10.50 kB gzip)
+# exit 0; 29 modules; JS 280.54 kB (80.79 kB gzip), CSS 49.11 kB (10.60 kB gzip)
 ```
 
 Browser QA exercised the landing page, dashboard, scenario selection/custom validation, evidence
-briefs, desktop layout, and a 390 x 844 responsive viewport. No console warnings/errors or body
-horizontal overflow were observed. The mobile navigation scrollbar and scenario-export decimal
-rounding were corrected from that review. Milestone 5 remains incomplete until the generated API
-client, live integration, and automated accessibility/e2e gates are present.
+briefs, desktop layout, and a 390 x 844 responsive viewport. The automated suite now covers the
+landing page plus dashboard, scenario, grounded brief/evidence, model/drift, and pipeline-quality
+routes at desktop and mobile sizes. It also verifies skip-link focus, keyboard navigation, scenario
+execution, and evidence citation navigation. The mobile navigation scrollbar, scenario-export
+decimal rounding, metadata contrast, decorative ARIA, and scrollable-table keyboard access were
+corrected from these reviews. Milestone 5 remains incomplete only because the generated OpenAPI
+client and live API integration are not connected.
 
 ## Milestone 6 — streaming and outbox
 
@@ -461,6 +468,8 @@ future design and is not claimed.
 - [x] Document system, batch, streaming, risk/evidence, AI, and ML architecture flows.
 - [x] Add eight incident runbooks with detection, impact, diagnosis, safe mitigation, recovery, and
   verification.
+- [x] Add explicit backup/restore guidance, migration policy, a blameless sanitized postmortem
+  template, and an observability contract for the deferred telemetry profile.
 - [x] Keep API image multi-stage/non-root and build the grounded-AI wheel before the dependent API.
 - [ ] Add structured telemetry, bounded metrics, traces, and a verified optional observability profile.
 - [ ] Run core/optional Docker profiles and verify health, readiness, and graceful shutdown.
@@ -481,9 +490,10 @@ remain P2 and no resource or paid service has been created.
 - [x] Add a statically validated, least-privilege ten-job CI workflow, dependency updates,
   evidence artifacts, isolated PostgreSQL migration job, dependency/SBOM gates, and container smoke
   definitions.
-- [ ] Observe the first GitHub-hosted CI run, network vulnerability audits, PostgreSQL service job,
+- [x] Observe the first GitHub-hosted CI run, network vulnerability audits, PostgreSQL service job,
   and Docker image smoke jobs after publication.
-- [ ] Complete live PostgreSQL/Redpanda, automated browser accessibility/e2e, and clean-room tests.
+- [x] Complete automated browser accessibility and critical-path e2e tests on desktop/mobile Chromium.
+- [ ] Complete live PostgreSQL/Redpanda and clean-room service tests.
 
 Verified no-service repository gates after AI/stream/MCP integration:
 
@@ -536,9 +546,13 @@ pnpm --filter @quantops/web build
 - [x] Capture seven actual running-product images for the landing page, dashboard, scenario/stress,
   grounded brief, model/drift, and data-quality views.
 - [x] Keep architecture diagrams, methodology, model/AI cards, engineering evidence, runbooks,
-  threat model, and core ADRs linked and factual.
-- [ ] Add the interview guide and AI-assisted-development record required by the full specification.
-- [ ] Complete automated browser accessibility and Playwright critical-path coverage.
+  threat model, and all ten required decision topics linked and factual, including MLflow
+  reproducibility and safely optional infrastructure profiles.
+- [x] Add the interview guide with pitch, walkthrough, demo, domain explanations, 30 technical
+  questions, ten trade-off questions, concepts, and personal owner exercises.
+- [x] Add a truthful AI-assisted-development record with observed verification, concrete corrected
+  errors, review limits, and separate owner-review actions.
+- [x] Complete automated browser accessibility and Playwright critical-path coverage.
 
 ## Milestone 14 — clean-room verification and publication
 
@@ -547,18 +561,17 @@ pnpm --filter @quantops/web build
   results.
 - [ ] Run the Docker/PostgreSQL/Redpanda/clean-checkout gates on a Docker-capable host.
 - [x] Publish public `braundm/quantops-risk-platform`, configure `origin`, description, and ten concise
-  repository topics, and push `main` at verified commit `fe73a64`.
-- [ ] Observe the initial hosted CI run to completion; do not create a release tag while the full
+  repository topics, and push `main`; hosted CI passed at verified commit `4f7627b`.
+- [x] Observe the initial hosted CI run to completion; do not create a release tag while the full
   Definition of Done remains open.
 
 ## Current blockers
 
 - Docker is unavailable, so PostgreSQL/Redpanda integration gates cannot yet be claimed.
-- GitHub Actions run `29689753000` passed nine jobs but exposed a frontend container startup
-  failure: nginx could not create `/var/cache/nginx/client_temp` while running as UID 101. The image
-  now prepares and assigns the required cache and PID paths to that unprivileged runtime user.
-- The container fix has been validated statically and with the frontend production build, but must
-  still be confirmed by a fresh Docker-capable GitHub-hosted CI run.
+- GitHub Actions run `29694259171` passed on `main`, including the PostgreSQL migration and
+  unprivileged API/frontend container smoke jobs.
+- Local Docker remains unavailable, so the same service and container behavior cannot yet be
+  reproduced on this workstation.
 
 Scoped verification for the frontend container permission fix:
 
@@ -573,8 +586,7 @@ pnpm --filter @quantops/web build
 
 ## Next work
 
-Push the scoped container fix and observe the resulting hosted CI run without creating a release
-tag. Then use a Docker-capable
-clean host to run PostgreSQL migrations, persistence/Redpanda integration, image and
-Compose smoke tests, and browser e2e/accessibility. Keep service-dependent evidence unchecked until
-those real integrations pass.
+Connect the generated TypeScript client to the live API boundary, then implement and verify the
+PostgreSQL-backed critical application path and Redpanda adapter. On a Docker-capable clean host,
+repeat migrations, persistence/Redpanda integration, image, and Compose smoke tests. Keep the
+release tag and remaining service-dependent evidence unchecked until those gates pass.

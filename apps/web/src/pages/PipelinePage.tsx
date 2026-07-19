@@ -25,7 +25,7 @@ export function PipelinePage({ result }: { readonly result: DemoResult }) {
 
       <section className="panel" aria-labelledby="runs-title">
         <header className="panel-header"><div><p className="panel-kicker">Latest deterministic executions</p><h2 id="runs-title">Pipeline runs</h2></div><Badge tone={result.mode === "offline" ? "warning" : "good"}>{result.mode === "offline" ? "Broker offline · batch available" : "Batch mode"}</Badge></header>
-        <div className="table-wrap">
+        <div className="table-wrap" role="region" aria-label="Pipeline runs table" tabIndex={0}>
           <table>
             <caption className="sr-only">Pipeline run status and watermarks</caption>
             <thead><tr><th scope="col">Run</th><th scope="col">Status</th><th scope="col">Completed</th><th scope="col">Watermark</th><th scope="col">Accepted</th><th scope="col">Quarantined</th></tr></thead>

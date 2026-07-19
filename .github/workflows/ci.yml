@@ -303,12 +303,26 @@ jobs:
         run: pnpm --filter @quantops/web test
       - name: Build frontend
         run: pnpm --filter @quantops/web build
+      - name: Install Playwright Chromium
+        run: pnpm --filter @quantops/web exec playwright install --with-deps chromium
+      - name: Test critical browser paths and accessibility
+        run: pnpm --filter @quantops/web test:e2e
       - name: Upload frontend build
         uses: actions/upload-artifact@v7.0.1
         with:
           name: frontend-dist
           path: apps/web/dist
           if-no-files-found: error
+          retention-days: 14
+      - name: Upload browser test evidence
+        if: always()
+        uses: actions/upload-artifact@v7.0.1
+        with:
+          name: frontend-browser-tests
+          path: |
+            apps/web/playwright-report
+            apps/web/test-results
+          if-no-files-found: warn
           retention-days: 14
 
   security-docs:
