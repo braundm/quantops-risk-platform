@@ -104,10 +104,34 @@ Persistence, migrations, database constraints, and PostgreSQL integration eviden
 
 ## Milestone 2 — synthetic market and data quality
 
-- [ ] Deterministic two-year synthetic dataset and manifest.
-- [ ] Intentional duplicate, late, missing, and malformed quality cases.
+- [x] Deterministic two-year synthetic dataset and manifest.
+- [x] Intentional duplicate, late, missing, and malformed quality cases.
 - [ ] Idempotent seed/upsert and quarantine path.
-- [ ] Lineage and byte-reproducibility tests.
+- [x] Lineage and byte-reproducibility tests.
+
+File-generation, validation, and quarantine are implemented; PostgreSQL seed/upsert remains pending, so Milestone 2 is not yet complete.
+
+Verified synthetic-data gates:
+
+```text
+.venv\Scripts\pytest.exe -c pipelines/pyproject.toml pipelines/tests --cov=quantops_pipelines --cov-branch -q
+# exit 0; 19 passed; 92% combined branch coverage
+
+.venv\Scripts\ruff.exe check pipelines
+.venv\Scripts\ruff.exe format --check pipelines
+# both exit 0
+
+.venv\Scripts\mypy.exe --config-file pipelines/pyproject.toml pipelines/src/quantops_pipelines pipelines/tests
+# exit 0; 10 source files, no issues
+
+PYTHONPATH=pipelines/src .venv\Scripts\python.exe -m quantops_pipelines verify --dataset data/synthetic
+# exit 0; status valid
+
+PYTHONPATH=pipelines/src .venv\Scripts\python.exe -m quantops_pipelines generate --output data/synthetic
+# exit 0; 2,088 bars; files_written=0; files_unchanged=11
+```
+
+Aggregate dataset SHA-256: `2796bd52b205182f471903f42638c6f6751093c658d1017ecf4be03c3c1b1150`.
 
 ## Milestone 3 — risk engine
 

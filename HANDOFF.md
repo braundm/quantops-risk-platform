@@ -4,7 +4,7 @@ Last updated: 2026-07-19
 
 ## Current state
 
-The repository began empty. The authoritative master specification has been read in full. Milestone 0 is complete and committed as `102406d`; the framework-independent domain package is committed as `af3ac48`. The risk engine passes 99 tests, 98% combined branch coverage, lint, format, strict typing, package build, and a measured local benchmark. Persistence and deterministic data are under active implementation.
+The repository began empty. The authoritative master specification has been read in full. Milestone 0 is committed as `102406d`, domain as `af3ac48`, and the verified risk engine as `1027ef2`. The deterministic fixture/data-quality package passes 19 tests and 92% combined branch coverage; database seed/upsert is still pending. Persistence is under active implementation.
 
 ## Architecture in force
 
@@ -47,7 +47,7 @@ pnpm --filter @quantops/web build
 
 ## Exact next action
 
-Commit the verified risk engine, then finish persistence adapters/migrations and deterministic data-generation gates.
+Commit the verified synthetic fixture/data-quality foundation, then finish persistence adapters/migrations and connect idempotent database seeding.
 
 ## Uncommitted changes
 

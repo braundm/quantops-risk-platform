@@ -1,0 +1,29 @@
+{
+  "config_hash": "fed337ef9bcdc8847e22858e82d4113cbd140c53f53ac8264b6957157529381f",
+  "correlation_id": "6dbe98ab-6412-5f59-b61d-d2633ffd7c84",
+  "counts": {
+    "accepted_records": 17,
+    "counts_by_rule": {
+      "DQ_DUPLICATE_EVENT": 1,
+      "DQ_LATE_ARRIVAL": 1,
+      "DQ_MALFORMED_NUMBER": 1,
+      "DQ_MISSING_EXPECTED_BAR": 1
+    },
+    "expected_records": 20,
+    "input_records": 20,
+    "quality_issues": 4,
+    "quarantined_records": 4
+  },
+  "idempotency_key": "quantops_synthetic_market_v1:1.0.0:20250317",
+  "idempotency_strategy": "source_event_id unique; duplicates quarantined",
+  "is_synthetic": true,
+  "logical_finished_at": "2024-03-08T22:01:00Z",
+  "logical_started_at": "2024-03-08T22:00:00Z",
+  "pipeline_name": "synthetic_market_data_quality",
+  "quarantine_reference": "quarantine/quality_quarantine.jsonl",
+  "run_id": "792e39f0-44fa-5a3b-8178-e7d53c055af4",
+  "run_schema_version": "1.0.0",
+  "seed": 20250317,
+  "status": "completed_with_quarantine",
+  "watermark_minutes": 60
+}

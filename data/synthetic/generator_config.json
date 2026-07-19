@@ -1,0 +1,66 @@
+{
+  "calendar": "SYNTHETIC_WEEKDAY",
+  "currency": "USD",
+  "dataset_name": "quantops_synthetic_market_v1",
+  "dataset_version": "1.0.0",
+  "end_date": "2024-12-31",
+  "generator_version": "0.1.0",
+  "initial_prices": {
+    "QCASH": "100.000000",
+    "QGOLD": "180.000000",
+    "QTECH": "100.000000",
+    "QWTI": "75.000000"
+  },
+  "is_synthetic": true,
+  "max_lateness_minutes": 60,
+  "quality_case_window": {
+    "end_date": "2024-03-08",
+    "is_synthetic": true,
+    "start_date": "2024-03-04"
+  },
+  "regimes": [
+    {
+      "description": "Normal low-volatility period with ordinary diversification.",
+      "end_date": "2023-06-30",
+      "is_synthetic": true,
+      "name": "normal",
+      "start_date": "2023-01-02"
+    },
+    {
+      "description": "Risk-on trend with deliberately falling cross-asset dependence.",
+      "end_date": "2023-12-29",
+      "is_synthetic": true,
+      "name": "risk_on",
+      "start_date": "2023-07-03"
+    },
+    {
+      "description": "Abrupt deterministic volatility shock and high-volatility aftermath.",
+      "end_date": "2024-02-16",
+      "is_synthetic": true,
+      "name": "volatility_shock",
+      "start_date": "2024-01-01"
+    },
+    {
+      "description": "Correlation breakdown where normally diversifying assets move together.",
+      "end_date": "2024-06-28",
+      "is_synthetic": true,
+      "name": "correlation_breakdown",
+      "start_date": "2024-02-19"
+    },
+    {
+      "description": "Partial recovery with moderating but still elevated volatility.",
+      "end_date": "2024-12-31",
+      "is_synthetic": true,
+      "name": "partial_recovery",
+      "start_date": "2024-07-01"
+    }
+  ],
+  "seed": 20250317,
+  "start_date": "2023-01-02",
+  "symbols": [
+    "QTECH",
+    "QGOLD",
+    "QWTI",
+    "QCASH"
+  ]
+}

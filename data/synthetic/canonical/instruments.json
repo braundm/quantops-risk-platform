@@ -1,0 +1,71 @@
+{
+  "dataset_name": "quantops_synthetic_market_v1",
+  "instruments": [
+    {
+      "asset_class": "equity_index",
+      "calendar": "SYNTHETIC_WEEKDAY",
+      "id": "6dca64cd-a67c-572a-8f1d-7fd4c91fdba5",
+      "is_demo": true,
+      "is_synthetic": true,
+      "metadata": {
+        "fictional": true,
+        "usage": "demonstration_and_testing_only"
+      },
+      "name": "QuantOps Synthetic Technology Index",
+      "price_scale": 6,
+      "quote_currency": "USD",
+      "symbol": "QTECH",
+      "timezone": "UTC"
+    },
+    {
+      "asset_class": "commodity",
+      "calendar": "SYNTHETIC_WEEKDAY",
+      "id": "64fd9780-fa08-510b-88b3-f1d0393f91db",
+      "is_demo": true,
+      "is_synthetic": true,
+      "metadata": {
+        "fictional": true,
+        "usage": "demonstration_and_testing_only"
+      },
+      "name": "QuantOps Synthetic Gold Exposure",
+      "price_scale": 6,
+      "quote_currency": "USD",
+      "symbol": "QGOLD",
+      "timezone": "UTC"
+    },
+    {
+      "asset_class": "commodity",
+      "calendar": "SYNTHETIC_WEEKDAY",
+      "id": "e7a60b16-01d4-5dcd-94d7-8e3ed0f03df7",
+      "is_demo": true,
+      "is_synthetic": true,
+      "metadata": {
+        "fictional": true,
+        "usage": "demonstration_and_testing_only"
+      },
+      "name": "QuantOps Synthetic Crude-Oil Exposure",
+      "price_scale": 6,
+      "quote_currency": "USD",
+      "symbol": "QWTI",
+      "timezone": "UTC"
+    },
+    {
+      "asset_class": "cash",
+      "calendar": "SYNTHETIC_WEEKDAY",
+      "id": "601c2e33-8abc-576b-9746-7f9dc16e8a13",
+      "is_demo": true,
+      "is_synthetic": true,
+      "metadata": {
+        "fictional": true,
+        "usage": "demonstration_and_testing_only"
+      },
+      "name": "QuantOps Synthetic Cash Reference",
+      "price_scale": 6,
+      "quote_currency": "USD",
+      "symbol": "QCASH",
+      "timezone": "UTC"
+    }
+  ],
+  "is_synthetic": true,
+  "schema_version": "1.0.0"
+}

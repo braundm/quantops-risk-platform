@@ -1,0 +1,252 @@
+{
+  "dataset_name": "quantops_synthetic_market_v1",
+  "is_synthetic": true,
+  "regimes": [
+    {
+      "description": "Normal low-volatility period with ordinary diversification.",
+      "end_date": "2023-06-30",
+      "is_synthetic": true,
+      "name": "normal",
+      "parameters": {
+        "daily_drift": {
+          "QCASH": 5e-05,
+          "QGOLD": 0.0001,
+          "QTECH": 0.0003,
+          "QWTI": 0.00015
+        },
+        "daily_volatility": {
+          "QCASH": 8e-05,
+          "QGOLD": 0.006,
+          "QTECH": 0.009,
+          "QWTI": 0.012
+        },
+        "description": "Low-volatility baseline with ordinary diversification.",
+        "factor_loadings": {
+          "QCASH": {
+            "commodity": 0.0,
+            "defensive": 0.08,
+            "idiosyncratic": 0.2,
+            "shared_market": 0.04
+          },
+          "QGOLD": {
+            "commodity": 0.05,
+            "defensive": 0.75,
+            "idiosyncratic": 0.62,
+            "shared_market": -0.2
+          },
+          "QTECH": {
+            "commodity": 0.0,
+            "defensive": -0.05,
+            "idiosyncratic": 0.7,
+            "shared_market": 0.7
+          },
+          "QWTI": {
+            "commodity": 0.78,
+            "defensive": -0.05,
+            "idiosyncratic": 0.5,
+            "shared_market": 0.35
+          }
+        },
+        "is_synthetic": true
+      },
+      "start_date": "2023-01-02"
+    },
+    {
+      "description": "Risk-on trend with deliberately falling cross-asset dependence.",
+      "end_date": "2023-12-29",
+      "is_synthetic": true,
+      "name": "risk_on",
+      "parameters": {
+        "daily_drift": {
+          "QCASH": 5e-05,
+          "QGOLD": 8e-05,
+          "QTECH": 0.00085,
+          "QWTI": 0.00045
+        },
+        "daily_volatility": {
+          "QCASH": 8e-05,
+          "QGOLD": 0.006,
+          "QTECH": 0.01,
+          "QWTI": 0.013
+        },
+        "description": "Positive trend with deliberately lower cross-asset factor dependence.",
+        "factor_loadings": {
+          "QCASH": {
+            "commodity": 0.0,
+            "defensive": 0.05,
+            "idiosyncratic": 0.2,
+            "shared_market": 0.02
+          },
+          "QGOLD": {
+            "commodity": 0.0,
+            "defensive": 0.25,
+            "idiosyncratic": 0.96,
+            "shared_market": -0.1
+          },
+          "QTECH": {
+            "commodity": 0.0,
+            "defensive": 0.0,
+            "idiosyncratic": 0.97,
+            "shared_market": 0.22
+          },
+          "QWTI": {
+            "commodity": 0.25,
+            "defensive": 0.0,
+            "idiosyncratic": 0.95,
+            "shared_market": 0.18
+          }
+        },
+        "is_synthetic": true
+      },
+      "start_date": "2023-07-03"
+    },
+    {
+      "description": "Abrupt deterministic volatility shock and high-volatility aftermath.",
+      "end_date": "2024-02-16",
+      "is_synthetic": true,
+      "name": "volatility_shock",
+      "parameters": {
+        "daily_drift": {
+          "QCASH": 5e-05,
+          "QGOLD": 0.00015,
+          "QTECH": -0.0012,
+          "QWTI": -0.0014
+        },
+        "daily_volatility": {
+          "QCASH": 0.00012,
+          "QGOLD": 0.015,
+          "QTECH": 0.03,
+          "QWTI": 0.042
+        },
+        "description": "Abrupt selloff followed by a short, high-volatility interval.",
+        "factor_loadings": {
+          "QCASH": {
+            "commodity": 0.0,
+            "defensive": 0.1,
+            "idiosyncratic": 0.2,
+            "shared_market": 0.03
+          },
+          "QGOLD": {
+            "commodity": 0.0,
+            "defensive": 0.72,
+            "idiosyncratic": 0.6,
+            "shared_market": -0.35
+          },
+          "QTECH": {
+            "commodity": 0.0,
+            "defensive": 0.0,
+            "idiosyncratic": 0.54,
+            "shared_market": 0.84
+          },
+          "QWTI": {
+            "commodity": 0.58,
+            "defensive": 0.0,
+            "idiosyncratic": 0.48,
+            "shared_market": 0.66
+          }
+        },
+        "is_synthetic": true
+      },
+      "start_date": "2024-01-01"
+    },
+    {
+      "description": "Correlation breakdown where normally diversifying assets move together.",
+      "end_date": "2024-06-28",
+      "is_synthetic": true,
+      "name": "correlation_breakdown",
+      "parameters": {
+        "daily_drift": {
+          "QCASH": 5e-05,
+          "QGOLD": -5e-05,
+          "QTECH": -0.00015,
+          "QWTI": -0.0002
+        },
+        "daily_volatility": {
+          "QCASH": 0.0001,
+          "QGOLD": 0.014,
+          "QTECH": 0.021,
+          "QWTI": 0.028
+        },
+        "description": "Normally diversifying risky assets share a dominant common factor.",
+        "factor_loadings": {
+          "QCASH": {
+            "commodity": 0.0,
+            "defensive": 0.08,
+            "idiosyncratic": 0.2,
+            "shared_market": 0.03
+          },
+          "QGOLD": {
+            "commodity": 0.0,
+            "defensive": 0.05,
+            "idiosyncratic": 0.43,
+            "shared_market": 0.88
+          },
+          "QTECH": {
+            "commodity": 0.0,
+            "defensive": 0.0,
+            "idiosyncratic": 0.34,
+            "shared_market": 0.94
+          },
+          "QWTI": {
+            "commodity": 0.25,
+            "defensive": 0.0,
+            "idiosyncratic": 0.34,
+            "shared_market": 0.9
+          }
+        },
+        "is_synthetic": true
+      },
+      "start_date": "2024-02-19"
+    },
+    {
+      "description": "Partial recovery with moderating but still elevated volatility.",
+      "end_date": "2024-12-31",
+      "is_synthetic": true,
+      "name": "partial_recovery",
+      "parameters": {
+        "daily_drift": {
+          "QCASH": 5e-05,
+          "QGOLD": 0.0002,
+          "QTECH": 0.0006,
+          "QWTI": 0.00048
+        },
+        "daily_volatility": {
+          "QCASH": 9e-05,
+          "QGOLD": 0.009,
+          "QTECH": 0.014,
+          "QWTI": 0.019
+        },
+        "description": "Moderating volatility and incomplete recovery from the stress interval.",
+        "factor_loadings": {
+          "QCASH": {
+            "commodity": 0.0,
+            "defensive": 0.08,
+            "idiosyncratic": 0.2,
+            "shared_market": 0.03
+          },
+          "QGOLD": {
+            "commodity": 0.05,
+            "defensive": 0.64,
+            "idiosyncratic": 0.74,
+            "shared_market": -0.12
+          },
+          "QTECH": {
+            "commodity": 0.0,
+            "defensive": 0.0,
+            "idiosyncratic": 0.78,
+            "shared_market": 0.6
+          },
+          "QWTI": {
+            "commodity": 0.62,
+            "defensive": 0.0,
+            "idiosyncratic": 0.62,
+            "shared_market": 0.42
+          }
+        },
+        "is_synthetic": true
+      },
+      "start_date": "2024-07-01"
+    }
+  ],
+  "schema_version": "1.0.0"
+}

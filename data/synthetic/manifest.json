@@ -1,0 +1,151 @@
+{
+  "all_records_synthetic": true,
+  "artifacts": [
+    {
+      "bytes": 1778,
+      "media_type": "application/json",
+      "path": "generator_config.json",
+      "record_count": 1,
+      "sha256": "fed337ef9bcdc8847e22858e82d4113cbd140c53f53ac8264b6957157529381f"
+    },
+    {
+      "bytes": 1508,
+      "media_type": "text/markdown",
+      "path": "README.md",
+      "sha256": "49628e583bc3cc5dd401e0f34e4c9e11bf9bfa5133cb84c96b1affcf6cefea45"
+    },
+    {
+      "bytes": 1931,
+      "media_type": "application/json",
+      "path": "canonical/instruments.json",
+      "record_count": 4,
+      "sha256": "ed2dfeb3ec1493b8bb3b5e06c8b1e5bff6aec879c0d067525420242de203e4ae"
+    },
+    {
+      "bytes": 6907,
+      "media_type": "application/json",
+      "path": "canonical/regimes.json",
+      "record_count": 5,
+      "sha256": "7be32fb878d40f022a5a51110fa5430493bd461275a69f588ff5f3aa7bb26043"
+    },
+    {
+      "bytes": 505388,
+      "media_type": "text/csv",
+      "path": "canonical/price_bars.csv",
+      "record_count": 2088,
+      "sha256": "a1fb5e6f923a03e8a0efed4319a036ace7bc000337a1d8132a46981de14da3b8"
+    },
+    {
+      "bytes": 1219491,
+      "media_type": "application/json",
+      "path": "canonical/price_bars.json",
+      "record_count": 2088,
+      "sha256": "3e446021bc9a233bfd0c73106d69f7058a52d7184b06a51ba5f5e2015b71ac90"
+    },
+    {
+      "bytes": 4151,
+      "media_type": "application/json",
+      "path": "canonical/documents.json",
+      "record_count": 4,
+      "sha256": "f06d7ca73446c214302fba11e9cc022d825dcd88e69f77f9172a9b3c84001425"
+    },
+    {
+      "bytes": 14019,
+      "media_type": "application/json",
+      "path": "cases/quality_cases.json",
+      "record_count": 20,
+      "sha256": "464024606af43df4dfd543831da214ec6f70f5609d1aaa253c9498090ddbeb76"
+    },
+    {
+      "bytes": 1820,
+      "media_type": "application/x-ndjson",
+      "path": "quarantine/quality_quarantine.jsonl",
+      "record_count": 4,
+      "sha256": "be3dbcd48b396d36d46d2aa7ce14e81ff93b9f4dd796a7eecab307b01633d52f"
+    },
+    {
+      "bytes": 1014,
+      "media_type": "application/json",
+      "path": "runs/quality_run.json",
+      "record_count": 1,
+      "sha256": "d83800c6de6c7cc2abf5745a6c674531000e5479b227264d35b1ca83fb385550"
+    }
+  ],
+  "config": {
+    "calendar": "SYNTHETIC_WEEKDAY",
+    "currency": "USD",
+    "dataset_name": "quantops_synthetic_market_v1",
+    "dataset_version": "1.0.0",
+    "end_date": "2024-12-31",
+    "generator_version": "0.1.0",
+    "initial_prices": {
+      "QCASH": "100.000000",
+      "QGOLD": "180.000000",
+      "QTECH": "100.000000",
+      "QWTI": "75.000000"
+    },
+    "is_synthetic": true,
+    "max_lateness_minutes": 60,
+    "quality_case_window": {
+      "end_date": "2024-03-08",
+      "is_synthetic": true,
+      "start_date": "2024-03-04"
+    },
+    "regimes": [
+      {
+        "description": "Normal low-volatility period with ordinary diversification.",
+        "end_date": "2023-06-30",
+        "is_synthetic": true,
+        "name": "normal",
+        "start_date": "2023-01-02"
+      },
+      {
+        "description": "Risk-on trend with deliberately falling cross-asset dependence.",
+        "end_date": "2023-12-29",
+        "is_synthetic": true,
+        "name": "risk_on",
+        "start_date": "2023-07-03"
+      },
+      {
+        "description": "Abrupt deterministic volatility shock and high-volatility aftermath.",
+        "end_date": "2024-02-16",
+        "is_synthetic": true,
+        "name": "volatility_shock",
+        "start_date": "2024-01-01"
+      },
+      {
+        "description": "Correlation breakdown where normally diversifying assets move together.",
+        "end_date": "2024-06-28",
+        "is_synthetic": true,
+        "name": "correlation_breakdown",
+        "start_date": "2024-02-19"
+      },
+      {
+        "description": "Partial recovery with moderating but still elevated volatility.",
+        "end_date": "2024-12-31",
+        "is_synthetic": true,
+        "name": "partial_recovery",
+        "start_date": "2024-07-01"
+      }
+    ],
+    "seed": 20250317,
+    "start_date": "2023-01-02",
+    "symbols": [
+      "QTECH",
+      "QGOLD",
+      "QWTI",
+      "QCASH"
+    ]
+  },
+  "config_hash": "fed337ef9bcdc8847e22858e82d4113cbd140c53f53ac8264b6957157529381f",
+  "dataset_hash": "2796bd52b205182f471903f42638c6f6751093c658d1017ecf4be03c3c1b1150",
+  "dataset_name": "quantops_synthetic_market_v1",
+  "dataset_version": "1.0.0",
+  "generator_version": "0.1.0",
+  "hash_algorithm": "sha256",
+  "logical_created_at": "2025-01-01T00:00:00Z",
+  "logical_timestamp_note": "Fixed artifact metadata timestamp; it is not a claim about wall-clock generation time.",
+  "manifest_schema_version": "1.0.0",
+  "price_bar_count": 2088,
+  "seed": 20250317
+}
