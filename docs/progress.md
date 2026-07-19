@@ -111,9 +111,31 @@ Persistence, migrations, database constraints, and PostgreSQL integration eviden
 
 ## Milestone 3 — risk engine
 
-- [ ] Returns, valuation, volatility, covariance, VaR, ES, drawdown, concentration, contributions, scenarios, and backtesting.
-- [ ] Known-example and property tests, methodology documentation, and benchmark evidence.
-- [ ] Confirm framework independence and no `NaN` leakage.
+- [x] Returns, valuation, volatility, covariance, VaR, ES, drawdown, concentration, contributions, scenarios, and backtesting.
+- [x] Known-example and property tests, methodology documentation, and benchmark evidence.
+- [x] Confirm framework independence and no `NaN` leakage.
+
+Verified risk-engine gates:
+
+```text
+.venv\Scripts\pytest.exe packages/risk_engine/tests --cov=quantops_risk --cov-branch -q
+# exit 0; 99 passed, 14 subtests passed; 98% combined branch coverage
+
+.venv\Scripts\ruff.exe check packages/risk_engine
+.venv\Scripts\ruff.exe format --check packages/risk_engine
+# both exit 0
+
+.venv\Scripts\mypy.exe packages/risk_engine/src/quantops_risk packages/risk_engine/tests
+# exit 0; 28 source files, no issues
+
+.venv\Scripts\uv.exe build packages/risk_engine --offline
+# exit 0; sdist and wheel built
+
+.venv\Scripts\python.exe packages/risk_engine/benchmarks/benchmark_risk_engine.py
+# Python 3.12.13, Windows 11; 756 observations x 25 instruments; 0.223069 seconds
+```
+
+The benchmark is a local observation, not a universal SLA.
 
 ## Milestones 4–14
 

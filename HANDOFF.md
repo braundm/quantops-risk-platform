@@ -4,7 +4,7 @@ Last updated: 2026-07-19
 
 ## Current state
 
-The repository began empty. The authoritative master specification has been read in full. Milestone 0 is complete and committed as `102406d`. The framework-independent domain package passes its unit, coverage, lint, format, type, and build gates. Persistence is under active implementation; the risk package is verified but not yet committed.
+The repository began empty. The authoritative master specification has been read in full. Milestone 0 is complete and committed as `102406d`; the framework-independent domain package is committed as `af3ac48`. The risk engine passes 99 tests, 98% combined branch coverage, lint, format, strict typing, package build, and a measured local benchmark. Persistence and deterministic data are under active implementation.
 
 ## Architecture in force
 
@@ -47,7 +47,7 @@ pnpm --filter @quantops/web build
 
 ## Exact next action
 
-Finish strict type/lint/coverage verification for the domain and risk packages, commit each verified scope, then implement persistence adapters and migrations.
+Commit the verified risk engine, then finish persistence adapters/migrations and deterministic data-generation gates.
 
 ## Uncommitted changes
 
