@@ -59,7 +59,7 @@ The synchronous core is a modular monolith; batch, stream, scheduling, ML, AI, a
 | ML | Ten point-in-time features, rule baseline, fixed-seed candidate, chronological evaluation, promotion gates, model card, reproducible artifacts, and drift checks |
 | AI | Deterministic no-key brief, ten-tool read-only broker, scoped retrieval, citation/numerical validation, safe fallback/refusal, and 44 adversarial evaluation cases |
 | MCP | Exactly three bounded read-only tools and one fixed methodology resource over local stdio |
-| Product UI | Responsive research dashboard, portfolios, scenarios, evidence, data quality, model/drift, audit, methodology, and architecture views |
+| Product UI | Responsive research dashboard, portfolios, scenarios, evidence, data quality, model/drift, audit, methodology, and architecture views, covered by desktop/mobile Playwright and axe checks |
 
 ## Why this stack
 
@@ -130,12 +130,13 @@ uv run pytest -m "not integration and not e2e"
 pnpm lint
 pnpm typecheck
 pnpm test
+pnpm test:e2e
 pnpm build
 uv run python scripts/docs_check.py
 uv run python scripts/security_scan.py
 ```
 
-The latest recorded service-free core gate passed **428 Python tests plus 20 subtests** before the final scheduler/tooling additions; package-level branch coverage is recorded in [progress](docs/progress.md). The deterministic AI report passed **44/44 cases across 20 categories**. Live database/broker tests and container smoke checks remain explicitly pending because Docker is unavailable in the current build environment.
+The latest recorded service-free core gate passed **468 Python tests plus 20 subtests**, **14 Vitest tests**, and **14 Playwright tests** across desktop and mobile Chromium. The browser suite includes automated WCAG A/AA scans and a keyboard-only scenario/evidence journey. Package-level branch coverage is recorded in [progress](docs/progress.md). The deterministic AI report passed **44/44 cases across 20 categories**. Live database/broker tests and local container smoke checks remain explicitly pending because Docker is unavailable in the current workstation environment.
 
 ## Repository map
 

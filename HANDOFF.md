@@ -9,14 +9,16 @@ framework-free domain and risk cores, deterministic data/quality pipelines, Post
 migrations, a 31-route FastAPI surface, a responsive typed-demo UI, versioned events, broker-neutral
 streaming, offline scheduling wrappers, a leakage-safe ML lifecycle, bounded grounded AI, and an
 official-SDK read-only MCP server. The final local service-free gate passes 468 Python tests plus 20
-subtests, strict typechecks across 11 isolated groups, all frontend gates, documentation checks, and
-the repository security scan.
+subtests, strict typechecks across 11 isolated groups, 14 Vitest tests, 14 desktop/mobile Playwright
+tests with axe scans, the frontend production build, documentation checks, and the repository
+security scan.
 
-The public repository is https://github.com/braundm/quantops-risk-platform. Local `main` tracks
-`origin/main`; the initial GitHub Actions CI run started against commit `fe73a64` after publication.
+The public repository is https://github.com/braundm/quantops-risk-platform. Local work is on
+`agent/portfolio-polish`, tracking the same branch on `origin`; draft PR #11 contains the current
+portfolio/documentation improvements.
 
-Focused commits through `fe73a64` preserve the implementation history. A final documentation-only
-commit records publication state; use `git log -1` for its immutable SHA.
+Focused commits through `4f7627b` on `main` preserve the published implementation history. Use
+`git log -1` on the active branch for its latest immutable SHA.
 
 ## Architecture in force
 
@@ -49,8 +51,9 @@ review and keep unavailable integrations explicitly qualified.
 pnpm --filter @quantops/web lint
 pnpm --filter @quantops/web typecheck
 pnpm --filter @quantops/web test
+pnpm --filter @quantops/web test:e2e
 pnpm --filter @quantops/web build
-# exit 0; 14 Vitest tests; Vite production build
+# exit 0; 14 Vitest tests; 14 desktop/mobile Playwright tests; Vite production build
 
 .venv\Scripts\python.exe scripts/docs_check.py
 .venv\Scripts\python.exe scripts/security_scan.py
@@ -70,18 +73,18 @@ does not include it in `PATH`. Docker, GNU Make, and Terraform remain absent fro
 - Docker-backed clean PostgreSQL, pgvector, Redpanda, image, and Compose gates were not runnable.
 - GitHub Actions run `29694259171` passed on `main` after the unprivileged nginx cache/PID permission
   correction in commit `4f7627b`.
-- Live Airflow/MLflow/provider/observability profiles, generated UI client integration, and browser
-  e2e/accessibility remain unverified.
+- Live Airflow/MLflow/provider/observability profiles and generated UI client integration remain
+  unverified.
 - The full master-spec Definition of Done remains open; do not create the `v0.1.0` release tag yet.
 
 ## Exact next action
 
-Add browser accessibility/critical-path automation if dependencies can be introduced safely. On a
-Docker-capable clean host, run the remaining PostgreSQL/Redpanda/container gates and exercise the
-documented backup/migration/observability procedures before creating a release tag or calling the
-project complete.
+Connect the generated TypeScript client and PostgreSQL-backed critical application path. On a
+Docker-capable clean host, run the remaining Redpanda/clean-room gates and exercise the documented
+backup/migration/observability procedures before creating a release tag or calling the project
+complete.
 
 ## Working tree expectation
 
-The current work belongs to `agent/portfolio-polish`. Commit and push the operations documentation as
-its own scope, preserve `origin`, and inspect `git status --short --branch` before future edits.
+The current work belongs to `agent/portfolio-polish` and draft PR #11. Preserve `origin`, keep
+commits narrowly scoped, and inspect `git status --short --branch` before future edits.
