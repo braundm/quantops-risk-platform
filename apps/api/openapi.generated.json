@@ -1,6 +1,547 @@
 {
   "components": {
     "schemas": {
+      "AiEvaluationCaseResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "case_id": {
+            "title": "Case Id",
+            "type": "string"
+          },
+          "category": {
+            "title": "Category",
+            "type": "string"
+          },
+          "citation_precision": {
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Citation Precision",
+            "type": "number"
+          },
+          "citation_valid": {
+            "title": "Citation Valid",
+            "type": "boolean"
+          },
+          "fallback_used": {
+            "title": "Fallback Used",
+            "type": "boolean"
+          },
+          "groundedness": {
+            "title": "Groundedness",
+            "type": "boolean"
+          },
+          "issue_codes": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Issue Codes",
+            "type": "array"
+          },
+          "latency_ms": {
+            "minimum": 0.0,
+            "title": "Latency Ms",
+            "type": "number"
+          },
+          "numerical_consistency": {
+            "title": "Numerical Consistency",
+            "type": "boolean"
+          },
+          "passed": {
+            "title": "Passed",
+            "type": "boolean"
+          },
+          "refusal_accurate": {
+            "title": "Refusal Accurate",
+            "type": "boolean"
+          },
+          "required_citation_coverage": {
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Required Citation Coverage",
+            "type": "number"
+          },
+          "schema_valid": {
+            "title": "Schema Valid",
+            "type": "boolean"
+          },
+          "tool_call_count": {
+            "minimum": 0.0,
+            "title": "Tool Call Count",
+            "type": "integer"
+          },
+          "tool_selection_correct": {
+            "title": "Tool Selection Correct",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "case_id",
+          "category",
+          "passed",
+          "schema_valid",
+          "citation_valid",
+          "citation_precision",
+          "required_citation_coverage",
+          "numerical_consistency",
+          "refusal_accurate",
+          "tool_selection_correct",
+          "groundedness",
+          "latency_ms",
+          "tool_call_count",
+          "fallback_used",
+          "issue_codes"
+        ],
+        "title": "AiEvaluationCaseResponse",
+        "type": "object"
+      },
+      "AiEvaluationRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "suite_version": {
+            "const": "1.0.0",
+            "default": "1.0.0",
+            "title": "Suite Version",
+            "type": "string"
+          }
+        },
+        "title": "AiEvaluationRequest",
+        "type": "object"
+      },
+      "AiEvaluationResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "case_count": {
+            "minimum": 1.0,
+            "title": "Case Count",
+            "type": "integer"
+          },
+          "cases": {
+            "items": {
+              "$ref": "#/components/schemas/AiEvaluationCaseResponse"
+            },
+            "title": "Cases",
+            "type": "array"
+          },
+          "category_count": {
+            "minimum": 1.0,
+            "title": "Category Count",
+            "type": "integer"
+          },
+          "citation_valid_rate": {
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Citation Valid Rate",
+            "type": "number"
+          },
+          "completion_state": {
+            "const": "completed",
+            "default": "completed",
+            "title": "Completion State",
+            "type": "string"
+          },
+          "correlation_id": {
+            "format": "uuid",
+            "title": "Correlation Id",
+            "type": "string"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "deterministic": {
+            "const": true,
+            "default": true,
+            "title": "Deterministic",
+            "type": "boolean"
+          },
+          "evaluation_policy": {
+            "const": "deterministic labeled checks; no model-graded scoring",
+            "default": "deterministic labeled checks; no model-graded scoring",
+            "title": "Evaluation Policy",
+            "type": "string"
+          },
+          "execution_mode": {
+            "const": "deterministic-in-memory",
+            "default": "deterministic-in-memory",
+            "title": "Execution Mode",
+            "type": "string"
+          },
+          "external_provider_cost_usd": {
+            "title": "External Provider Cost Usd",
+            "type": "null"
+          },
+          "external_provider_token_estimate": {
+            "title": "External Provider Token Estimate",
+            "type": "null"
+          },
+          "external_provider_used": {
+            "const": false,
+            "default": false,
+            "title": "External Provider Used",
+            "type": "boolean"
+          },
+          "failed": {
+            "minimum": 0.0,
+            "title": "Failed",
+            "type": "integer"
+          },
+          "fallback_rate": {
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Fallback Rate",
+            "type": "number"
+          },
+          "groundedness_rate": {
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Groundedness Rate",
+            "type": "number"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "mean_latency_ms": {
+            "minimum": 0.0,
+            "title": "Mean Latency Ms",
+            "type": "number"
+          },
+          "numerical_consistency_rate": {
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Numerical Consistency Rate",
+            "type": "number"
+          },
+          "passed": {
+            "minimum": 0.0,
+            "title": "Passed",
+            "type": "integer"
+          },
+          "refusal_accuracy": {
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Refusal Accuracy",
+            "type": "number"
+          },
+          "report_version": {
+            "title": "Report Version",
+            "type": "string"
+          },
+          "schema_valid_rate": {
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Schema Valid Rate",
+            "type": "number"
+          },
+          "suite_version": {
+            "title": "Suite Version",
+            "type": "string"
+          },
+          "tool_selection_accuracy": {
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Tool Selection Accuracy",
+            "type": "number"
+          },
+          "total_tool_calls": {
+            "minimum": 0.0,
+            "title": "Total Tool Calls",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "created_at",
+          "correlation_id",
+          "report_version",
+          "suite_version",
+          "case_count",
+          "passed",
+          "failed",
+          "category_count",
+          "schema_valid_rate",
+          "citation_valid_rate",
+          "numerical_consistency_rate",
+          "refusal_accuracy",
+          "tool_selection_accuracy",
+          "groundedness_rate",
+          "mean_latency_ms",
+          "total_tool_calls",
+          "fallback_rate",
+          "external_provider_cost_usd",
+          "external_provider_token_estimate",
+          "cases"
+        ],
+        "title": "AiEvaluationResponse",
+        "type": "object"
+      },
+      "AiEvidenceReferenceResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "canonical_unit": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Canonical Unit"
+          },
+          "canonical_value": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Canonical Value"
+          },
+          "document_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Document Id"
+          },
+          "evidence_id": {
+            "title": "Evidence Id",
+            "type": "string"
+          },
+          "kind": {
+            "title": "Kind",
+            "type": "string"
+          },
+          "metric_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Metric Name"
+          },
+          "publication_date": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Publication Date"
+          },
+          "section": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Section"
+          },
+          "source_timestamp": {
+            "format": "date-time",
+            "title": "Source Timestamp",
+            "type": "string"
+          },
+          "source_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source Url"
+          },
+          "synthetic": {
+            "title": "Synthetic",
+            "type": "boolean"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          }
+        },
+        "required": [
+          "evidence_id",
+          "kind",
+          "source_timestamp",
+          "title",
+          "metric_name",
+          "canonical_value",
+          "canonical_unit",
+          "document_id",
+          "section",
+          "source_url",
+          "publication_date",
+          "synthetic"
+        ],
+        "title": "AiEvidenceReferenceResponse",
+        "type": "object"
+      },
+      "AiSafeTraceResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "contains_chain_of_thought": {
+            "const": false,
+            "default": false,
+            "title": "Contains Chain Of Thought",
+            "type": "boolean"
+          },
+          "contains_prompt_or_document_body": {
+            "const": false,
+            "default": false,
+            "title": "Contains Prompt Or Document Body",
+            "type": "boolean"
+          },
+          "elapsed_ms": {
+            "minimum": 0.0,
+            "title": "Elapsed Ms",
+            "type": "number"
+          },
+          "evidence_ids": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Evidence Ids",
+            "type": "array"
+          },
+          "fallback_used": {
+            "title": "Fallback Used",
+            "type": "boolean"
+          },
+          "provider_attempts": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Provider Attempts",
+            "type": "array"
+          },
+          "repair_attempted": {
+            "title": "Repair Attempted",
+            "type": "boolean"
+          },
+          "request_fingerprint": {
+            "title": "Request Fingerprint",
+            "type": "string"
+          },
+          "states": {
+            "items": {
+              "type": "string"
+            },
+            "title": "States",
+            "type": "array"
+          },
+          "tool_call_count": {
+            "minimum": 0.0,
+            "title": "Tool Call Count",
+            "type": "integer"
+          },
+          "tool_names": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Tool Names",
+            "type": "array"
+          },
+          "trace_version": {
+            "title": "Trace Version",
+            "type": "string"
+          },
+          "validation_issue_codes": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Validation Issue Codes",
+            "type": "array"
+          }
+        },
+        "required": [
+          "trace_version",
+          "request_fingerprint",
+          "states",
+          "tool_names",
+          "tool_call_count",
+          "evidence_ids",
+          "provider_attempts",
+          "validation_issue_codes",
+          "repair_attempted",
+          "fallback_used",
+          "elapsed_ms"
+        ],
+        "title": "AiSafeTraceResponse",
+        "type": "object"
+      },
+      "AiValidationResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "checked_numeric_claims": {
+            "minimum": 0.0,
+            "title": "Checked Numeric Claims",
+            "type": "integer"
+          },
+          "citation_precision": {
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Citation Precision",
+            "type": "number"
+          },
+          "citation_valid": {
+            "title": "Citation Valid",
+            "type": "boolean"
+          },
+          "issue_codes": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Issue Codes",
+            "type": "array"
+          },
+          "numerical_valid": {
+            "title": "Numerical Valid",
+            "type": "boolean"
+          },
+          "required_citation_coverage": {
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Required Citation Coverage",
+            "type": "number"
+          },
+          "valid": {
+            "title": "Valid",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "valid",
+          "citation_valid",
+          "numerical_valid",
+          "citation_precision",
+          "required_citation_coverage",
+          "checked_numeric_claims",
+          "issue_codes"
+        ],
+        "title": "AiValidationResponse",
+        "type": "object"
+      },
       "AuditEventResponse": {
         "additionalProperties": false,
         "properties": {
@@ -61,6 +602,30 @@
         ],
         "title": "AuditEventResponse",
         "type": "object"
+      },
+      "CanonicalUnit": {
+        "enum": [
+          "ratio",
+          "percent",
+          "basis_points",
+          "usd",
+          "days",
+          "count"
+        ],
+        "title": "CanonicalUnit",
+        "type": "string"
+      },
+      "ClaimType": {
+        "enum": [
+          "metric",
+          "document",
+          "quality",
+          "scenario",
+          "methodology",
+          "general"
+        ],
+        "title": "ClaimType",
+        "type": "string"
       },
       "DataQualityIssueResponse": {
         "additionalProperties": false,
@@ -282,6 +847,72 @@
           "metadata"
         ],
         "title": "InstrumentResponse",
+        "type": "object"
+      },
+      "MainFactor": {
+        "additionalProperties": false,
+        "properties": {
+          "claim_type": {
+            "$ref": "#/components/schemas/ClaimType",
+            "default": "general"
+          },
+          "evidence_ids": {
+            "items": {
+              "pattern": "^(RISK|PRICE|QUALITY|DOC|SCENARIO|METHOD|MODEL)-[A-Z0-9_-]{2,80}$",
+              "type": "string"
+            },
+            "maxItems": 8,
+            "minItems": 1,
+            "title": "Evidence Ids",
+            "type": "array"
+          },
+          "metric": {
+            "anyOf": [
+              {
+                "pattern": "^[a-z][a-z0-9_.]{1,79}",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Metric"
+          },
+          "statement": {
+            "maxLength": 600,
+            "minLength": 1,
+            "title": "Statement",
+            "type": "string"
+          },
+          "unit": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/CanonicalUnit"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "value": {
+            "anyOf": [
+              {
+                "maxLength": 80,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Value"
+          }
+        },
+        "required": [
+          "statement",
+          "evidence_ids"
+        ],
+        "title": "MainFactor",
         "type": "object"
       },
       "ModelCatalogResponse": {
@@ -1328,6 +1959,244 @@
         "title": "ReadinessResponse",
         "type": "object"
       },
+      "RefusalDetail": {
+        "additionalProperties": false,
+        "properties": {
+          "category": {
+            "pattern": "^[a-z][a-z0-9_]{1,63}",
+            "title": "Category",
+            "type": "string"
+          },
+          "safe_alternative": {
+            "maxLength": 400,
+            "minLength": 1,
+            "title": "Safe Alternative",
+            "type": "string"
+          }
+        },
+        "required": [
+          "category",
+          "safe_alternative"
+        ],
+        "title": "RefusalDetail",
+        "type": "object"
+      },
+      "RiskBrief": {
+        "additionalProperties": false,
+        "properties": {
+          "answer_type": {
+            "enum": [
+              "risk_explanation",
+              "comparison",
+              "document_summary",
+              "refusal"
+            ],
+            "title": "Answer Type",
+            "type": "string"
+          },
+          "limitations": {
+            "default": [],
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 8,
+            "title": "Limitations",
+            "type": "array"
+          },
+          "main_factors": {
+            "default": [],
+            "items": {
+              "$ref": "#/components/schemas/MainFactor"
+            },
+            "maxItems": 12,
+            "title": "Main Factors",
+            "type": "array"
+          },
+          "recommended_checks": {
+            "default": [],
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 8,
+            "title": "Recommended Checks",
+            "type": "array"
+          },
+          "refusal": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/RefusalDetail"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "schema_version": {
+            "const": "1.0.0",
+            "default": "1.0.0",
+            "title": "Schema Version",
+            "type": "string"
+          },
+          "summary": {
+            "maxLength": 1200,
+            "minLength": 1,
+            "title": "Summary",
+            "type": "string"
+          },
+          "uncertainties": {
+            "default": [],
+            "items": {
+              "$ref": "#/components/schemas/Uncertainty"
+            },
+            "maxItems": 8,
+            "title": "Uncertainties",
+            "type": "array"
+          }
+        },
+        "required": [
+          "answer_type",
+          "summary"
+        ],
+        "title": "RiskBrief",
+        "type": "object"
+      },
+      "RiskBriefCreateRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "document_query": {
+            "anyOf": [
+              {
+                "maxLength": 300,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Document Query"
+          },
+          "question": {
+            "default": "Why did portfolio risk increase?",
+            "maxLength": 1000,
+            "minLength": 1,
+            "title": "Question",
+            "type": "string"
+          },
+          "snapshot_ids": {
+            "default": [],
+            "items": {
+              "format": "uuid",
+              "type": "string"
+            },
+            "maxItems": 2,
+            "title": "Snapshot Ids",
+            "type": "array"
+          }
+        },
+        "title": "RiskBriefCreateRequest",
+        "type": "object"
+      },
+      "RiskBriefResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "brief": {
+            "$ref": "#/components/schemas/RiskBrief"
+          },
+          "completion_state": {
+            "const": "completed",
+            "default": "completed",
+            "title": "Completion State",
+            "type": "string"
+          },
+          "correlation_id": {
+            "format": "uuid",
+            "title": "Correlation Id",
+            "type": "string"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "evidence": {
+            "items": {
+              "$ref": "#/components/schemas/AiEvidenceReferenceResponse"
+            },
+            "title": "Evidence",
+            "type": "array"
+          },
+          "execution_mode": {
+            "const": "deterministic-in-memory",
+            "default": "deterministic-in-memory",
+            "title": "Execution Mode",
+            "type": "string"
+          },
+          "external_provider_used": {
+            "const": false,
+            "default": false,
+            "title": "External Provider Used",
+            "type": "boolean"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "portfolio_id": {
+            "format": "uuid",
+            "title": "Portfolio Id",
+            "type": "string"
+          },
+          "provider": {
+            "const": "deterministic-risk-brief-v1",
+            "title": "Provider",
+            "type": "string"
+          },
+          "snapshot_ids": {
+            "items": {
+              "format": "uuid",
+              "type": "string"
+            },
+            "title": "Snapshot Ids",
+            "type": "array"
+          },
+          "source_evidence_ids": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Source Evidence Ids",
+            "type": "array"
+          },
+          "synthetic": {
+            "const": true,
+            "default": true,
+            "title": "Synthetic",
+            "type": "boolean"
+          },
+          "trace": {
+            "$ref": "#/components/schemas/AiSafeTraceResponse"
+          },
+          "validation": {
+            "$ref": "#/components/schemas/AiValidationResponse"
+          }
+        },
+        "required": [
+          "id",
+          "portfolio_id",
+          "snapshot_ids",
+          "source_evidence_ids",
+          "created_at",
+          "correlation_id",
+          "provider",
+          "brief",
+          "evidence",
+          "validation",
+          "trace"
+        ],
+        "title": "RiskBriefResponse",
+        "type": "object"
+      },
       "RiskRecomputeRequest": {
         "additionalProperties": false,
         "properties": {
@@ -1812,17 +2681,31 @@
         "title": "ScenarioShockWrite",
         "type": "object"
       },
-      "UnsupportedRequest": {
+      "Uncertainty": {
         "additionalProperties": false,
         "properties": {
-          "parameters": {
-            "additionalProperties": true,
-            "maxProperties": 20,
-            "title": "Parameters",
-            "type": "object"
+          "evidence_ids": {
+            "items": {
+              "pattern": "^(RISK|PRICE|QUALITY|DOC|SCENARIO|METHOD|MODEL)-[A-Z0-9_-]{2,80}$",
+              "type": "string"
+            },
+            "maxItems": 8,
+            "minItems": 1,
+            "title": "Evidence Ids",
+            "type": "array"
+          },
+          "statement": {
+            "maxLength": 500,
+            "minLength": 1,
+            "title": "Statement",
+            "type": "string"
           }
         },
-        "title": "UnsupportedRequest",
+        "required": [
+          "statement",
+          "evidence_ids"
+        ],
+        "title": "Uncertainty",
         "type": "object"
       },
       "VersionResponse": {
@@ -1917,17 +2800,19 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/UnsupportedRequest"
+                "$ref": "#/components/schemas/AiEvaluationRequest"
               }
             }
           },
           "required": true
         },
         "responses": {
-          "200": {
+          "201": {
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/AiEvaluationResponse"
+                }
               }
             },
             "description": "Successful Response"
@@ -4551,17 +5436,19 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/UnsupportedRequest"
+                "$ref": "#/components/schemas/RiskBriefCreateRequest"
               }
             }
           },
           "required": true
         },
         "responses": {
-          "200": {
+          "201": {
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/RiskBriefResponse"
+                }
               }
             },
             "description": "Successful Response"
@@ -5586,7 +6473,9 @@
           "200": {
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/RiskBriefResponse"
+                }
               }
             },
             "description": "Successful Response"

@@ -17,6 +17,7 @@ from quantops_api.api.dependencies import (
     Limit,
     Offset,
     etag,
+    get_ai_service,
     get_request_correlation_id,
     get_service,
     require_demo_token,
@@ -25,6 +26,7 @@ from quantops_api.api.dependencies import (
     require_if_match,
 )
 from quantops_api.api.presenters import (
+    ai_evaluation_response,
     audit_response,
     instrument_response,
     pipeline_response,
@@ -32,11 +34,14 @@ from quantops_api.api.presenters import (
     position_response,
     price_response,
     quality_issue_response,
+    risk_brief_response,
     risk_response,
     scenario_response,
     scenario_run_response,
 )
 from quantops_api.api.schemas import (
+    AiEvaluationRequest,
+    AiEvaluationResponse,
     AuditEventResponse,
     DataQualityIssueResponse,
     DataQualitySummaryResponse,
@@ -54,26 +59,28 @@ from quantops_api.api.schemas import (
     PriceBarResponse,
     ProblemDetails,
     ReadinessResponse,
+    RiskBriefCreateRequest,
+    RiskBriefResponse,
     RiskRecomputeRequest,
     RiskSnapshotResponse,
     ScenarioCreate,
     ScenarioResponse,
     ScenarioRunResponse,
-    UnsupportedRequest,
     VersionResponse,
 )
+from quantops_api.application.ai_service import DeterministicAiApplicationService
 from quantops_api.application.demo_service import (
     CustomShockCommand,
     DemoQuantOpsService,
 )
 from quantops_api.application.errors import (
-    FeatureUnavailableError,
     NotFoundError,
     RequestFormatError,
 )
 from quantops_api.settings import Settings
 
 Service = Annotated[DemoQuantOpsService, Depends(get_service)]
+AiService = Annotated[DeterministicAiApplicationService, Depends(get_ai_service)]
 CorrelationId = Annotated[UUID, Depends(get_request_correlation_id)]
 ExpectedVersion = Annotated[int, Depends(require_if_match)]
 IdempotencyKey = Annotated[str, Depends(require_idempotency_key)]
@@ -505,39 +512,67 @@ async def get_unconfigured_model(model_id: str) -> None:
 
 @router.post(
     "/portfolios/{portfolio_id}/risk-briefs",
+    response_model=RiskBriefResponse,
+    status_code=status.HTTP_201_CREATED,
     tags=["grounded AI"],
     dependencies=[
         Depends(require_demo_token),
-        Depends(require_idempotency_key),
         Depends(require_expensive_capacity),
     ],
 )
-async def create_risk_brief(portfolio_id: UUID, _: UnsupportedRequest) -> None:
-    del portfolio_id
-    raise FeatureUnavailableError(
-        "risk brief generation is not configured; no synthetic AI narrative was returned"
+async def create_risk_brief(
+    portfolio_id: UUID,
+    payload: RiskBriefCreateRequest,
+    response: Response,
+    service: AiService,
+    correlation_id: CorrelationId,
+    idempotency_key: IdempotencyKey,
+) -> RiskBriefResponse:
+    result = service.create_risk_brief(
+        portfolio_id,
+        question=payload.question,
+        snapshot_ids=payload.snapshot_ids,
+        document_query=payload.document_query,
+        idempotency_key=idempotency_key,
+        correlation_id=correlation_id,
     )
+    _mark_idempotency(response, result.replayed)
+    return risk_brief_response(result.value)
 
 
-@router.get("/risk-briefs/{brief_id}", tags=["grounded AI"])
-async def get_risk_brief(brief_id: UUID) -> None:
-    del brief_id
-    raise FeatureUnavailableError("risk brief storage is not configured")
+@router.get(
+    "/risk-briefs/{brief_id}",
+    response_model=RiskBriefResponse,
+    tags=["grounded AI"],
+)
+async def get_risk_brief(brief_id: UUID, service: AiService) -> RiskBriefResponse:
+    return risk_brief_response(service.get_risk_brief(brief_id))
 
 
 @router.post(
     "/ai/evaluations/run",
+    response_model=AiEvaluationResponse,
+    status_code=status.HTTP_201_CREATED,
     tags=["grounded AI"],
     dependencies=[
         Depends(require_demo_token),
-        Depends(require_idempotency_key),
         Depends(require_expensive_capacity),
     ],
 )
-async def run_ai_evaluation(_: UnsupportedRequest) -> None:
-    raise FeatureUnavailableError(
-        "AI evaluation is not configured; no fabricated score was returned"
+async def run_ai_evaluation(
+    payload: AiEvaluationRequest,
+    response: Response,
+    service: AiService,
+    correlation_id: CorrelationId,
+    idempotency_key: IdempotencyKey,
+) -> AiEvaluationResponse:
+    result = service.run_evaluation(
+        suite_version=payload.suite_version,
+        idempotency_key=idempotency_key,
+        correlation_id=correlation_id,
     )
+    _mark_idempotency(response, result.replayed)
+    return ai_evaluation_response(result.value)
 
 
 @router.get("/audit-events", response_model=Page[AuditEventResponse], tags=["audit"])

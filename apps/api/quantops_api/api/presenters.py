@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import cast
+from typing import Literal, cast
 
 from quantops_domain import AuditEvent, Instrument, Portfolio, Position
 from quantops_risk import (
@@ -15,6 +15,11 @@ from quantops_risk import (
 )
 
 from quantops_api.api.schemas import (
+    AiEvaluationCaseResponse,
+    AiEvaluationResponse,
+    AiEvidenceReferenceResponse,
+    AiSafeTraceResponse,
+    AiValidationResponse,
     AuditEventResponse,
     DataQualityIssueResponse,
     InstrumentResponse,
@@ -22,11 +27,16 @@ from quantops_api.api.schemas import (
     PortfolioResponse,
     PositionResponse,
     PriceBarResponse,
+    RiskBriefResponse,
     RiskSnapshotResponse,
     ScenarioPositionResultResponse,
     ScenarioResponse,
     ScenarioRunResponse,
     ScenarioShockResponse,
+)
+from quantops_api.application.ai_service import (
+    AiEvaluationApplicationRecord,
+    RiskBriefApplicationRecord,
 )
 from quantops_api.application.demo_service import (
     DataQualityIssueRecord,
@@ -211,4 +221,118 @@ def audit_response(value: AuditEvent) -> AuditEventResponse:
         occurred_at=value.occurred_at,
         correlation_id=value.correlation_id,
         details=dict(value.details),
+    )
+
+
+def risk_brief_response(value: RiskBriefApplicationRecord) -> RiskBriefResponse:
+    report = value.result.validation
+    if report is None:
+        validation = AiValidationResponse(
+            valid=True,
+            citation_valid=True,
+            numerical_valid=True,
+            citation_precision=1.0,
+            required_citation_coverage=1.0,
+            checked_numeric_claims=0,
+            issue_codes=value.result.trace.validation_issue_codes,
+        )
+    else:
+        validation = AiValidationResponse(
+            valid=report.valid,
+            citation_valid=report.citation.valid,
+            numerical_valid=report.numerical.valid,
+            citation_precision=report.citation.precision,
+            required_citation_coverage=report.citation.required_coverage,
+            checked_numeric_claims=report.numerical.checked_claims,
+            issue_codes=report.issue_codes,
+        )
+    trace = value.result.trace
+    return RiskBriefResponse(
+        id=value.id,
+        portfolio_id=value.portfolio_id,
+        snapshot_ids=value.snapshot_ids,
+        source_evidence_ids=value.source_evidence_ids,
+        created_at=value.created_at,
+        correlation_id=value.correlation_id,
+        provider=cast(Literal["deterministic-risk-brief-v1"], value.provider),
+        brief=value.result.brief,
+        evidence=tuple(
+            AiEvidenceReferenceResponse(
+                evidence_id=item.evidence_id,
+                kind=item.kind.value,
+                source_timestamp=item.source_timestamp,
+                title=item.title,
+                metric_name=item.metric_name,
+                canonical_value=(
+                    None if item.canonical_value is None else str(item.canonical_value)
+                ),
+                canonical_unit=(None if item.canonical_unit is None else item.canonical_unit.value),
+                document_id=item.document_id,
+                section=item.section,
+                source_url=item.source_url,
+                publication_date=item.publication_date,
+                synthetic=item.synthetic,
+            )
+            for item in value.evidence
+        ),
+        validation=validation,
+        trace=AiSafeTraceResponse(
+            trace_version=trace.trace_version,
+            request_fingerprint=trace.request_fingerprint,
+            states=trace.states,
+            tool_names=trace.tool_names,
+            tool_call_count=trace.tool_call_count,
+            evidence_ids=trace.evidence_ids,
+            provider_attempts=trace.provider_attempts,
+            validation_issue_codes=trace.validation_issue_codes,
+            repair_attempted=trace.repair_attempted,
+            fallback_used=trace.fallback_used,
+            elapsed_ms=trace.elapsed_ms,
+        ),
+    )
+
+
+def ai_evaluation_response(value: AiEvaluationApplicationRecord) -> AiEvaluationResponse:
+    report = value.report
+    return AiEvaluationResponse(
+        id=value.id,
+        created_at=value.created_at,
+        correlation_id=value.correlation_id,
+        report_version=report.report_version,
+        suite_version=report.suite_version,
+        case_count=report.case_count,
+        passed=report.passed,
+        failed=report.failed,
+        category_count=report.category_count,
+        schema_valid_rate=report.schema_valid_rate,
+        citation_valid_rate=report.citation_valid_rate,
+        numerical_consistency_rate=report.numerical_consistency_rate,
+        refusal_accuracy=report.refusal_accuracy,
+        tool_selection_accuracy=report.tool_selection_accuracy,
+        groundedness_rate=report.groundedness_rate,
+        mean_latency_ms=report.mean_latency_ms,
+        total_tool_calls=report.total_tool_calls,
+        fallback_rate=report.fallback_rate,
+        external_provider_cost_usd=report.external_provider_cost_usd,
+        external_provider_token_estimate=report.external_provider_token_estimate,
+        cases=tuple(
+            AiEvaluationCaseResponse(
+                case_id=item.case_id,
+                category=item.category,
+                passed=item.passed,
+                schema_valid=item.schema_valid,
+                citation_valid=item.citation_valid,
+                citation_precision=item.citation_precision,
+                required_citation_coverage=item.required_citation_coverage,
+                numerical_consistency=item.numerical_consistency,
+                refusal_accurate=item.refusal_accurate,
+                tool_selection_correct=item.tool_selection_correct,
+                groundedness=item.groundedness,
+                latency_ms=item.latency_ms,
+                tool_call_count=item.tool_call_count,
+                fallback_used=item.fallback_used,
+                issue_codes=item.issue_codes,
+            )
+            for item in report.cases
+        ),
     )

@@ -10,6 +10,7 @@ from quantops_api import __version__
 from quantops_api.api.middleware import FixedWindowRateLimiter, request_context_middleware
 from quantops_api.api.problems import install_problem_handlers
 from quantops_api.api.router import router
+from quantops_api.application.ai_service import DeterministicAiApplicationService
 from quantops_api.application.demo_service import DemoQuantOpsService
 from quantops_api.settings import Settings, get_settings
 
@@ -64,8 +65,10 @@ def create_app(
             "X-Request-ID",
         ],
     )
+    runtime_service = service or DemoQuantOpsService()
     application.state.settings = runtime_settings
-    application.state.quantops_service = service or DemoQuantOpsService()
+    application.state.quantops_service = runtime_service
+    application.state.quantops_ai_service = DeterministicAiApplicationService(runtime_service)
     application.state.expensive_rate_limiter = FixedWindowRateLimiter(
         capacity=runtime_settings.expensive_rate_limit,
         window_seconds=runtime_settings.expensive_rate_window_seconds,

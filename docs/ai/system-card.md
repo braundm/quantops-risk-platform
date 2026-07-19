@@ -17,6 +17,10 @@ unavailable. The optional OpenAI-compatible provider is behind an injected HTTP 
 HTTPS host allowlist, bounded response/timeout settings, and the same post-generation validators.
 It is disabled by default and was not contacted by the recorded evaluation.
 
+The deterministic workflow is exposed through the versioned application API for create/get brief
+and synchronous evaluation operations. The current browser uses its typed local adapter rather than
+that live API client, so UI presentation is not evidence of network integration.
+
 ## Inputs and data
 
 Requests contain a bounded question plus explicit portfolio, snapshot, scenario, or document scope.

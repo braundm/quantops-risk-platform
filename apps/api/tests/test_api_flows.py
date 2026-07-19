@@ -192,8 +192,10 @@ def test_validation_and_unconfigured_capabilities_are_honest() -> None:
     assert models.json()["items"] == []
     assert models.json()["status"] == "not_configured"
     assert model.status_code == 404
-    assert brief.status_code == 503
-    assert "no synthetic AI narrative" in brief.json()["detail"]
+    assert brief.status_code == 201
+    assert brief.json()["execution_mode"] == "deterministic-in-memory"
+    assert brief.json()["brief"]["answer_type"] == "risk_explanation"
+    assert brief.json()["validation"]["valid"] is True
 
 
 def test_pipeline_quality_and_expensive_rate_limit() -> None:

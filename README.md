@@ -4,7 +4,7 @@
 
 QuantOps is a production-style portfolio project for ingesting deterministic synthetic market data, computing reproducible portfolio risk, inspecting lineage and quality, and generating evidence-grounded risk explanations through bounded read-only tools.
 
-> **Current status:** the deterministic domain, risk, synthetic-data, event-contract, application-API, and frontend research flows are implemented and tested. The browser UI currently uses a typed local adapter, while the API uses a process-local deterministic service. PostgreSQL, streaming, scheduling, ML/AI API integration, and clean-room infrastructure evidence remain in progress and are not claimed. See [implementation progress](docs/progress.md).
+> **Current status:** the deterministic domain, risk, synthetic-data, event-contract, application-API, frontend, ML, grounded-AI, broker-neutral streaming, and read-only MCP cores are implemented and tested. The browser UI currently uses a typed local adapter, while the API and stdio MCP server use process-local deterministic services. The PostgreSQL critical path, live Redpanda adapter, scheduling, live UI client integration, and clean-room infrastructure evidence remain in progress and are not claimed. See [implementation progress](docs/progress.md).
 
 ## Product boundary
 

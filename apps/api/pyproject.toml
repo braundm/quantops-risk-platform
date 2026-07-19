@@ -11,6 +11,7 @@ dependencies = [
   "pgvector==0.5.0",
   "pydantic==2.13.4",
   "pydantic-settings>=2.12,<3",
+  "quantops-ai-engine==0.1.0",
   "quantops-contracts==0.1.0",
   "quantops-domain==0.1.0",
   "quantops-risk==0.1.0",
@@ -26,6 +27,7 @@ build-backend = "hatchling.build"
 packages = ["quantops_api"]
 
 [tool.uv.sources]
+quantops-ai-engine = { workspace = true }
 quantops-contracts = { workspace = true }
 quantops-domain = { workspace = true }
 quantops-risk = { workspace = true }

@@ -2,12 +2,13 @@
 
 from __future__ import annotations
 
-from datetime import datetime
+from datetime import date, datetime
 from decimal import Decimal
 from typing import Any, Literal
 from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
+from quantops_ai.models import RiskBrief
 
 
 class ContractModel(BaseModel):
@@ -300,6 +301,153 @@ class ModelCatalogResponse(ContractModel):
     detail: str
 
 
+class RiskBriefCreateRequest(ContractModel):
+    question: str = Field(
+        default="Why did portfolio risk increase?",
+        min_length=1,
+        max_length=1_000,
+    )
+    snapshot_ids: tuple[UUID, ...] = Field(default=(), max_length=2)
+    document_query: str | None = Field(default=None, min_length=1, max_length=300)
+
+    @field_validator("question")
+    @classmethod
+    def non_blank_question(cls, value: str) -> str:
+        normalized = value.strip()
+        if not normalized:
+            raise ValueError("question must not be blank")
+        return normalized
+
+    @field_validator("document_query")
+    @classmethod
+    def non_blank_document_query(cls, value: str | None) -> str | None:
+        if value is None:
+            return None
+        normalized = value.strip()
+        if not normalized:
+            raise ValueError("document query must not be blank")
+        return normalized
+
+    @field_validator("snapshot_ids")
+    @classmethod
+    def unique_snapshot_ids(cls, value: tuple[UUID, ...]) -> tuple[UUID, ...]:
+        if len(value) != len(set(value)):
+            raise ValueError("snapshot IDs must be unique")
+        return value
+
+
+class AiEvidenceReferenceResponse(ContractModel):
+    evidence_id: str
+    kind: str
+    source_timestamp: datetime
+    title: str
+    metric_name: str | None
+    canonical_value: str | None
+    canonical_unit: str | None
+    document_id: str | None
+    section: str | None
+    source_url: str | None
+    publication_date: date | None
+    synthetic: bool
+
+
+class AiValidationResponse(ContractModel):
+    valid: bool
+    citation_valid: bool
+    numerical_valid: bool
+    citation_precision: float = Field(ge=0, le=1)
+    required_citation_coverage: float = Field(ge=0, le=1)
+    checked_numeric_claims: int = Field(ge=0)
+    issue_codes: tuple[str, ...]
+
+
+class AiSafeTraceResponse(ContractModel):
+    trace_version: str
+    request_fingerprint: str
+    states: tuple[str, ...]
+    tool_names: tuple[str, ...]
+    tool_call_count: int = Field(ge=0)
+    evidence_ids: tuple[str, ...]
+    provider_attempts: tuple[str, ...]
+    validation_issue_codes: tuple[str, ...]
+    repair_attempted: bool
+    fallback_used: bool
+    elapsed_ms: float = Field(ge=0)
+    contains_prompt_or_document_body: Literal[False] = False
+    contains_chain_of_thought: Literal[False] = False
+
+
+class RiskBriefResponse(ContractModel):
+    id: UUID
+    portfolio_id: UUID
+    snapshot_ids: tuple[UUID, ...]
+    source_evidence_ids: tuple[str, ...]
+    created_at: datetime
+    correlation_id: UUID
+    provider: Literal["deterministic-risk-brief-v1"]
+    execution_mode: Literal["deterministic-in-memory"] = "deterministic-in-memory"
+    completion_state: Literal["completed"] = "completed"
+    external_provider_used: Literal[False] = False
+    synthetic: Literal[True] = True
+    brief: RiskBrief
+    evidence: tuple[AiEvidenceReferenceResponse, ...]
+    validation: AiValidationResponse
+    trace: AiSafeTraceResponse
+
+
+class AiEvaluationRequest(ContractModel):
+    suite_version: Literal["1.0.0"] = "1.0.0"
+
+
+class AiEvaluationCaseResponse(ContractModel):
+    case_id: str
+    category: str
+    passed: bool
+    schema_valid: bool
+    citation_valid: bool
+    citation_precision: float = Field(ge=0, le=1)
+    required_citation_coverage: float = Field(ge=0, le=1)
+    numerical_consistency: bool
+    refusal_accurate: bool
+    tool_selection_correct: bool
+    groundedness: bool
+    latency_ms: float = Field(ge=0)
+    tool_call_count: int = Field(ge=0)
+    fallback_used: bool
+    issue_codes: tuple[str, ...]
+
+
+class AiEvaluationResponse(ContractModel):
+    id: UUID
+    created_at: datetime
+    correlation_id: UUID
+    execution_mode: Literal["deterministic-in-memory"] = "deterministic-in-memory"
+    completion_state: Literal["completed"] = "completed"
+    deterministic: Literal[True] = True
+    external_provider_used: Literal[False] = False
+    report_version: str
+    suite_version: str
+    case_count: int = Field(ge=1)
+    passed: int = Field(ge=0)
+    failed: int = Field(ge=0)
+    category_count: int = Field(ge=1)
+    schema_valid_rate: float = Field(ge=0, le=1)
+    citation_valid_rate: float = Field(ge=0, le=1)
+    numerical_consistency_rate: float = Field(ge=0, le=1)
+    refusal_accuracy: float = Field(ge=0, le=1)
+    tool_selection_accuracy: float = Field(ge=0, le=1)
+    groundedness_rate: float = Field(ge=0, le=1)
+    mean_latency_ms: float = Field(ge=0)
+    total_tool_calls: int = Field(ge=0)
+    fallback_rate: float = Field(ge=0, le=1)
+    external_provider_cost_usd: None
+    external_provider_token_estimate: None
+    evaluation_policy: Literal["deterministic labeled checks; no model-graded scoring"] = (
+        "deterministic labeled checks; no model-graded scoring"
+    )
+    cases: tuple[AiEvaluationCaseResponse, ...]
+
+
 class AuditEventResponse(ContractModel):
     id: UUID
     action: str
@@ -309,7 +457,3 @@ class AuditEventResponse(ContractModel):
     occurred_at: datetime
     correlation_id: UUID
     details: dict[str, Any]
-
-
-class UnsupportedRequest(ContractModel):
-    parameters: dict[str, Any] = Field(default_factory=dict, max_length=20)

@@ -14,8 +14,11 @@ distinct from the canonical database demo fixture, which contains **2,088 price 
 the fallback's row count as evidence that the database fixture was loaded.
 
 The readiness response identifies the active deterministic-demo mode and reports the database as
-`not_configured`. Optional ML and grounded-AI endpoints likewise return an empty catalog, `404`, or
-`503` rather than fabricated results.
+`not_configured`. The ML catalog remains explicitly unconfigured. Grounded-AI risk briefs and the
+versioned AI evaluation suite run synchronously through a process-local deterministic provider:
+they use only the API's authoritative synthetic snapshot values and approved packaged documents,
+return validated evidence IDs and safe trace summaries, never call an external provider, and do
+not persist across process restarts.
 
 ## OpenAPI compatibility
 

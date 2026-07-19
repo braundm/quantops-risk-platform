@@ -9,6 +9,7 @@ from uuid import UUID
 
 from fastapi import Header, Query, Request
 
+from quantops_api.application.ai_service import DeterministicAiApplicationService
 from quantops_api.application.demo_service import DemoQuantOpsService
 from quantops_api.application.errors import (
     AuthenticationError,
@@ -28,6 +29,15 @@ def get_service(request: Request) -> DemoQuantOpsService:
     """Resolve the process-scoped deterministic application service."""
 
     return cast(DemoQuantOpsService, request.app.state.quantops_service)
+
+
+def get_ai_service(request: Request) -> DeterministicAiApplicationService:
+    """Resolve the process-scoped deterministic grounded-AI service."""
+
+    return cast(
+        DeterministicAiApplicationService,
+        request.app.state.quantops_ai_service,
+    )
 
 
 def get_request_correlation_id(request: Request) -> UUID:

@@ -202,7 +202,7 @@ Verified application-API gates:
 
 ```text
 .venv\Scripts\pytest.exe apps/api/tests -q
-# exit 0; 33 passed, 1 skipped (PostgreSQL integration unavailable)
+# exit 0; 39 passed, 1 skipped (PostgreSQL integration unavailable)
 
 .venv\Scripts\ruff.exe check apps/api
 .venv\Scripts\ruff.exe format --check apps/api
@@ -216,10 +216,11 @@ Verified application-API gates:
 ```
 
 The process-local fallback contains 41 dates for each of four instruments (164 accepted bars),
-distinct from the canonical 2,088-bar database fixture. It returns truthful empty, `404`, or `503`
-responses for unavailable ML/AI capabilities. Dockerfile structure is tested, but a container build
-and live PostgreSQL execution remain unverified because Docker is unavailable. Milestone 4 is not
-complete until the persistence critical path and generated live client are connected.
+distinct from the canonical 2,088-bar database fixture. It now exposes deterministic grounded risk
+briefs and the 44-case synchronous AI evaluation while returning truthful unavailable responses for
+other unconnected capabilities. Dockerfile structure is tested, but a container build and live
+PostgreSQL execution remain unverified because Docker is unavailable. Milestone 4 is not complete
+until the persistence critical path and generated live client are connected.
 
 ## Milestone 5 — frontend product
 
@@ -254,9 +255,12 @@ client, live integration, and automated accessibility/e2e gates are present.
 ## Milestone 6 — streaming and outbox
 
 - [x] Versioned event-envelope and payload contracts.
-- [ ] Redpanda replay producer, idempotent consumer, and outbox publisher.
-- [ ] Late/duplicate/dead-letter handling and broker-outage evidence.
-- [ ] Controlled risk recomputation and optional live updates.
+- [x] Broker-neutral deterministic replay, idempotent consumer, and outbox-publisher services.
+- [x] Duplicate/conflicting-content, late/out-of-order, bounded retry, safe DLQ, and metrics behavior.
+- [x] Commit-after-durability ordering, partition replay barriers, and broker-outage simulation.
+- [x] Controlled `portfolio.changed.v1` to `risk.recompute.requested.v1` outbox derivation.
+- [ ] Live Redpanda producer/consumer adapter and isolated broker integration tests.
+- [ ] Replay-driven persisted risk snapshot update and optional live UI updates.
 
 Verified event-contract gates:
 
@@ -279,8 +283,32 @@ Verified event-contract gates:
 
 The six v1 contracts enforce type/version pairing, UTC/non-nil identifiers, bounded payloads,
 finite Decimal values, canonical JSON, stable idempotency keys, and explicit synthetic labels.
-They intentionally have no broker dependency. Milestone 6 remains incomplete until replay and
-consumer/outbox behavior is exercised against Redpanda.
+They intentionally have no broker dependency.
+
+Verified broker-neutral worker gates:
+
+```text
+.venv\Scripts\pytest.exe -c apps/stream_worker/pyproject.toml apps/stream_worker/tests \
+  --cov=quantops_stream_worker --cov-branch -q
+# exit 0; 29 passed; 89% combined branch-aware coverage
+
+.venv\Scripts\ruff.exe check apps/stream_worker
+.venv\Scripts\ruff.exe format --check apps/stream_worker
+# both exit 0; 18 files formatted
+
+.venv\Scripts\mypy.exe --config-file apps/stream_worker/pyproject.toml \
+  apps/stream_worker/src apps/stream_worker/tests
+# exit 0; 17 source files, no issues
+
+.venv\Scripts\uv.exe build apps/stream_worker --offline
+# exit 0; sdist and wheel built
+```
+
+The process-local adapters demonstrate exact redelivery, idempotency conflicts, bounded lateness,
+metadata-only DLQ records, planned retry delays without sleeping, broker outage behavior, and
+acknowledged publication ordering. They do not prove consumer-group rebalancing, topic/ACL setup,
+or durable Redpanda behavior. Milestone 6 remains incomplete until the live adapter, isolated broker
+tests, and replay-driven persisted risk update pass.
 
 ## Milestone 7 — Airflow and adapters
 
@@ -334,7 +362,8 @@ ten files. Milestone 8 remains incomplete until the real MLflow profile and API 
 - [x] Version 44 labeled evaluation cases covering every one of the 20 required categories.
 - [x] Store a machine-readable evaluation report and document the system boundary.
 - [ ] Exercise pgvector retrieval and the optional provider against configured external services.
-- [ ] Expose deterministic briefs and evaluations through the application API and live UI client.
+- [x] Expose deterministic briefs, structured refusal, and evaluations through the application API.
+- [ ] Connect the generated/live UI client to the API brief endpoints.
 
 Verified grounded-AI gates:
 
@@ -364,12 +393,48 @@ Verified grounded-AI gates:
 All deterministic schema, citation, numerical, refusal, tool-selection, and groundedness rates were
 `1.0`; 23 tool calls were made. Seven deliberately invalid-provider cases used the safe fallback.
 External cost/token fields are null because no provider call occurred. Evaluation latency is a
-local observation and is not a portable benchmark. Milestone 9 remains incomplete until API/live
-client integration and configured pgvector/external-provider profiles are separately proven.
+local observation and is not a portable benchmark. API integration additionally verifies auth,
+idempotency/conflict, rate limiting, unknown scope, deterministic refusals with zero tool/provider
+calls, and synchronous evaluation. Milestone 9 remains incomplete until live UI client integration
+and configured pgvector/external-provider profiles are separately proven.
 
-## Milestones 10–14
+## Milestone 10 — read-only MCP
 
-- [ ] Milestone 10 — read-only MCP.
+- [x] Use the official Python MCP SDK `1.28.1`, capped below its future v2 boundary.
+- [x] Expose exactly three read-only tools over the existing application-service read methods.
+- [x] Expose one fixed, bounded risk-methodology resource through local stdio transport.
+- [x] Validate UUID and literal demo scope and cap reads at one second and responses at 32 KiB.
+- [x] Return structured synthetic/no-advice outputs with evidence identity where applicable.
+- [x] Prove the exact tool/resource surface, read-only annotations, no audit mutation, invalid-scope
+  rejection, injection-as-data behavior, timeout/size failure, and stdio client/server operation.
+- [x] Document package-level threats, explicitly absent capabilities, and remote-transport gaps.
+
+Verified MCP gates:
+
+```text
+.venv\Scripts\pytest.exe -c apps/mcp_server/pyproject.toml apps/mcp_server/tests -q
+# exit 0; 10 passed, including an actual stdio client/server exchange on protocol 2025-11-25
+
+.venv\Scripts\ruff.exe check apps/mcp_server
+.venv\Scripts\ruff.exe format --check apps/mcp_server
+# both exit 0; 10 files formatted
+
+.venv\Scripts\mypy.exe --config-file apps/mcp_server/pyproject.toml \
+  -p quantops_mcp -p apps.mcp_server.tests
+# exit 0; 9 source files, no issues
+
+.venv\Scripts\uv.exe build apps/mcp_server --offline
+# exit 0; sdist and wheel built
+```
+
+The allowlist contains `get_latest_portfolio_risk`, `get_snapshot_evidence`, and
+`list_system_scenarios`; no write, recompute, scenario-run, shell, filesystem, arbitrary URL,
+environment, raw database, prompt, sampling, or arbitrary-resource capability exists. Milestone 10
+is complete for the required local stdio boundary. Authenticated multi-tenant remote transport is a
+future design and is not claimed.
+
+## Milestones 11–14
+
 - [ ] Milestone 11 — operations and infrastructure.
 - [ ] Milestone 12 — CI, security, and full testing.
 - [ ] Milestone 13 — portfolio polish.
