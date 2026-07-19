@@ -1,0 +1,47 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+coverage.xml
+htmlcov/
+.venv/
+.uv-cache/
+
+# JavaScript
+node_modules/
+.pnpm-store/
+dist/
+playwright-report/
+test-results/
+
+# Runtime and generated data
+.env
+!.env.example
+data/generated/*
+!data/generated/.gitkeep
+artifacts/
+mlruns/
+*.log
+
+# IDE and operating system
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+
+# Infrastructure local state
+.terraform/
+*.tfstate
+*.tfstate.*
+.airflow/
+
+# Secrets and keys
+*.pem
+*.key
+*.p12
+*.pfx
+credentials.json

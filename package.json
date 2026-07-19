@@ -1,0 +1,17 @@
+{
+  "name": "quantops-risk-platform",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Market Risk, Data, and Grounded AI Research Platform",
+  "packageManager": "pnpm@11.15.0",
+  "engines": {
+    "node": ">=22.12.0",
+    "pnpm": ">=11.0.0"
+  },
+  "scripts": {
+    "build": "pnpm --filter @quantops/web build",
+    "lint": "pnpm --filter @quantops/web lint",
+    "test": "pnpm --filter @quantops/web test",
+    "typecheck": "pnpm --filter @quantops/web typecheck"
+  }
+}

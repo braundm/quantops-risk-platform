@@ -1,0 +1,4 @@
+services: {}
+
+# The optional observability profile is added after concrete metrics and traces
+# exist; this placeholder makes the current scope explicit rather than fake.

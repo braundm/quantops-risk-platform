@@ -1,0 +1,19 @@
+[project]
+name = "quantops-api"
+version = "0.1.0"
+description = "QuantOps FastAPI application"
+requires-python = ">=3.12,<3.15"
+dependencies = [
+  "fastapi==0.139.2",
+  "httpx>=0.28,<1",
+  "pydantic==2.13.4",
+  "pydantic-settings>=2.12,<3",
+  "uvicorn[standard]>=0.36,<1",
+]
+
+[build-system]
+requires = ["hatchling>=1.27,<2"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["quantops_api"]

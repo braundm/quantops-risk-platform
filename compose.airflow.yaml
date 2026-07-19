@@ -1,0 +1,4 @@
+services: {}
+
+# Airflow is intentionally deferred until reusable CLI pipelines exist. Keeping
+# an empty override avoids implying that an unverified scheduler profile works.
