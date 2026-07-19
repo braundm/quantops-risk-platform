@@ -5,7 +5,10 @@ requires-python = ">=3.12, <3.15"
 [manifest]
 members = [
     "quantops-api",
+    "quantops-contracts",
     "quantops-domain",
+    "quantops-pipelines",
+    "quantops-risk",
     "quantops-workspace",
 ]
 
@@ -1237,6 +1240,34 @@ requires-dist = [
 ]
 
 [[package]]
+name = "quantops-contracts"
+version = "0.1.0"
+source = { editable = "packages/data_contracts" }
+dependencies = [
+    { name = "pydantic" },
+]
+
+[package.optional-dependencies]
+test = [
+    { name = "hypothesis" },
+    { name = "mypy" },
+    { name = "pytest" },
+    { name = "pytest-cov" },
+    { name = "ruff" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "hypothesis", marker = "extra == 'test'", specifier = ">=6.139,<7" },
+    { name = "mypy", marker = "extra == 'test'", specifier = ">=2.3,<3" },
+    { name = "pydantic", specifier = ">=2.12,<3" },
+    { name = "pytest", marker = "extra == 'test'", specifier = ">=9.1,<10" },
+    { name = "pytest-cov", marker = "extra == 'test'", specifier = ">=7,<8" },
+    { name = "ruff", marker = "extra == 'test'", specifier = ">=0.15,<0.16" },
+]
+provides-extras = ["test"]
+
+[[package]]
 name = "quantops-domain"
 version = "0.1.0"
 source = { editable = "packages/domain" }
@@ -1255,6 +1286,44 @@ requires-dist = [
     { name = "pytest", marker = "extra == 'test'", specifier = ">=8.3" },
     { name = "pytest-cov", marker = "extra == 'test'", specifier = ">=6.0" },
     { name = "ruff", marker = "extra == 'test'", specifier = ">=0.9" },
+]
+provides-extras = ["test"]
+
+[[package]]
+name = "quantops-pipelines"
+version = "0.1.0"
+source = { editable = "pipelines" }
+
+[package.optional-dependencies]
+test = [
+    { name = "pytest" },
+    { name = "pytest-cov" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "pytest", marker = "extra == 'test'", specifier = ">=9.1" },
+    { name = "pytest-cov", marker = "extra == 'test'", specifier = ">=7" },
+]
+provides-extras = ["test"]
+
+[[package]]
+name = "quantops-risk"
+version = "0.1.0"
+source = { editable = "packages/risk_engine" }
+
+[package.optional-dependencies]
+test = [
+    { name = "hypothesis" },
+    { name = "pytest" },
+    { name = "pytest-cov" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "hypothesis", marker = "extra == 'test'", specifier = ">=6.112" },
+    { name = "pytest", marker = "extra == 'test'", specifier = ">=8.3" },
+    { name = "pytest-cov", marker = "extra == 'test'", specifier = ">=5.0" },
 ]
 provides-extras = ["test"]
 

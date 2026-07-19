@@ -21,7 +21,13 @@ dev = [
 package = false
 
 [tool.uv.workspace]
-members = ["apps/api", "packages/domain"]
+members = [
+  "apps/api",
+  "packages/data_contracts",
+  "packages/domain",
+  "packages/risk_engine",
+  "pipelines",
+]
 
 [tool.pytest.ini_options]
 addopts = "--strict-config --strict-markers -ra"
@@ -79,7 +85,7 @@ mypy_path = [
   "apps/api",
   "packages/domain",
   "packages/risk_engine/src",
-  "packages/data_contracts",
+  "packages/data_contracts/src",
   "packages/ai_engine",
   "packages/shared",
   "pipelines",

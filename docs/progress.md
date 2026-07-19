@@ -186,11 +186,44 @@ Verified risk-engine gates:
 
 The benchmark is a local observation, not a universal SLA.
 
-## Milestones 4–14
+## Milestones 4–5
 
 - [ ] Milestone 4 — application API.
 - [ ] Milestone 5 — frontend product.
-- [ ] Milestone 6 — streaming and outbox.
+
+## Milestone 6 — streaming and outbox
+
+- [x] Versioned event-envelope and payload contracts.
+- [ ] Redpanda replay producer, idempotent consumer, and outbox publisher.
+- [ ] Late/duplicate/dead-letter handling and broker-outage evidence.
+- [ ] Controlled risk recomputation and optional live updates.
+
+Verified event-contract gates:
+
+```text
+.venv\Scripts\pytest.exe -c packages/data_contracts/pyproject.toml \
+  packages/data_contracts/tests --cov=quantops_contracts --cov-branch -q
+# exit 0; 43 passed; 94% combined branch coverage
+
+.venv\Scripts\ruff.exe check packages/data_contracts
+.venv\Scripts\ruff.exe format --check packages/data_contracts
+# both exit 0; 12 files formatted
+
+.venv\Scripts\mypy.exe --config-file packages/data_contracts/pyproject.toml \
+  packages/data_contracts/src/quantops_contracts packages/data_contracts/tests
+# exit 0; 12 source files, no issues
+
+.venv\Scripts\uv.exe build packages/data_contracts --offline
+# exit 0; sdist and wheel built
+```
+
+The six v1 contracts enforce type/version pairing, UTC/non-nil identifiers, bounded payloads,
+finite Decimal values, canonical JSON, stable idempotency keys, and explicit synthetic labels.
+They intentionally have no broker dependency. Milestone 6 remains incomplete until replay and
+consumer/outbox behavior is exercised against Redpanda.
+
+## Milestones 7–14
+
 - [ ] Milestone 7 — Airflow and adapters.
 - [ ] Milestone 8 — ML lifecycle.
 - [ ] Milestone 9 — grounded AI.
@@ -207,6 +240,6 @@ The benchmark is a local observation, not a universal SLA.
 
 ## Next work
 
-Connect the deterministic seed/upsert path to PostgreSQL when an isolated database is available.
-In parallel, continue the application API against explicit ports and keep broker/database-dependent
-exit evidence unchecked until the real services can be exercised.
+Continue the application API against explicit ports, then connect the deterministic seed/upsert
+path when an isolated PostgreSQL database is available. Keep broker/database-dependent exit
+evidence unchecked until the real services can be exercised.
