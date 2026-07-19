@@ -312,7 +312,30 @@ tests, and replay-driven persisted risk update pass.
 
 ## Milestone 7 — Airflow and adapters
 
-- [ ] Milestone 7 — Airflow and adapters.
+- [x] Add four typed, offline-first job wrappers over the existing data, ML, and AI CLIs.
+- [x] Derive deterministic configuration hashes and UUIDv5 run identities.
+- [x] Enforce process-local duplicate suppression, bounded execution, dry-run, timeout,
+  cancellation, sanitized failures, and observable run counts/statuses.
+- [x] Add guarded optional Airflow DAG discovery that degrades to `scheduler_unavailable`.
+- [ ] Exercise the DAGs against a real Airflow scheduler and durable metadata/run store.
+- [ ] Add database ingestion/upsert scheduling after the PostgreSQL critical path exists.
+
+Verified scheduler gates:
+
+```text
+.venv\Scripts\pytest.exe -c apps/scheduler/pyproject.toml apps/scheduler/tests -q
+# exit 0; 37 passed
+
+.venv\Scripts\ruff.exe check apps/scheduler
+.venv\Scripts\mypy.exe --config-file apps/scheduler/pyproject.toml apps/scheduler/src apps/scheduler/tests
+# both exit 0; mypy checked 18 source files
+
+.venv\Scripts\uv.exe --cache-dir .uv-cache build --package quantops-scheduler --offline
+# exit 0; sdist and wheel built
+```
+
+The tests execute the real existing pipeline, ML, and AI CLI boundaries without network access.
+No active Airflow service, cross-host idempotency, or database ingestion is claimed.
 
 ## Milestone 8 — ML lifecycle
 
@@ -455,8 +478,11 @@ remain P2 and no resource or paid service has been created.
   container, denial-of-service, and financial-misinterpretation threats.
 - [x] Record the minimum ADR set plus the local demo-auth boundary.
 - [x] Map major engineering claims to inspectable files/tests/commands.
-- [ ] Add and validate least-privilege CI, dependency updates, artifacts, service integration, and
-  container smoke gates.
+- [x] Add a statically validated, least-privilege ten-job CI workflow, dependency updates,
+  evidence artifacts, isolated PostgreSQL migration job, dependency/SBOM gates, and container smoke
+  definitions.
+- [ ] Observe the first GitHub-hosted CI run, network vulnerability audits, PostgreSQL service job,
+  and Docker image smoke jobs after publication.
 - [ ] Complete live PostgreSQL/Redpanda, automated browser accessibility/e2e, and clean-room tests.
 
 Verified no-service repository gates after AI/stream/MCP integration:
@@ -479,18 +505,59 @@ Verified no-service repository gates after AI/stream/MCP integration:
 The scanner explicitly permits the committed 1.16 MiB canonical synthetic JSON fixture while its
 manifest/hash checks remain authoritative; other repository files over 1 MiB fail the gate.
 
-## Milestones 13–14
+Final local service-free integration gate after scheduler, CI tooling, and portfolio images:
 
-- [ ] Milestone 13 — portfolio polish.
-- [ ] Milestone 14 — clean-room verification and publication.
+```text
+.venv\Scripts\python.exe -m pytest -m "not integration and not e2e" -q
+# exit 0; 468 passed, 1 integration test deselected, 20 subtests passed
+
+.venv\Scripts\ruff.exe check .
+.venv\Scripts\ruff.exe format --check .
+# both exit 0; 210 Python files formatted
+
+.venv\Scripts\python.exe scripts/typecheck.py
+# exit 0; 11 isolated strict mypy groups passed
+
+pnpm --filter @quantops/web lint
+pnpm --filter @quantops/web typecheck
+pnpm --filter @quantops/web test
+pnpm --filter @quantops/web build
+# all exit 0; 14 Vitest tests; production build completed
+
+.venv\Scripts\python.exe scripts/docs_check.py
+.venv\Scripts\python.exe scripts/security_scan.py
+# both exit 0; 48 Markdown files; no high-confidence secret or hygiene findings
+```
+
+## Milestone 13 — portfolio polish
+
+- [x] Replace the scaffold README with a product-oriented quickstart, demo story, architecture,
+  feature evidence, methods/safety summary, observed status, and visible limitations.
+- [x] Capture seven actual running-product images for the landing page, dashboard, scenario/stress,
+  grounded brief, model/drift, and data-quality views.
+- [x] Keep architecture diagrams, methodology, model/AI cards, engineering evidence, runbooks,
+  threat model, and core ADRs linked and factual.
+- [ ] Add the interview guide and AI-assisted-development record required by the full specification.
+- [ ] Complete automated browser accessibility and Playwright critical-path coverage.
+
+## Milestone 14 — clean-room verification and publication
+
+- [x] Run the strongest clean local service-free gate available in this environment.
+- [x] Inspect repository images, lockfile, documentation, status, and high-confidence secret/hygiene
+  results.
+- [ ] Run the Docker/PostgreSQL/Redpanda/clean-checkout gates on a Docker-capable host.
+- [ ] Publish after GitHub CLI is installed and authenticated; do not create a release tag while the
+  full Definition of Done remains open.
 
 ## Current blockers
 
 - Docker is unavailable, so PostgreSQL/Redpanda integration gates cannot yet be claimed.
-- GitHub CLI is unavailable; publication is intentionally deferred until the Definition of Done.
+- GitHub CLI is unavailable, so the explicitly requested public upload cannot be authenticated from
+  this environment. The repository is prepared for `gh repo create` after owner authentication.
 
 ## Next work
 
-Commit the verified API and offline ML scopes, then integrate the grounded-AI workflow. Connect the
-deterministic seed/upsert path when an isolated PostgreSQL database is available. Keep broker- and
-database-dependent exit evidence unchecked until the real services can be exercised.
+Install/authenticate GitHub CLI and publish the verified snapshot without a release tag. Then use a
+Docker-capable clean host to run PostgreSQL migrations, persistence/Redpanda integration, image and
+Compose smoke tests, and browser e2e/accessibility. Keep service-dependent evidence unchecked until
+those real integrations pass.

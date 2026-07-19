@@ -1,75 +1,136 @@
-.PHONY: doctor setup up migrate seed demo replay test test-unit test-integration test-contract test-e2e test-performance lint format typecheck security ml-train-demo ml-evaluate ai-evaluate docs-check down clean
+UV ?= uv
+PNPM ?= pnpm
+PYTHON := $(UV) run python
+PYTEST := $(UV) run pytest -p no:cacheprovider
+
+.PHONY: doctor setup up down migrate seed demo clean compose-check docker-build \
+	test test-unit test-integration test-contract test-e2e test-performance test-openapi \
+	event-test stream-test scheduler-test mcp-test ai-test ai-evaluate ml-test \
+	ml-train-demo ml-evaluate web-lint web-typecheck web-test web-build \
+	lint format format-check typecheck security security-scan dependency-audit docs-check
 
 doctor:
 	python scripts/doctor.py
 
 setup:
-	uv sync --all-packages
-	pnpm install --frozen-lockfile
+	$(UV) sync --locked --all-packages --all-groups
+	$(PNPM) install --frozen-lockfile
 
 up:
 	docker compose up --build -d
 
+down:
+	docker compose down
+
 migrate:
-	uv run alembic -c apps/api/alembic.ini upgrade head
+	$(UV) run alembic -c apps/api/alembic.ini upgrade head
 
 seed:
-	uv run python -m quantops_pipelines.cli generate-demo-dataset
-	uv run python -m quantops_pipelines.cli seed-demo
+	$(PYTHON) -m quantops_pipelines generate
+	$(PYTHON) -m quantops_pipelines verify --dataset data/synthetic
 
 demo: up migrate seed
 	@echo "Web: http://localhost:5173  API: http://localhost:8000  Docs: http://localhost:8000/docs"
 
-replay:
-	uv run python -m quantops_stream_worker.cli replay --scenario volatility-shock --speed 50
+compose-check:
+	docker compose config --quiet
 
-test: test-unit test-contract
+docker-build: compose-check
+	docker build --file apps/api/Dockerfile --tag quantops-api:local .
+	docker build --file apps/web/Dockerfile --tag quantops-web:local .
+
+test: test-unit test-contract stream-test scheduler-test ai-test ml-test web-test
 
 test-unit:
-	uv run pytest -m "not integration and not e2e"
+	$(PYTEST) -m "not integration and not e2e"
 
 test-integration:
-	uv run pytest -m integration
+	$(PYTEST) -m integration
 
-test-contract:
-	uv run pytest -m contract
+test-contract: event-test mcp-test
 
-test-e2e:
-	pnpm --filter @quantops/web test:e2e
+# The repository currently has deterministic Vitest UI tests, not a browser E2E harness.
+test-e2e: web-test
 
 test-performance:
-	uv run pytest tests/performance
+	$(PYTHON) packages/risk_engine/benchmarks/benchmark_risk_engine.py
 
-lint:
-	uv run ruff check .
-	pnpm lint
+test-openapi:
+	$(PYTEST) apps/api/tests/test_health.py::test_checked_in_openapi_snapshot_matches_application
 
-format:
-	uv run ruff format .
-	uv run ruff check --fix .
+event-test:
+	$(PYTEST) -c packages/data_contracts/pyproject.toml packages/data_contracts/tests
 
-typecheck:
-	uv run mypy apps packages pipelines ml
-	pnpm typecheck
+stream-test:
+	$(PYTEST) -c apps/stream_worker/pyproject.toml apps/stream_worker/tests
 
-security:
-	uv run pip-audit
-	pnpm audit --prod
+scheduler-test:
+	$(PYTEST) -c apps/scheduler/pyproject.toml apps/scheduler/tests
 
-ml-train-demo:
-	uv run python -m ml.training.train --config ml/configs/demo.yaml
+mcp-test:
+	$(PYTEST) -c apps/mcp_server/pyproject.toml apps/mcp_server/tests
 
-ml-evaluate:
-	uv run python -m ml.evaluation.evaluate --config ml/configs/demo.yaml
+ai-test:
+	$(PYTEST) -c packages/ai_engine/pyproject.toml packages/ai_engine/tests
 
 ai-evaluate:
-	uv run python -m quantops_ai.evaluation
+	$(PYTHON) -m quantops_ai evaluate --output artifacts/ci/ai-evaluation-report.json
+
+ml-test:
+	$(PYTEST) -c ml/pyproject.toml ml/tests
+
+ml-train-demo: ml-evaluate
+
+ml-evaluate:
+	$(PYTHON) -m quantops_ml run \
+		--prices data/synthetic/canonical/price_bars.csv \
+		--manifest data/synthetic/manifest.json \
+		--output artifacts/ci/ml-demo
+
+web-lint:
+	$(PNPM) --filter @quantops/web lint
+
+web-typecheck:
+	$(PNPM) --filter @quantops/web typecheck
+
+web-test:
+	$(PNPM) --filter @quantops/web test
+
+web-build:
+	$(PNPM) --filter @quantops/web build
+
+lint: format-check
+	$(UV) run ruff check .
+	$(PNPM) lint
+
+format:
+	$(UV) run ruff format .
+	$(UV) run ruff check --fix .
+
+format-check:
+	$(UV) run ruff format --check .
+
+typecheck:
+	$(PYTHON) scripts/typecheck.py
+	$(PNPM) typecheck
+
+security: security-scan dependency-audit
+
+security-scan:
+	$(PYTHON) scripts/security_scan.py
+
+dependency-audit:
+	mkdir -p artifacts/ci
+	$(UV) export --locked --all-packages --all-groups --no-emit-workspace \
+		--format requirements.txt --output-file artifacts/ci/python-requirements.txt
+	$(UV) run pip-audit --requirement artifacts/ci/python-requirements.txt \
+		--require-hashes --strict
+	$(UV) export --locked --all-packages --no-dev --no-emit-workspace \
+		--format cyclonedx1.5 --output-file artifacts/ci/python-sbom.cdx.json
+	$(PNPM) audit --prod
 
 docs-check:
-	uv run python scripts/docs_check.py
-
-down:
-	docker compose down
+	$(PYTHON) scripts/docs_check.py
 
 clean:
-	uv run python scripts/clean.py
+	$(PYTHON) scripts/clean.py

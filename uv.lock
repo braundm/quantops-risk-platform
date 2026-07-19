@@ -16,6 +16,7 @@ members = [
     "quantops-ml",
     "quantops-pipelines",
     "quantops-risk",
+    "quantops-scheduler",
     "quantops-stream-worker",
     "quantops-workspace",
 ]
@@ -2962,6 +2963,34 @@ requires-dist = [
     { name = "hypothesis", marker = "extra == 'test'", specifier = ">=6.112" },
     { name = "pytest", marker = "extra == 'test'", specifier = ">=8.3" },
     { name = "pytest-cov", marker = "extra == 'test'", specifier = ">=5.0" },
+]
+provides-extras = ["test"]
+
+[[package]]
+name = "quantops-scheduler"
+version = "0.1.0"
+source = { editable = "apps/scheduler" }
+dependencies = [
+    { name = "quantops-ai-engine" },
+    { name = "quantops-ml" },
+    { name = "quantops-pipelines" },
+]
+
+[package.optional-dependencies]
+test = [
+    { name = "mypy" },
+    { name = "pytest" },
+    { name = "ruff" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "mypy", marker = "extra == 'test'", specifier = ">=2.3,<3" },
+    { name = "pytest", marker = "extra == 'test'", specifier = ">=9.1,<10" },
+    { name = "quantops-ai-engine", editable = "packages/ai_engine" },
+    { name = "quantops-ml", editable = "ml" },
+    { name = "quantops-pipelines", editable = "pipelines" },
+    { name = "ruff", marker = "extra == 'test'", specifier = ">=0.15,<0.16" },
 ]
 provides-extras = ["test"]
 

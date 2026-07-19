@@ -1,0 +1,429 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  UV_VERSION: "0.11.29"
+  PYTHON_VERSION: "3.12.11"
+  NODE_VERSION: "24.14.0"
+  PNPM_VERSION: "11.15.0"
+  UV_LOCKED: "1"
+  UV_NO_PROGRESS: "1"
+
+jobs:
+  python-quality:
+    name: Python quality and packages
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6.0.2
+      - name: Install pinned uv and Python
+        uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b # v8.1.0
+        with:
+          version: ${{ env.UV_VERSION }}
+          python-version: ${{ env.PYTHON_VERSION }}
+          enable-cache: true
+          cache-dependency-glob: uv.lock
+      - name: Install locked Python workspace
+        run: uv sync --locked --all-packages --all-groups
+      - name: Check formatting
+        run: uv run ruff format --check .
+      - name: Lint Python
+        run: uv run ruff check .
+      - name: Typecheck isolated namespaces
+        run: uv run python scripts/typecheck.py
+      - name: Prepare package artifacts directory
+        run: mkdir -p artifacts/python-dist
+      - name: Build all workspace packages offline
+        run: uv build --all-packages --offline --out-dir artifacts/python-dist
+      - name: Upload Python distributions
+        uses: actions/upload-artifact@v7.0.1
+        with:
+          name: python-distributions
+          path: artifacts/python-dist
+          if-no-files-found: error
+          retention-days: 14
+
+  python-unit:
+    name: Python unit and property tests
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6.0.2
+      - name: Install pinned uv and Python
+        uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b # v8.1.0
+        with:
+          version: ${{ env.UV_VERSION }}
+          python-version: ${{ env.PYTHON_VERSION }}
+          enable-cache: true
+          cache-dependency-glob: uv.lock
+      - name: Install locked Python workspace
+        run: uv sync --locked --all-packages --all-groups
+      - name: Prepare test artifacts directory
+        run: mkdir -p artifacts
+      - name: Run OpenAPI snapshot contract
+        run: >-
+          uv run pytest -p no:cacheprovider
+          apps/api/tests/test_health.py::test_checked_in_openapi_snapshot_matches_application -q
+      - name: Run root unit and property suite with branch coverage
+        run: >-
+          uv run pytest -p no:cacheprovider -m "not integration and not e2e"
+          --cov --cov-branch --cov-report=term
+          --cov-report=xml:artifacts/python-coverage.xml
+      - name: Upload Python coverage
+        if: always()
+        uses: actions/upload-artifact@v7.0.1
+        with:
+          name: python-coverage
+          path: artifacts/python-coverage.xml
+          if-no-files-found: warn
+          retention-days: 14
+
+  postgres-integration:
+    name: PostgreSQL and pgvector migrations
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    services:
+      postgres:
+        image: pgvector/pgvector:pg16
+        env:
+          POSTGRES_DB: quantops_test
+          POSTGRES_USER: quantops
+          POSTGRES_PASSWORD: quantops_ci
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U quantops -d quantops_test"
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 12
+    env:
+      QUANTOPS_TEST_DATABASE_URL: postgresql+asyncpg://quantops:quantops_ci@127.0.0.1:5432/quantops_test
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6.0.2
+      - name: Install pinned uv and Python
+        uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b # v8.1.0
+        with:
+          version: ${{ env.UV_VERSION }}
+          python-version: ${{ env.PYTHON_VERSION }}
+          enable-cache: true
+          cache-dependency-glob: uv.lock
+      - name: Install locked Python workspace
+        run: uv sync --locked --all-packages --all-groups
+      - name: Migrate a clean isolated database to head
+        run: >-
+          uv run pytest -p no:cacheprovider
+          apps/api/tests/integration/test_postgres_migrations.py -m integration -q
+
+  event-pipelines:
+    name: Event, pipeline, stream, and scheduler gates
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6.0.2
+      - name: Install pinned uv and Python
+        uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b # v8.1.0
+        with:
+          version: ${{ env.UV_VERSION }}
+          python-version: ${{ env.PYTHON_VERSION }}
+          enable-cache: true
+          cache-dependency-glob: uv.lock
+      - name: Install locked Python workspace
+        run: uv sync --locked --all-packages --all-groups
+      - name: Prepare test artifacts directory
+        run: mkdir -p artifacts
+      - name: Verify canonical synthetic dataset
+        run: uv run python -m quantops_pipelines verify --dataset data/synthetic
+      - name: Test versioned event contracts
+        run: >-
+          uv run pytest -p no:cacheprovider -c packages/data_contracts/pyproject.toml
+          packages/data_contracts/tests --cov=quantops_contracts --cov-branch
+          --cov-report=term --cov-report=xml:artifacts/contracts-coverage.xml
+      - name: Test deterministic stream worker
+        run: >-
+          uv run pytest -p no:cacheprovider -c apps/stream_worker/pyproject.toml
+          apps/stream_worker/tests --cov=quantops_stream_worker --cov-branch
+          --cov-report=term --cov-report=xml:artifacts/stream-coverage.xml
+      - name: Test offline scheduler wrappers
+        run: >-
+          uv run pytest -p no:cacheprovider -c apps/scheduler/pyproject.toml
+          apps/scheduler/tests -q
+      - name: Upload event and stream coverage
+        if: always()
+        uses: actions/upload-artifact@v7.0.1
+        with:
+          name: event-stream-coverage
+          path: |
+            artifacts/contracts-coverage.xml
+            artifacts/stream-coverage.xml
+          if-no-files-found: warn
+          retention-days: 14
+
+  ai-evaluation:
+    name: Grounded AI tests and evaluation
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6.0.2
+      - name: Install pinned uv and Python
+        uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b # v8.1.0
+        with:
+          version: ${{ env.UV_VERSION }}
+          python-version: ${{ env.PYTHON_VERSION }}
+          enable-cache: true
+          cache-dependency-glob: uv.lock
+      - name: Install locked Python workspace
+        run: uv sync --locked --all-packages --all-groups
+      - name: Prepare evaluation artifacts directory
+        run: mkdir -p artifacts
+      - name: Test bounded AI workflow and validators
+        run: >-
+          uv run pytest -p no:cacheprovider -c packages/ai_engine/pyproject.toml
+          packages/ai_engine/tests --cov=quantops_ai --cov-branch
+          --cov-report=term --cov-report=xml:artifacts/ai-coverage.xml
+      - name: Run deterministic versioned evaluation suite
+        run: >-
+          uv run python -m quantops_ai evaluate
+          --cases packages/ai_engine/evals/v1/cases.jsonl
+          --output artifacts/ai-evaluation-report.json
+      - name: Upload AI evidence
+        if: always()
+        uses: actions/upload-artifact@v7.0.1
+        with:
+          name: ai-evaluation
+          path: |
+            artifacts/ai-coverage.xml
+            artifacts/ai-evaluation-report.json
+          if-no-files-found: warn
+          retention-days: 14
+
+  ml-evaluation:
+    name: Deterministic ML lifecycle
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6.0.2
+      - name: Install pinned uv and Python
+        uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b # v8.1.0
+        with:
+          version: ${{ env.UV_VERSION }}
+          python-version: ${{ env.PYTHON_VERSION }}
+          enable-cache: true
+          cache-dependency-glob: uv.lock
+      - name: Install locked Python workspace
+        run: uv sync --locked --all-packages --all-groups
+      - name: Prepare evaluation artifacts directory
+        run: mkdir -p artifacts
+      - name: Test leakage-safe ML package
+        run: >-
+          uv run pytest -p no:cacheprovider -c ml/pyproject.toml ml/tests
+          --cov=quantops_ml --cov-branch --cov-report=term
+          --cov-report=xml:artifacts/ml-coverage.xml
+      - name: Run deterministic fixture lifecycle
+        run: >-
+          uv run python -m quantops_ml run
+          --prices data/synthetic/canonical/price_bars.csv
+          --manifest data/synthetic/manifest.json
+          --output artifacts/ml-demo
+          --code-revision ${{ github.sha }}
+      - name: Upload ML evidence
+        if: always()
+        uses: actions/upload-artifact@v7.0.1
+        with:
+          name: ml-evaluation
+          path: |
+            artifacts/ml-coverage.xml
+            artifacts/ml-demo
+          if-no-files-found: warn
+          retention-days: 14
+
+  mcp-contract:
+    name: Read-only MCP contract
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6.0.2
+      - name: Install pinned uv and Python
+        uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b # v8.1.0
+        with:
+          version: ${{ env.UV_VERSION }}
+          python-version: ${{ env.PYTHON_VERSION }}
+          enable-cache: true
+          cache-dependency-glob: uv.lock
+      - name: Install locked Python workspace
+        run: uv sync --locked --all-packages --all-groups
+      - name: Test MCP schemas, security boundary, and stdio transport
+        run: >-
+          uv run pytest -p no:cacheprovider -c apps/mcp_server/pyproject.toml
+          apps/mcp_server/tests -q
+
+  frontend:
+    name: Frontend quality and build
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6.0.2
+      - name: Install pinned pnpm
+        uses: pnpm/action-setup@v6.0.8
+        with:
+          version: ${{ env.PNPM_VERSION }}
+          run_install: false
+      - name: Install pinned Node.js
+        uses: actions/setup-node@v6.4.0
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+          cache-dependency-path: pnpm-lock.yaml
+      - name: Install locked frontend dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Lint frontend
+        run: pnpm --filter @quantops/web lint
+      - name: Typecheck frontend
+        run: pnpm --filter @quantops/web typecheck
+      - name: Test frontend
+        run: pnpm --filter @quantops/web test
+      - name: Build frontend
+        run: pnpm --filter @quantops/web build
+      - name: Upload frontend build
+        uses: actions/upload-artifact@v7.0.1
+        with:
+          name: frontend-dist
+          path: apps/web/dist
+          if-no-files-found: error
+          retention-days: 14
+
+  security-docs:
+    name: Security, dependencies, and documentation
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6.0.2
+      - name: Install pinned uv and Python
+        uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b # v8.1.0
+        with:
+          version: ${{ env.UV_VERSION }}
+          python-version: ${{ env.PYTHON_VERSION }}
+          enable-cache: true
+          cache-dependency-glob: uv.lock
+      - name: Install locked Python workspace
+        run: uv sync --locked --all-packages --all-groups
+      - name: Install pinned pnpm
+        uses: pnpm/action-setup@v6.0.8
+        with:
+          version: ${{ env.PNPM_VERSION }}
+          run_install: false
+      - name: Install pinned Node.js
+        uses: actions/setup-node@v6.4.0
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+          cache-dependency-path: pnpm-lock.yaml
+      - name: Install locked frontend dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Scan repository hygiene and secrets
+        run: uv run python scripts/security_scan.py
+      - name: Test the security scanner
+        run: uv run pytest -p no:cacheprovider tests/test_security_scan.py -q
+      - name: Check documentation links and required files
+        run: uv run python scripts/docs_check.py
+      - name: Export locked Python dependencies
+        run: |
+          mkdir -p artifacts/security
+          uv export --locked --all-packages --all-groups --no-emit-workspace \
+            --format requirements.txt \
+            --output-file artifacts/security/python-requirements.txt
+      - name: Audit locked Python dependencies
+        run: >-
+          uv run pip-audit
+          --requirement artifacts/security/python-requirements.txt
+          --require-hashes --strict --format cyclonedx-json
+          --output artifacts/security/python-audit.cdx.json
+      - name: Export Python production SBOM
+        run: >-
+          uv export --locked --all-packages --no-dev --no-emit-workspace
+          --format cyclonedx1.5
+          --output-file artifacts/security/python-sbom.cdx.json
+      - name: Audit production frontend dependencies
+        run: pnpm audit --prod
+      - name: Record production frontend dependency inventory
+        run: pnpm list --prod --depth Infinity --json > artifacts/security/node-dependencies.json
+      - name: Upload security evidence
+        if: always()
+        uses: actions/upload-artifact@v7.0.1
+        with:
+          name: security-evidence
+          path: artifacts/security
+          if-no-files-found: warn
+          retention-days: 14
+
+  containers:
+    name: Container build and smoke tests
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    needs: [python-quality, python-unit, frontend]
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6.0.2
+      - name: Validate Compose configuration
+        run: docker compose config --quiet
+      - name: Build API image without publishing
+        run: docker build --file apps/api/Dockerfile --tag quantops-api:ci .
+      - name: Build frontend image without publishing
+        run: docker build --file apps/web/Dockerfile --tag quantops-web:ci .
+      - name: Smoke-test API health
+        run: |
+          docker run --detach --name quantops-api-ci --publish 8000:8000 quantops-api:ci
+          for attempt in {1..30}; do
+            if curl --fail --silent http://127.0.0.1:8000/api/v1/health; then
+              exit 0
+            fi
+            sleep 2
+          done
+          docker logs quantops-api-ci
+          exit 1
+      - name: Smoke-test frontend health
+        run: |
+          docker run --detach --name quantops-web-ci --publish 5173:8080 quantops-web:ci
+          for attempt in {1..30}; do
+            if curl --fail --silent http://127.0.0.1:5173/health; then
+              exit 0
+            fi
+            sleep 2
+          done
+          docker logs quantops-web-ci
+          exit 1
+      - name: Record built image metadata
+        run: |
+          mkdir -p artifacts
+          docker image inspect quantops-api:ci quantops-web:ci > artifacts/docker-images.json
+      - name: Stop smoke containers
+        if: always()
+        run: docker rm --force quantops-api-ci quantops-web-ci 2>/dev/null || true
+      - name: Upload image metadata
+        if: always()
+        uses: actions/upload-artifact@v7.0.1
+        with:
+          name: docker-image-metadata
+          path: artifacts/docker-images.json
+          if-no-files-found: warn
+          retention-days: 14

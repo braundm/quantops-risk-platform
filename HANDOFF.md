@@ -4,71 +4,85 @@ Last updated: 2026-07-19
 
 ## Current state
 
-The repository began empty. The authoritative master specification has been read in full. Milestone 0 is committed as `102406d`, domain as `af3ac48`, risk as `1027ef2`, deterministic data as `f747731`, PostgreSQL persistence as `9bdd210`, event contracts as `764b545`, the deterministic frontend as `3aefae6`, the application API as `72cfa24`, offline ML as `2718de5`, grounded AI as `d70cc69`, and the AI/stream/MCP integration boundaries as `aa7d31e`. The no-service monorepo gate passes 428 tests and 20 subtests. Live Redpanda and PostgreSQL execution are not claimed.
+The authoritative 2,442-line master specification was read in full. The repository now contains the
+framework-free domain and risk cores, deterministic data/quality pipelines, PostgreSQL mappings and
+migrations, a 31-route FastAPI surface, a responsive typed-demo UI, versioned events, broker-neutral
+streaming, offline scheduling wrappers, a leakage-safe ML lifecycle, bounded grounded AI, and an
+official-SDK read-only MCP server. The final local service-free gate passes 468 Python tests plus 20
+subtests, strict typechecks across 11 isolated groups, all frontend gates, documentation checks, and
+the repository security scan.
+
+Focused commits through `9aaeb7f` preserve the implementation history. The final portfolio/CI/
+scheduler commit is named `feat(platform): complete verified portfolio delivery`; use `git log -1`
+for its immutable SHA.
 
 ## Architecture in force
 
-Use a modular monolith for synchronous business behavior, framework-free domain/risk packages, and separate worker processes only where replay, scheduling, or isolation is justified. PostgreSQL is the source of record; Redpanda, Airflow, MLflow, external LLM providers, and observability are optional profiles.
+Use a modular monolith for synchronous behavior, framework-free domain/risk packages, and separate
+workers only for replay, scheduling, or isolation. PostgreSQL is the designed source of record;
+Redpanda, Airflow, MLflow, external LLM providers, and observability remain optional boundaries. The
+current UI and API run deterministic local adapters independently, so live integration must not be
+claimed.
 
-## Toolchain discovered
-
-- System Python: 3.13.7 (`C:\\Python3.13\\python.exe`), with pip but no project dependencies installed.
-- Bundled Codex Python: 3.12.13.
-- Bundled Codex Node: 24.14.0; pnpm: 11.9.0.
-- Bundled Codex Git: 2.53.0.
-- Workspace `uv`: 0.11.29; locked Python dependencies resolve successfully.
-- Project package manager declaration: pnpm 11.15.0. Bundled pnpm 11.9.0 was used only as the verification runtime and the frozen lockfile passes.
-- Docker, GitHub CLI, GNU Make, `uv`, and Terraform are not on the system `PATH`.
-- The directory was not a Git repository at discovery time.
-
-## Last successful commands
+## Last successful local gates
 
 ```text
-Get-Content -Encoding UTF8 C:\Users\domin\Downloads\QuantOps_AI_Codex_Master_Prompt.md
-C:\Users\domin\.cache\codex-runtimes\codex-primary-runtime\dependencies\native\git\cmd\git.exe --version
-C:\Users\domin\.cache\codex-runtimes\codex-primary-runtime\dependencies\node\bin\node.exe --version
-C:\Users\domin\.cache\codex-runtimes\codex-primary-runtime\dependencies\bin\fallback\pnpm.cmd --version
-.venv\Scripts\uv.exe sync --locked --all-packages
-.venv\Scripts\ruff.exe check apps/api scripts
-.venv\Scripts\mypy.exe apps/api
-.venv\Scripts\pytest.exe apps/api/tests -q
-PYTHONPATH=apps/api;packages/domain .venv\Scripts\alembic.exe -c apps/api/alembic.ini upgrade head --sql
-.venv\Scripts\uv.exe build apps/api --offline
-.venv\Scripts\pytest.exe -c ml/pyproject.toml ml/tests --cov=quantops_ml --cov-branch -q
-.venv\Scripts\mypy.exe --config-file ml/pyproject.toml -p quantops_ml -p ml.tests
-.venv\Scripts\python.exe -m quantops_ml run --prices data/synthetic/canonical/price_bars.csv --manifest data/synthetic/manifest.json --output ml/artifacts/demo --code-revision 72cfa241760ffb02e682ef58caab176bedab41d1
-.venv\Scripts\pytest.exe -c packages/ai_engine/pyproject.toml packages/ai_engine/tests --cov=quantops_ai --cov-branch -q
-.venv\Scripts\mypy.exe --config-file packages/ai_engine/pyproject.toml -p quantops_ai -p packages.ai_engine.tests
-.venv\Scripts\python.exe -m quantops_ai evaluate --cases packages/ai_engine/evals/v1/cases.jsonl --output $env:TEMP\quantops-ai-evaluation-root.json
-.venv\Scripts\pytest.exe -c apps/stream_worker/pyproject.toml apps/stream_worker/tests --cov=quantops_stream_worker --cov-branch -q
-.venv\Scripts\mypy.exe --config-file apps/stream_worker/pyproject.toml apps/stream_worker/src apps/stream_worker/tests
-.venv\Scripts\pytest.exe -c apps/mcp_server/pyproject.toml apps/mcp_server/tests -q
-.venv\Scripts\mypy.exe --config-file apps/mcp_server/pyproject.toml -p quantops_mcp -p apps.mcp_server.tests
-.venv\Scripts\pytest.exe -m "not integration and not e2e" -q
-.venv\Scripts\python.exe scripts/security_scan.py
-.venv\Scripts\pytest.exe -c packages/data_contracts/pyproject.toml packages/data_contracts/tests --cov=quantops_contracts --cov-branch -q
-.venv\Scripts\mypy.exe --config-file packages/data_contracts/pyproject.toml packages/data_contracts/src/quantops_contracts packages/data_contracts/tests
+.venv\Scripts\uv.exe --cache-dir .uv-cache sync --locked --all-packages --offline
+# exit 0; quantops-scheduler installed from the workspace
+
+.venv\Scripts\python.exe -m pytest -m "not integration and not e2e" -q
+# exit 0; 468 passed, 1 deselected, 20 subtests passed
+
+.venv\Scripts\ruff.exe check .
+.venv\Scripts\ruff.exe format --check .
+# exit 0; 210 Python files formatted
+
+.venv\Scripts\python.exe scripts/typecheck.py
+# exit 0; 11 strict isolated mypy groups
+
 pnpm --filter @quantops/web lint
 pnpm --filter @quantops/web typecheck
 pnpm --filter @quantops/web test
 pnpm --filter @quantops/web build
+# exit 0; 14 Vitest tests; Vite production build
+
 .venv\Scripts\python.exe scripts/docs_check.py
+.venv\Scripts\python.exe scripts/security_scan.py
+# exit 0; 48 Markdown files; no high-confidence secret/hygiene findings
+
+.venv\Scripts\pytest.exe -c apps/scheduler/pyproject.toml apps/scheduler/tests -q
+.venv\Scripts\uv.exe --cache-dir .uv-cache build --package quantops-scheduler --offline
+# exit 0; 37 tests; sdist and wheel built
 ```
 
-## Blockers and limitations
+The current workstation uses bundled Git/Node/pnpm and workspace `uv`; Docker, `gh`, GNU Make, and
+Terraform are absent from `PATH`.
 
-- Docker-backed PostgreSQL/Redpanda tests cannot run until Docker is available.
-- GitHub publication cannot occur until the project is complete and `gh` authentication is available.
-- Any command not yet listed in `docs/progress.md` as passing must be treated as unverified.
+## Honest blockers and limitations
+
+- Docker-backed clean PostgreSQL, pgvector, Redpanda, image, and Compose gates were not runnable.
+- GitHub Actions is defined and statically validated, but no hosted run exists before publication.
+- Live Airflow/MLflow/provider/observability profiles, generated UI client integration, and browser
+  e2e/accessibility remain unverified.
+- GitHub CLI is absent, so repository creation/push cannot be authenticated or bypassed.
+- The full master-spec Definition of Done remains open; do not create the `v0.1.0` release tag yet.
 
 ## Exact next action
 
-Commit the reviewed security/architecture/runbook evidence and API image dependency correction.
-Then review and commit the in-progress CI/developer commands and scheduler slice. Connect idempotent
-database seeding and live persistence integration when PostgreSQL is available.
+Install GitHub CLI, authenticate, and publish the prepared `main` history:
 
-## Uncommitted changes
+```text
+winget install --id GitHub.cli
+gh auth login
+gh repo create quantops-risk-platform --public --source . --remote origin --push --description "Production-style market risk, data lineage, and grounded AI research platform"
+gh repo edit --add-topic python --add-topic fastapi --add-topic postgresql --add-topic fintech --add-topic data-engineering --add-topic machine-learning --add-topic llm --add-topic mcp --add-topic docker --add-topic react
+```
 
-Security/architecture/ADR/runbook work, security scan, API Dockerfile correction, CI/developer
-commands, and scheduler work are separate in-progress scopes; inspect `git status` before modifying
-them.
+After publication, observe/fix the initial CI run. On a Docker-capable clean host, run the remaining
+PostgreSQL/Redpanda/container/browser gates before creating a release tag or calling the project
+complete.
+
+## Working tree expectation
+
+The working tree should be clean after the final scoped commit. Preserve any existing remote and
+inspect `git status --short --branch` before future edits.
