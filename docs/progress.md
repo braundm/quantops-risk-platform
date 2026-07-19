@@ -546,18 +546,19 @@ pnpm --filter @quantops/web build
 - [x] Inspect repository images, lockfile, documentation, status, and high-confidence secret/hygiene
   results.
 - [ ] Run the Docker/PostgreSQL/Redpanda/clean-checkout gates on a Docker-capable host.
-- [ ] Publish after GitHub CLI is installed and authenticated; do not create a release tag while the
-  full Definition of Done remains open.
+- [x] Publish public `braundm/quantops-risk-platform`, configure `origin`, description, and ten concise
+  repository topics, and push `main` at verified commit `fe73a64`.
+- [ ] Observe the initial hosted CI run to completion; do not create a release tag while the full
+  Definition of Done remains open.
 
 ## Current blockers
 
 - Docker is unavailable, so PostgreSQL/Redpanda integration gates cannot yet be claimed.
-- GitHub CLI is unavailable, so the explicitly requested public upload cannot be authenticated from
-  this environment. The repository is prepared for `gh repo create` after owner authentication.
+- The initial GitHub-hosted CI run is in progress and is not yet counted as passing evidence.
 
 ## Next work
 
-Install/authenticate GitHub CLI and publish the verified snapshot without a release tag. Then use a
-Docker-capable clean host to run PostgreSQL migrations, persistence/Redpanda integration, image and
+Observe/fix the initial hosted CI run without creating a release tag. Then use a Docker-capable
+clean host to run PostgreSQL migrations, persistence/Redpanda integration, image and
 Compose smoke tests, and browser e2e/accessibility. Keep service-dependent evidence unchecked until
 those real integrations pass.

@@ -12,9 +12,11 @@ official-SDK read-only MCP server. The final local service-free gate passes 468 
 subtests, strict typechecks across 11 isolated groups, all frontend gates, documentation checks, and
 the repository security scan.
 
-Focused commits through `9aaeb7f` preserve the implementation history. The final portfolio/CI/
-scheduler commit is named `feat(platform): complete verified portfolio delivery`; use `git log -1`
-for its immutable SHA.
+The public repository is https://github.com/braundm/quantops-risk-platform. Local `main` tracks
+`origin/main`; the initial GitHub Actions CI run started against commit `fe73a64` after publication.
+
+Focused commits through `fe73a64` preserve the implementation history. A final documentation-only
+commit records publication state; use `git log -1` for its immutable SHA.
 
 ## Architecture in force
 
@@ -55,30 +57,23 @@ pnpm --filter @quantops/web build
 # exit 0; 37 tests; sdist and wheel built
 ```
 
-The current workstation uses bundled Git/Node/pnpm and workspace `uv`; Docker, `gh`, GNU Make, and
-Terraform are absent from `PATH`.
+The current workstation uses bundled Git/Node/pnpm and workspace `uv`. GitHub CLI 2.96.0 is installed
+at `C:\Program Files\GitHub CLI\gh.exe` and authenticated as `braundm`, although the current shell
+does not include it in `PATH`. Docker, GNU Make, and Terraform remain absent from `PATH`.
 
 ## Honest blockers and limitations
 
 - Docker-backed clean PostgreSQL, pgvector, Redpanda, image, and Compose gates were not runnable.
-- GitHub Actions is defined and statically validated, but no hosted run exists before publication.
+- GitHub Actions is defined and statically validated; its first hosted run was in progress at the
+  publication handoff and must be observed to completion.
 - Live Airflow/MLflow/provider/observability profiles, generated UI client integration, and browser
   e2e/accessibility remain unverified.
-- GitHub CLI is absent, so repository creation/push cannot be authenticated or bypassed.
 - The full master-spec Definition of Done remains open; do not create the `v0.1.0` release tag yet.
 
 ## Exact next action
 
-Install GitHub CLI, authenticate, and publish the prepared `main` history:
-
-```text
-winget install --id GitHub.cli
-gh auth login
-gh repo create quantops-risk-platform --public --source . --remote origin --push --description "Production-style market risk, data lineage, and grounded AI research platform"
-gh repo edit --add-topic python --add-topic fastapi --add-topic postgresql --add-topic fintech --add-topic data-engineering --add-topic machine-learning --add-topic llm --add-topic mcp --add-topic docker --add-topic react
-```
-
-After publication, observe/fix the initial CI run. On a Docker-capable clean host, run the remaining
+Observe and, if needed, fix the initial CI run at
+https://github.com/braundm/quantops-risk-platform/actions. On a Docker-capable clean host, run the remaining
 PostgreSQL/Redpanda/container/browser gates before creating a release tag or calling the project
 complete.
 
