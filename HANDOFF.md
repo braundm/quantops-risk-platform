@@ -54,7 +54,7 @@ pnpm --filter @quantops/web build
 
 .venv\Scripts\python.exe scripts/docs_check.py
 .venv\Scripts\python.exe scripts/security_scan.py
-# exit 0; 50 Markdown files; no high-confidence secret/hygiene findings
+# exit 0; 52 Markdown files; no high-confidence secret/hygiene findings
 
 .venv\Scripts\pytest.exe -c apps/scheduler/pyproject.toml apps/scheduler/tests -q
 .venv\Scripts\uv.exe --cache-dir .uv-cache build --package quantops-scheduler --offline
@@ -76,13 +76,11 @@ does not include it in `PATH`. Docker, GNU Make, and Terraform remain absent fro
 
 ## Exact next action
 
-Complete the remaining ADR topics for MLflow reproducibility and optional infrastructure profiles,
-then add browser accessibility/critical-path automation if dependencies can be introduced safely.
-On a Docker-capable clean host, run the remaining PostgreSQL/Redpanda/container gates before creating
-a release tag or calling the project complete.
+Add browser accessibility/critical-path automation if dependencies can be introduced safely. On a
+Docker-capable clean host, run the remaining PostgreSQL/Redpanda/container gates before creating a
+release tag or calling the project complete.
 
 ## Working tree expectation
 
-The current work belongs to `agent/portfolio-polish`. Commit and push the interview/AI-development
-documentation as one scope, preserve `origin`, and inspect `git status --short --branch` before
-future edits.
+The current work belongs to `agent/portfolio-polish`. Commit and push the MLflow/optional-profile ADRs
+as their own scope, preserve `origin`, and inspect `git status --short --branch` before future edits.

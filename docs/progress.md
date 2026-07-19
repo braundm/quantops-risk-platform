@@ -536,7 +536,8 @@ pnpm --filter @quantops/web build
 - [x] Capture seven actual running-product images for the landing page, dashboard, scenario/stress,
   grounded brief, model/drift, and data-quality views.
 - [x] Keep architecture diagrams, methodology, model/AI cards, engineering evidence, runbooks,
-  threat model, and core ADRs linked and factual.
+  threat model, and all ten required decision topics linked and factual, including MLflow
+  reproducibility and safely optional infrastructure profiles.
 - [x] Add the interview guide with pitch, walkthrough, demo, domain explanations, 30 technical
   questions, ten trade-off questions, concepts, and personal owner exercises.
 - [x] Add a truthful AI-assisted-development record with observed verification, concrete corrected
