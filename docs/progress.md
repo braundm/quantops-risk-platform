@@ -461,6 +461,8 @@ future design and is not claimed.
 - [x] Document system, batch, streaming, risk/evidence, AI, and ML architecture flows.
 - [x] Add eight incident runbooks with detection, impact, diagnosis, safe mitigation, recovery, and
   verification.
+- [x] Add explicit backup/restore guidance, migration policy, a blameless sanitized postmortem
+  template, and an observability contract for the deferred telemetry profile.
 - [x] Keep API image multi-stage/non-root and build the grounded-AI wheel before the dependent API.
 - [ ] Add structured telemetry, bounded metrics, traces, and a verified optional observability profile.
 - [ ] Run core/optional Docker profiles and verify health, readiness, and graceful shutdown.
