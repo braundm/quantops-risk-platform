@@ -186,10 +186,39 @@ Verified risk-engine gates:
 
 The benchmark is a local observation, not a universal SLA.
 
-## Milestones 4–5
+## Milestone 4 — application API
 
 - [ ] Milestone 4 — application API.
-- [ ] Milestone 5 — frontend product.
+
+## Milestone 5 — frontend product
+
+- [x] Responsive product routes, navigation, design system, and deterministic demo adapter.
+- [x] Dashboard, portfolio, scenario, evidence/brief, market, model, pipeline, audit,
+  methodology, and architecture views.
+- [x] Loading, empty, error, stale, partial, insufficient-history, and offline states.
+- [x] Frontend fixture risk/scenario values reconciled to the current API demo service.
+- [ ] Generated OpenAPI client and live API integration.
+- [ ] Automated accessibility scan and full keyboard/browser end-to-end suite.
+
+Verified frontend gates:
+
+```text
+pnpm --filter @quantops/web lint
+pnpm --filter @quantops/web typecheck
+# both exit 0
+
+pnpm --filter @quantops/web test
+# exit 0; 2 files, 14 tests passed
+
+pnpm --filter @quantops/web build
+# exit 0; 29 modules; JS 280.31 kB (80.75 kB gzip), CSS 48.38 kB (10.50 kB gzip)
+```
+
+Browser QA exercised the landing page, dashboard, scenario selection/custom validation, evidence
+briefs, desktop layout, and a 390 x 844 responsive viewport. No console warnings/errors or body
+horizontal overflow were observed. The mobile navigation scrollbar and scenario-export decimal
+rounding were corrected from that review. Milestone 5 remains incomplete until the generated API
+client, live integration, and automated accessibility/e2e gates are present.
 
 ## Milestone 6 — streaming and outbox
 

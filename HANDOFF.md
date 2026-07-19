@@ -4,7 +4,7 @@ Last updated: 2026-07-19
 
 ## Current state
 
-The repository began empty. The authoritative master specification has been read in full. Milestone 0 is committed as `102406d`, domain as `af3ac48`, risk as `1027ef2`, deterministic data as `f747731`, and PostgreSQL persistence as `9bdd210`. The standalone event-contract package passes 43 tests at 94% combined branch coverage and is ready for its focused commit. A real clean-database migration remains unverified because PostgreSQL/Docker is unavailable.
+The repository began empty. The authoritative master specification has been read in full. Milestone 0 is committed as `102406d`, domain as `af3ac48`, risk as `1027ef2`, deterministic data as `f747731`, PostgreSQL persistence as `9bdd210`, and event contracts as `764b545`. The complete deterministic frontend route set passes 14 tests and production build, and its risk/scenario values match the current API fixture. A real clean-database migration remains unverified because PostgreSQL/Docker is unavailable.
 
 ## Architecture in force
 
@@ -51,11 +51,12 @@ pnpm --filter @quantops/web build
 
 ## Exact next action
 
-Commit the versioned event-contract package, then continue application services/API. Connect
-idempotent database seeding and live persistence integration when PostgreSQL is available.
+Commit the verified frontend foundation, then finish reviewing and commit the application API and
+offline ML lifecycle. Connect idempotent database seeding and live persistence integration when
+PostgreSQL is available.
 
 ## Uncommitted changes
 
-`packages/data_contracts`, its root workspace/lock integration, and this handoff update are
-uncommitted. Frontend Milestone 5 work may also be in progress; inspect `git status` before
-modifying `apps/web`.
+The frontend foundation and this handoff update are uncommitted. Application API, ML lifecycle,
+security/architecture documents, root workspace/lock changes, and grounded-AI work are separate
+in-progress scopes; inspect `git status` before modifying them.
