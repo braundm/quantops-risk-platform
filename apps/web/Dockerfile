@@ -11,7 +11,7 @@ RUN pnpm install --frozen-lockfile
 COPY apps/web apps/web
 RUN pnpm --filter @quantops/web build
 
-FROM nginx:1.29.4-alpine AS runtime
+FROM nginx:1.31.4-alpine AS runtime
 COPY apps/web/nginx.conf /etc/nginx/conf.d/default.conf
 COPY --from=builder /workspace/apps/web/dist /usr/share/nginx/html
 RUN mkdir -p /var/cache/nginx \
