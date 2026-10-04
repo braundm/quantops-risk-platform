@@ -4,7 +4,7 @@ import { expect, test, type Page } from "@playwright/test";
 const portfolioId = "11111111-1111-4111-8111-111111111111";
 
 const auditedPages = [
-  { name: "landing", path: "/" },
+  { name: "landing", path: "/research" },
   { name: "dashboard", path: "/dashboard" },
   { name: "scenario lab", path: `/portfolios/${portfolioId}/scenarios` },
   { name: "grounded brief", path: `/portfolios/${portfolioId}/briefs` },
@@ -39,7 +39,7 @@ test.describe("accessibility smoke", () => {
 });
 
 test("keyboard entry, scenario result, and evidence citation remain navigable", async ({ page }) => {
-  await page.goto("/");
+  await page.goto("/research");
 
   const skipLink = page.getByRole("link", { name: "Skip to main content" });
   await page.keyboard.press("Tab");

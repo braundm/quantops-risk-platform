@@ -1,8 +1,73 @@
 # QuantOps implementation progress
 
-Last updated: 2026-07-19
+Last updated: 2026-10-04
 
 This file records observed results only. An unchecked item is not implemented or has not yet met its exit evidence.
+
+## Retail first vertical flow — 2026-10-04
+
+- [x] Preserve React/FastAPI, pure valuation/scenario calculations and existing research routes.
+- [x] Connect the Polish personal workspace to stateless FastAPI calculations.
+- [x] Verify manual/current-position CSV inputs, signed values, cash, quotation-currency exposures
+  and concentration; reject unsupported derivatives and contract multipliers.
+- [x] Verify combined price/FX sensitivity, short/long hedge direction, no/partial/full forward
+  payoffs, separate costs, theoretical carry and oversized initial hedges after asset losses.
+- [x] Verify readable report contents, stale-result invalidation, local restore/delete, base-currency
+  rate reset, synthetic provenance and responsive keyboard/axe accessibility.
+- [x] Document synthetic inputs, missing history, stale prices, no ETF look-through, model exclusions
+  and actual/deferred scope in `docs/retail-first-flow.md`.
+- [ ] Implement onboarding, user historical-risk data, educational decision experiment, complete cost
+  ledger, persistence/tenant authentication and broker-specific read-only adapters.
+
+Observed scoped gates:
+
+```text
+.venv\Scripts\python.exe -m pytest apps/api/tests packages/risk_engine/tests -q -o cache_dir=artifacts/pytest-retail-cache
+# exit 0; 190 passed, 1 PostgreSQL integration test skipped, 14 subtests passed
+
+.venv\Scripts\python.exe scripts/typecheck.py --group api --group risk
+# exit 0; 35 API files and 30 risk files checked under strict mypy
+
+pnpm --filter @quantops/web lint
+pnpm --filter @quantops/web typecheck
+pnpm --filter @quantops/web test
+pnpm --filter @quantops/web build
+pnpm --filter @quantops/web test:e2e
+# exit 0; 14 Vitest tests, production build, 22 desktop/mobile Playwright tests
+
+.venv\Scripts\ruff.exe check <changed Python files>
+.venv\Scripts\ruff.exe format --check <changed Python files>
+# exit 0; lint passed and all 6 changed Python files already formatted
+
+.venv\Scripts\python.exe scripts/security_scan.py
+.venv\Scripts\python.exe scripts/docs_check.py
+git diff --check
+# exit 0; no high-confidence secret/hygiene findings, 48 Markdown files checked, clean diff
+```
+
+Initial verification caught an outdated exact route-set assertion (updated with the three new
+retail endpoints), global research-table colors leaking into the light personal workspace (fixed
+with scoped colors), and parallel browser tests exhausting the production-default 20/minute limit.
+The test server alone uses a 1000/minute budget; a dedicated API test verifies the normal configurable
+429 response and Retry-After header. Existing pytest cache permissions required a fresh ignored
+`artifacts/pytest-retail-cache`; no test or warning check was disabled. The public OpenAPI snapshot
+was regenerated and its existing equality gate passes. The owner subsequently explicitly
+authorized recording these changes in Git and publishing them to GitHub on 2026-10-04. This
+authorization overrides the prior publication restriction for this change; it does not mark the
+retail MVP or master-spec Definition of Done complete. Use the existing branch and draft PR #11.
+
+The entire retail MVP remains open. The completed scope is the specifically requested first flow:
+portfolio → exposures → currency scenario → hedge comparison, plus CSV, local data controls,
+before/after valuation and report export.
+
+Local preview started with the documented commands on loopback ports 8000 and 5173. A direct
+health request and a Vite-proxied demo request returned the healthy API and four synthetic positions.
+The Codex browser-panel opening request was queued by the app; use `http://127.0.0.1:5173/` directly
+if the preview panel is not visible. Development processes remain running for the owner to inspect.
+
+Pre-publication repository security, documentation and whitespace checks passed again. The commit
+contains only the 22 source, test, contract, example and documentation files belonging to this flow;
+preview artifacts, build output and test caches are excluded. No merge or release is requested.
 
 ## Milestone 0 — discovery and foundation
 

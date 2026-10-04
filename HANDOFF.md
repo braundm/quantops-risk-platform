@@ -1,6 +1,37 @@
 # QuantOps handoff
 
-Last updated: 2026-07-19
+Last updated: 2026-10-04
+
+## Retail flow added on 2026-10-04
+
+The default `/` route now serves a Polish personal portfolio workspace connected to FastAPI.
+The former landing page is preserved at `/research`; existing research routes and risk calculations
+remain available. See `docs/retail-first-flow.md` for launch commands, the full CSV mapping, model
+assumptions, local data handling and the actual/synthetic/deferred capability split.
+
+Implemented and verified: manual current positions, atomic CSV preview/confirm, signed spot
+valuation and exposures, concentration, combined asset/FX shocks, no/partial/full signed forward
+comparisons with entry/holding estimates, before/after valuation, explicit local save/restore/delete,
+readable report export and stale-result invalidation. Synthetic origin is retained in the example
+CSV and modified fictional holdings. New portfolios require user FX; changing base currency clears
+foreign rates instead of silently reusing rates with different units. The API is stateless and
+rate-limited; it adds no hosted user accounts or PostgreSQL persistence.
+
+Scoped gates: 190 API/risk Python tests and 14 subtests passed; one PostgreSQL test skipped because
+no isolated database was configured. API/risk strict typechecks passed. Frontend lint, typecheck,
+14 Vitest tests, production build and 22 desktop/mobile Playwright tests passed, including report
+contents, CSV rejection, local data deletion and axe checks. Exact commands are in `docs/progress.md`.
+
+Next retail action: add aligned historical price/FX inputs and transaction/flow contracts, connect
+the existing historical risk core to user portfolios, and implement the educational decision
+experiment without future-data leakage. Onboarding and broker-specific read-only adapters remain
+separate deferred work. This is the requested first vertical flow, not completion of the entire
+retail MVP or the original master-spec Definition of Done. The owner explicitly authorized a Git
+commit and GitHub publication on 2026-10-04, overriding the earlier publication restriction for
+this change. Publish on the existing `agent/portfolio-polish` branch and update draft PR #11;
+do not merge or create a release tag as part of this request.
+
+## Previous research baseline (2026-07-19)
 
 ## Current state
 

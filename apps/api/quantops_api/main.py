@@ -9,6 +9,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from quantops_api import __version__
 from quantops_api.api.middleware import FixedWindowRateLimiter, request_context_middleware
 from quantops_api.api.problems import install_problem_handlers
+from quantops_api.api.retail import router as retail_router
 from quantops_api.api.router import router
 from quantops_api.application.ai_service import DeterministicAiApplicationService
 from quantops_api.application.demo_service import DemoQuantOpsService
@@ -76,6 +77,7 @@ def create_app(
     application.middleware("http")(request_context_middleware)
     install_problem_handlers(application)
     application.include_router(router)
+    application.include_router(retail_router)
     return application
 
 

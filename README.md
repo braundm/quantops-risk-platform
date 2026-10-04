@@ -11,7 +11,28 @@ QuantOps is a production-style portfolio project for reproducible multi-asset ma
 
 ![QuantOps risk dashboard](docs/images/quantops-dashboard.png)
 
-> **Observed status:** the deterministic domain, risk, data-quality, API, UI, ML, AI, event-contract, broker-neutral streaming, scheduling-core, and read-only MCP boundaries are implemented and tested. The UI currently uses a typed local demo adapter and the API uses a deterministic process-local service. Live PostgreSQL, Redpanda, Airflow, MLflow, and observability profiles remain environment-dependent and are not claimed as verified. See [implementation progress](docs/progress.md).
+> **Observed status:** the Polish personal workspace now connects to FastAPI for portfolio valuation, quotation-currency exposures, combined price/FX scenarios and model-forward comparisons. The existing research UI uses a typed local demo adapter and its API uses a deterministic process-local service. Live PostgreSQL, Redpanda, Airflow, MLflow, and observability profiles remain environment-dependent and are not claimed as verified. See [implementation progress](docs/progress.md).
+
+## Personal portfolio: first working flow
+
+The default page is a Polish portfolio workspace with a visibly synthetic demo, manual positions,
+CSV preview and confirmation, signed exposures, concentration, hypothetical price/FX shocks,
+no/partial/full forward comparisons, separate cost estimates, local save/delete, before/after
+valuation and a readable report. The existing research landing page remains at `/research`.
+
+After workspace setup, run these commands in two terminals from the repository root:
+
+```powershell
+.venv\Scripts\python.exe -m uvicorn quantops_api.main:app --host 127.0.0.1 --port 8000
+pnpm --filter @quantops/web dev --host 127.0.0.1
+```
+
+Open `http://localhost:5173/`. No database, Docker, broker credentials or market provider is needed.
+The first flow uses spot equities, ETFs and cash; its forward is a terminal educational model,
+not a broker quote. Historical risk for user portfolios, onboarding, the educational decision
+experiment, complete cost accounting and MT5/Bossa adapters remain deferred. See the
+[flow, CSV mapping, model assumptions and limitations](docs/retail-first-flow.md) and the
+[synthetic CSV example](data/retail-synthetic-positions.csv).
 
 ## The problem
 

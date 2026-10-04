@@ -542,6 +542,290 @@
         "title": "AiValidationResponse",
         "type": "object"
       },
+      "AnalysisRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "annual_holding_bps": {
+            "anyOf": [
+              {
+                "maximum": 10000.0,
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}|(?=[\\d.]{1,25}0*$)\\d{0,14}\\.\\d{0,10}0*$)",
+                "type": "string"
+              }
+            ],
+            "default": "0",
+            "title": "Annual Holding Bps"
+          },
+          "asset_shock": {
+            "anyOf": [
+              {
+                "maximum": 5.0,
+                "minimum": -1.0,
+                "type": "number"
+              },
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}|(?=[\\d.]{1,25}0*$)\\d{0,14}\\.\\d{0,10}0*$)",
+                "type": "string"
+              }
+            ],
+            "default": "0",
+            "title": "Asset Shock"
+          },
+          "base_rate": {
+            "anyOf": [
+              {
+                "maximum": 1.0,
+                "minimum": -0.1,
+                "type": "number"
+              },
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}|(?=[\\d.]{1,25}0*$)\\d{0,14}\\.\\d{0,10}0*$)",
+                "type": "string"
+              }
+            ],
+            "default": "0.04",
+            "title": "Base Rate"
+          },
+          "currency": {
+            "default": "USD",
+            "title": "Currency",
+            "type": "string"
+          },
+          "days": {
+            "default": 90,
+            "maximum": 3650.0,
+            "minimum": 1.0,
+            "title": "Days",
+            "type": "integer"
+          },
+          "entry_bps": {
+            "anyOf": [
+              {
+                "maximum": 10000.0,
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}|(?=[\\d.]{1,25}0*$)\\d{0,14}\\.\\d{0,10}0*$)",
+                "type": "string"
+              }
+            ],
+            "default": "10",
+            "title": "Entry Bps"
+          },
+          "foreign_rate": {
+            "anyOf": [
+              {
+                "maximum": 1.0,
+                "minimum": -0.1,
+                "type": "number"
+              },
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}|(?=[\\d.]{1,25}0*$)\\d{0,14}\\.\\d{0,10}0*$)",
+                "type": "string"
+              }
+            ],
+            "default": "0.03",
+            "title": "Foreign Rate"
+          },
+          "fx_shock": {
+            "anyOf": [
+              {
+                "exclusiveMinimum": -1.0,
+                "maximum": 5.0,
+                "type": "number"
+              },
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}|(?=[\\d.]{1,25}0*$)\\d{0,14}\\.\\d{0,10}0*$)",
+                "type": "string"
+              }
+            ],
+            "default": "-0.1",
+            "title": "Fx Shock"
+          },
+          "hedge_ratio": {
+            "anyOf": [
+              {
+                "maximum": 1.0,
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}|(?=[\\d.]{1,25}0*$)\\d{0,14}\\.\\d{0,10}0*$)",
+                "type": "string"
+              }
+            ],
+            "default": "0.5",
+            "title": "Hedge Ratio"
+          },
+          "portfolio": {
+            "$ref": "#/components/schemas/Portfolio-Input"
+          }
+        },
+        "required": [
+          "portfolio"
+        ],
+        "title": "AnalysisRequest",
+        "type": "object"
+      },
+      "AnalysisResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "base_currency": {
+            "title": "Base Currency",
+            "type": "string"
+          },
+          "calculated_at": {
+            "format": "date-time",
+            "title": "Calculated At",
+            "type": "string"
+          },
+          "cash_value": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Cash Value",
+            "type": "string"
+          },
+          "concentration": {
+            "anyOf": [
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Concentration"
+          },
+          "exposures": {
+            "items": {
+              "$ref": "#/components/schemas/Exposure"
+            },
+            "title": "Exposures",
+            "type": "array"
+          },
+          "gross_exposure": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Gross Exposure",
+            "type": "string"
+          },
+          "gross_to_equity": {
+            "anyOf": [
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gross To Equity"
+          },
+          "hedges": {
+            "items": {
+              "$ref": "#/components/schemas/HedgeResult"
+            },
+            "title": "Hedges",
+            "type": "array"
+          },
+          "historical_risk_status": {
+            "const": "insufficient_data",
+            "default": "insufficient_data",
+            "title": "Historical Risk Status",
+            "type": "string"
+          },
+          "impact_fraction": {
+            "anyOf": [
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Impact Fraction"
+          },
+          "model_version": {
+            "default": "retail-fx-forward@1.0.0",
+            "title": "Model Version",
+            "type": "string"
+          },
+          "net_exposure": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Net Exposure",
+            "type": "string"
+          },
+          "net_value": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Net Value",
+            "type": "string"
+          },
+          "positions": {
+            "items": {
+              "$ref": "#/components/schemas/PositionResult"
+            },
+            "title": "Positions",
+            "type": "array"
+          },
+          "run_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Run Id"
+          },
+          "source": {
+            "enum": [
+              "synthetic",
+              "user",
+              "mixed"
+            ],
+            "title": "Source",
+            "type": "string"
+          },
+          "unhedged_impact": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Unhedged Impact",
+            "type": "string"
+          },
+          "warnings": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Warnings",
+            "type": "array"
+          }
+        },
+        "required": [
+          "calculated_at",
+          "run_id",
+          "base_currency",
+          "source",
+          "net_value",
+          "cash_value",
+          "gross_exposure",
+          "net_exposure",
+          "gross_to_equity",
+          "concentration",
+          "unhedged_impact",
+          "impact_fraction",
+          "positions",
+          "exposures",
+          "hedges",
+          "warnings"
+        ],
+        "title": "AnalysisResponse",
+        "type": "object"
+      },
       "AuditEventResponse": {
         "additionalProperties": false,
         "properties": {
@@ -626,6 +910,76 @@
         ],
         "title": "ClaimType",
         "type": "string"
+      },
+      "CsvIssue": {
+        "additionalProperties": false,
+        "properties": {
+          "message": {
+            "title": "Message",
+            "type": "string"
+          },
+          "row": {
+            "title": "Row",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "row",
+          "message"
+        ],
+        "title": "CsvIssue",
+        "type": "object"
+      },
+      "CsvPreview": {
+        "additionalProperties": false,
+        "properties": {
+          "errors": {
+            "items": {
+              "$ref": "#/components/schemas/CsvIssue"
+            },
+            "title": "Errors",
+            "type": "array"
+          },
+          "import_kind": {
+            "const": "current_positions",
+            "default": "current_positions",
+            "title": "Import Kind",
+            "type": "string"
+          },
+          "importable": {
+            "title": "Importable",
+            "type": "boolean"
+          },
+          "positions": {
+            "items": {
+              "$ref": "#/components/schemas/Holding-Output"
+            },
+            "title": "Positions",
+            "type": "array"
+          }
+        },
+        "required": [
+          "positions",
+          "errors",
+          "importable"
+        ],
+        "title": "CsvPreview",
+        "type": "object"
+      },
+      "CsvRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "text": {
+            "maxLength": 200000,
+            "title": "Text",
+            "type": "string"
+          }
+        },
+        "required": [
+          "text"
+        ],
+        "title": "CsvRequest",
+        "type": "object"
       },
       "DataQualityIssueResponse": {
         "additionalProperties": false,
@@ -745,6 +1099,51 @@
         "title": "DataQualitySummaryResponse",
         "type": "object"
       },
+      "Exposure": {
+        "additionalProperties": false,
+        "properties": {
+          "currency": {
+            "title": "Currency",
+            "type": "string"
+          },
+          "foreign_amount": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Foreign Amount",
+            "type": "string"
+          },
+          "gross_base": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Gross Base",
+            "type": "string"
+          },
+          "net_base": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Net Base",
+            "type": "string"
+          }
+        },
+        "required": [
+          "currency",
+          "foreign_amount",
+          "net_base",
+          "gross_base"
+        ],
+        "title": "Exposure",
+        "type": "object"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail",
+            "type": "array"
+          }
+        },
+        "title": "HTTPValidationError",
+        "type": "object"
+      },
       "HealthResponse": {
         "additionalProperties": false,
         "properties": {
@@ -769,6 +1168,267 @@
           "version"
         ],
         "title": "HealthResponse",
+        "type": "object"
+      },
+      "HedgeResult": {
+        "additionalProperties": false,
+        "properties": {
+          "base_notional": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Base Notional",
+            "type": "string"
+          },
+          "entry_cost": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Entry Cost",
+            "type": "string"
+          },
+          "holding_cost": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Holding Cost",
+            "type": "string"
+          },
+          "net_payoff": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Net Payoff",
+            "type": "string"
+          },
+          "overhedged_after_shock": {
+            "title": "Overhedged After Shock",
+            "type": "boolean"
+          },
+          "payoff": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Payoff",
+            "type": "string"
+          },
+          "portfolio_impact": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Portfolio Impact",
+            "type": "string"
+          },
+          "ratio": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Ratio",
+            "type": "string"
+          },
+          "remaining_foreign_exposure": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Remaining Foreign Exposure",
+            "type": "string"
+          },
+          "signed_foreign_notional": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Signed Foreign Notional",
+            "type": "string"
+          },
+          "terminal_spot": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Terminal Spot",
+            "type": "string"
+          },
+          "terminal_value": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Terminal Value",
+            "type": "string"
+          },
+          "theoretical_forward": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Theoretical Forward",
+            "type": "string"
+          }
+        },
+        "required": [
+          "ratio",
+          "signed_foreign_notional",
+          "base_notional",
+          "remaining_foreign_exposure",
+          "theoretical_forward",
+          "terminal_spot",
+          "payoff",
+          "entry_cost",
+          "holding_cost",
+          "net_payoff",
+          "portfolio_impact",
+          "terminal_value",
+          "overhedged_after_shock"
+        ],
+        "title": "HedgeResult",
+        "type": "object"
+      },
+      "Holding-Input": {
+        "additionalProperties": false,
+        "properties": {
+          "account": {
+            "maxLength": 64,
+            "minLength": 1,
+            "title": "Account",
+            "type": "string"
+          },
+          "as_of": {
+            "format": "date-time",
+            "title": "As Of",
+            "type": "string"
+          },
+          "asset_class": {
+            "enum": [
+              "equity",
+              "etf",
+              "cash"
+            ],
+            "title": "Asset Class",
+            "type": "string"
+          },
+          "currency": {
+            "title": "Currency",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "multiplier": {
+            "anyOf": [
+              {
+                "exclusiveMinimum": 0.0,
+                "type": "number"
+              },
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}|(?=[\\d.]{1,25}0*$)\\d{0,14}\\.\\d{0,10}0*$)",
+                "type": "string"
+              }
+            ],
+            "default": "1",
+            "title": "Multiplier"
+          },
+          "price": {
+            "anyOf": [
+              {
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}|(?=[\\d.]{1,25}0*$)\\d{0,14}\\.\\d{0,10}0*$)",
+                "type": "string"
+              }
+            ],
+            "title": "Price"
+          },
+          "quantity": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}|(?=[\\d.]{1,25}0*$)\\d{0,14}\\.\\d{0,10}0*$)",
+                "type": "string"
+              }
+            ],
+            "title": "Quantity"
+          },
+          "source": {
+            "default": "user",
+            "enum": [
+              "synthetic",
+              "user"
+            ],
+            "title": "Source",
+            "type": "string"
+          },
+          "symbol": {
+            "pattern": "^[A-Z0-9][A-Z0-9._/-]{0,31}$",
+            "title": "Symbol",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "account",
+          "symbol",
+          "asset_class",
+          "currency",
+          "quantity",
+          "price",
+          "as_of"
+        ],
+        "title": "Holding",
+        "type": "object"
+      },
+      "Holding-Output": {
+        "additionalProperties": false,
+        "properties": {
+          "account": {
+            "maxLength": 64,
+            "minLength": 1,
+            "title": "Account",
+            "type": "string"
+          },
+          "as_of": {
+            "format": "date-time",
+            "title": "As Of",
+            "type": "string"
+          },
+          "asset_class": {
+            "enum": [
+              "equity",
+              "etf",
+              "cash"
+            ],
+            "title": "Asset Class",
+            "type": "string"
+          },
+          "currency": {
+            "title": "Currency",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "multiplier": {
+            "default": "1",
+            "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}|(?=[\\d.]{1,25}0*$)\\d{0,14}\\.\\d{0,10}0*$)",
+            "title": "Multiplier",
+            "type": "string"
+          },
+          "price": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}|(?=[\\d.]{1,25}0*$)\\d{0,14}\\.\\d{0,10}0*$)",
+            "title": "Price",
+            "type": "string"
+          },
+          "quantity": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}|(?=[\\d.]{1,25}0*$)\\d{0,14}\\.\\d{0,10}0*$)",
+            "title": "Quantity",
+            "type": "string"
+          },
+          "source": {
+            "default": "user",
+            "enum": [
+              "synthetic",
+              "user"
+            ],
+            "title": "Source",
+            "type": "string"
+          },
+          "symbol": {
+            "pattern": "^[A-Z0-9][A-Z0-9._/-]{0,31}$",
+            "title": "Symbol",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "account",
+          "symbol",
+          "asset_class",
+          "currency",
+          "quantity",
+          "price",
+          "as_of"
+        ],
+        "title": "Holding",
         "type": "object"
       },
       "InstrumentResponse": {
@@ -1462,6 +2122,108 @@
         "title": "PipelineRunResponse",
         "type": "object"
       },
+      "Portfolio-Input": {
+        "additionalProperties": false,
+        "properties": {
+          "base_currency": {
+            "default": "PLN",
+            "title": "Base Currency",
+            "type": "string"
+          },
+          "fx": {
+            "additionalProperties": {
+              "anyOf": [
+                {
+                  "exclusiveMinimum": 0.0,
+                  "type": "number"
+                },
+                {
+                  "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}|(?=[\\d.]{1,25}0*$)\\d{0,14}\\.\\d{0,10}0*$)",
+                  "type": "string"
+                }
+              ]
+            },
+            "title": "Fx",
+            "type": "object"
+          },
+          "fx_as_of": {
+            "format": "date-time",
+            "title": "Fx As Of",
+            "type": "string"
+          },
+          "fx_source": {
+            "default": "user",
+            "enum": [
+              "synthetic",
+              "user"
+            ],
+            "title": "Fx Source",
+            "type": "string"
+          },
+          "positions": {
+            "items": {
+              "$ref": "#/components/schemas/Holding-Input"
+            },
+            "maxItems": 200,
+            "title": "Positions",
+            "type": "array"
+          }
+        },
+        "required": [
+          "positions",
+          "fx",
+          "fx_as_of"
+        ],
+        "title": "Portfolio",
+        "type": "object"
+      },
+      "Portfolio-Output": {
+        "additionalProperties": false,
+        "properties": {
+          "base_currency": {
+            "default": "PLN",
+            "title": "Base Currency",
+            "type": "string"
+          },
+          "fx": {
+            "additionalProperties": {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}|(?=[\\d.]{1,25}0*$)\\d{0,14}\\.\\d{0,10}0*$)",
+              "type": "string"
+            },
+            "title": "Fx",
+            "type": "object"
+          },
+          "fx_as_of": {
+            "format": "date-time",
+            "title": "Fx As Of",
+            "type": "string"
+          },
+          "fx_source": {
+            "default": "user",
+            "enum": [
+              "synthetic",
+              "user"
+            ],
+            "title": "Fx Source",
+            "type": "string"
+          },
+          "positions": {
+            "items": {
+              "$ref": "#/components/schemas/Holding-Output"
+            },
+            "maxItems": 200,
+            "title": "Positions",
+            "type": "array"
+          }
+        },
+        "required": [
+          "positions",
+          "fx",
+          "fx_as_of"
+        ],
+        "title": "Portfolio",
+        "type": "object"
+      },
       "PortfolioCreate": {
         "additionalProperties": false,
         "properties": {
@@ -1681,6 +2443,62 @@
           "tags"
         ],
         "title": "PositionResponse",
+        "type": "object"
+      },
+      "PositionResult": {
+        "additionalProperties": false,
+        "properties": {
+          "currency": {
+            "title": "Currency",
+            "type": "string"
+          },
+          "gross_weight": {
+            "anyOf": [
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gross Weight"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "impact": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Impact",
+            "type": "string"
+          },
+          "stressed_value": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Stressed Value",
+            "type": "string"
+          },
+          "symbol": {
+            "title": "Symbol",
+            "type": "string"
+          },
+          "value": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Value",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "symbol",
+          "currency",
+          "value",
+          "stressed_value",
+          "impact",
+          "gross_weight"
+        ],
+        "title": "PositionResult",
         "type": "object"
       },
       "PositionWrite": {
@@ -2706,6 +3524,46 @@
           "evidence_ids"
         ],
         "title": "Uncertainty",
+        "type": "object"
+      },
+      "ValidationError": {
+        "properties": {
+          "ctx": {
+            "title": "Context",
+            "type": "object"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "title": "Location",
+            "type": "array"
+          },
+          "msg": {
+            "title": "Message",
+            "type": "string"
+          },
+          "type": {
+            "title": "Error Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError",
         "type": "object"
       },
       "VersionResponse": {
@@ -6451,6 +7309,112 @@
         "summary": "Portfolio Json Report",
         "tags": [
           "reports"
+        ]
+      }
+    },
+    "/api/v1/retail/analyze": {
+      "post": {
+        "description": "Calculate without persisting portfolios, credentials, prices or personal data.",
+        "operationId": "analyze_api_v1_retail_analyze_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AnalysisRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AnalysisResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Analyze",
+        "tags": [
+          "Local portfolio sensitivity"
+        ]
+      }
+    },
+    "/api/v1/retail/csv-preview": {
+      "post": {
+        "description": "Validate every row before confirmation; never infer transactions from holdings.",
+        "operationId": "csv_preview_api_v1_retail_csv_preview_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CsvRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CsvPreview"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Csv Preview",
+        "tags": [
+          "Local portfolio sensitivity"
+        ]
+      }
+    },
+    "/api/v1/retail/demo": {
+      "get": {
+        "description": "Return visibly fictional spot positions; these are not investment recommendations.",
+        "operationId": "demo_portfolio_api_v1_retail_demo_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Portfolio-Output"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Demo Portfolio",
+        "tags": [
+          "Local portfolio sensitivity"
         ]
       }
     },
