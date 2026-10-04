@@ -4,6 +4,44 @@ Last updated: 2026-10-04
 
 This file records observed results only. An unchecked item is not implemented or has not yet met its exit evidence.
 
+## Synthetic forecast quiz — 2026-10-04
+
+- [x] Add a no-lookahead market-direction quiz (12 synthetic charts, confidence, periodic reveal).
+- [x] Score hit/miss/sideways with calibration summary (effectiveness, Brier, buckets).
+- [x] Cover API invariants and refresh OpenAPI; wire Polish UI panel under Quiz prognoz.
+
+Observed verification:
+
+```text
+pytest apps/api/tests/test_retail_next.py -k forecast
+# 2 passed
+pytest apps/api/tests/test_health.py
+# 5 passed (OpenAPI routes + snapshot)
+apps/web: tsc + eslint
+# passed
+```
+
+## YNAB-style cash envelopes — 2026-10-04
+
+- [x] Add a local zero-based cash budget panel (Ready to Assign, envelopes, assigned/activity/available).
+- [x] Persist per-user browser state; clear on logout/delete; reset amounts on base-currency change.
+- [x] Cover envelope math with Vitest; extend retail e2e through the login/onboarding gate.
+
+Observed verification:
+
+```text
+apps/web: vitest run
+# 3 files, 20 passed (includes cashBudget tests)
+apps/web: tsc -b --pretty false
+# passed
+apps/web: eslint . --max-warnings 0
+# passed
+```
+
+E2E for the new budget panel was updated (`enterRetailWorkspace` + envelope assignment). Playwright
+browsers were unavailable in this environment (`npx playwright install` required), so the UI e2e
+was not executed here; Vitest/typecheck/lint passed.
+
 ## Retail history and education follow-up — 2026-10-04
 
 - [x] Add strict historical CSV preview/confirmation and dated-FX repricing of current units.
@@ -67,6 +105,11 @@ Updated its guardrails to require locked production-only non-editable installati
 an isolated runtime environment and the same non-root user; no runtime safety check was removed.
 The focused Dockerfile test passed (1 test); its Ruff lint/format, all documentation checks and
 diff whitespace checks passed before publication.
+
+Final hosted evidence: run `37212261658` completed successfully at commit `2cb2515`.
+All ten jobs passed, including Python tests, frontend/browser tests, dependency/security checks,
+PostgreSQL/pgvector migrations and both container builds/health smoke tests. This is hosted
+evidence; no local Docker run or full retail-product completion is claimed.
 
 ## Retail first vertical flow — 2026-10-04
 

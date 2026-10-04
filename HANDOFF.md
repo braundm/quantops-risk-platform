@@ -2,6 +2,21 @@
 
 Last updated: 2026-10-04
 
+## Synthetic forecast quiz
+
+The personal workspace includes a market-direction calibration quiz inspired by workshop-style
+forecast drills: 12 synthetic charts ending at NOW, up/down + confidence, periodic future reveal,
+and a closing calibration summary. Futures stay server-side until reveal (HMAC cursor). Distinct
+from the ten-step education lab; both are synthetic and non-advisory.
+
+## YNAB-style cash envelopes
+
+The personal workspace now includes a local zero-based cash budget (YNAB-style envelopes): monthly
+income, Ready-to-Assign, category groups, assigned/spent/available, “assign the rest”, and optional
+import of portfolio cash. State is browser-local per user id and clears with logout/delete. It is a
+liquidity planning aid, not investment advice or a transaction ledger. Retail e2e helpers enter
+through the local login and default-settings gate.
+
 ## Retail history, education and visual refinement
 
 The personal workspace now includes aligned historical price/FX CSV preview, VaR/ES, volatility,
@@ -24,8 +39,9 @@ after a locked-process interruption; the temporary repair environment was remove
 
 Hosted application, PostgreSQL, frontend and security gates passed at `6fd665f`. The container job
 found duplicate independently resolved Pydantic wheels. The follow-up Dockerfile uses one locked,
-non-editable API dependency environment and retains the unprivileged runtime. Confirm the follow-up
-hosted container job before claiming container verification; Docker is unavailable locally.
+non-editable API dependency environment and retains the unprivileged runtime. Hosted run
+`37212261658` passed all ten jobs at `2cb2515`, including API/frontend container builds and smoke
+tests. Docker remains unavailable locally; the container evidence is from GitHub Actions.
 
 Remaining work includes transaction/flow history, persisted named scenarios, authenticated durable
 storage and any separately scoped read-only data adapters. The education cursor is intentionally
