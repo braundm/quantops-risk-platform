@@ -62,6 +62,12 @@ temporary Windows environment with 35 packages. Its installed API imported succe
 produced all 1020 synthetic history rows. The temporary environment was removed afterwards.
 This verifies dependency selection and packaging, not the Linux container runtime.
 
+The first follow-up exposed a static test still expecting the retired five-wheel build layout.
+Updated its guardrails to require locked production-only non-editable installation, source copies,
+an isolated runtime environment and the same non-root user; no runtime safety check was removed.
+The focused Dockerfile test passed (1 test); its Ruff lint/format, all documentation checks and
+diff whitespace checks passed before publication.
+
 ## Retail first vertical flow — 2026-10-04
 
 - [x] Preserve React/FastAPI, pure valuation/scenario calculations and existing research routes.
