@@ -50,6 +50,18 @@ sidebar. Adding scroll containment corrected the actual layout; no accessibility
 Desktop and mobile history screenshots were visually reviewed. Optional service/production gates
 remain separate from these local checks.
 
+Hosted run `37211696446` passed all nine application, PostgreSQL, browser and security jobs.
+Its final container job exposed an existing packaging defect: separately resolved wheel builds
+collected both Pydantic 2.13.4 and 2.13.5, and wildcard installation demanded both. The API image
+now installs its production dependency closure once from `uv.lock` with non-editable workspace
+packages, then copies only the environment into the unprivileged runtime. Local Docker is
+unavailable; hosted container verification is required for this correction.
+
+The same `uv sync --locked --package quantops-api --no-dev --no-editable` command succeeded in a
+temporary Windows environment with 35 packages. Its installed API imported successfully and
+produced all 1020 synthetic history rows. The temporary environment was removed afterwards.
+This verifies dependency selection and packaging, not the Linux container runtime.
+
 ## Retail first vertical flow — 2026-10-04
 
 - [x] Preserve React/FastAPI, pure valuation/scenario calculations and existing research routes.

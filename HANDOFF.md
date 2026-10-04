@@ -22,6 +22,11 @@ Updated Python and production Node audits found no known vulnerabilities. The br
 the locked Python API required by its tests. The local Python environment was restored to 3.12
 after a locked-process interruption; the temporary repair environment was removed.
 
+Hosted application, PostgreSQL, frontend and security gates passed at `6fd665f`. The container job
+found duplicate independently resolved Pydantic wheels. The follow-up Dockerfile uses one locked,
+non-editable API dependency environment and retains the unprivileged runtime. Confirm the follow-up
+hosted container job before claiming container verification; Docker is unavailable locally.
+
 Remaining work includes transaction/flow history, persisted named scenarios, authenticated durable
 storage and any separately scoped read-only data adapters. The education cursor is intentionally
 single-process and replayable; synthetic trials are not evidence of strategy performance. No full
