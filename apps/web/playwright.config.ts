@@ -33,15 +33,16 @@ export default defineConfig({
   ],
   webServer: [{
     command: process.platform === "win32"
-      ? ".venv\\Scripts\\python.exe -m uvicorn quantops_api.main:app --host 127.0.0.1 --port 8000"
-      : ".venv/bin/python -m uvicorn quantops_api.main:app --host 127.0.0.1 --port 8000",
+      ? ".venv\\Scripts\\python.exe -m uvicorn quantops_api.main:app --host 127.0.0.1 --port 8001"
+      : ".venv/bin/python -m uvicorn quantops_api.main:app --host 127.0.0.1 --port 8001",
     cwd: "../..",
     env: { QUANTOPS_EXPENSIVE_RATE_LIMIT: "1000" },
-    url: "http://127.0.0.1:8000/api/v1/health",
+    url: "http://127.0.0.1:8001/api/v1/health",
     reuseExistingServer: !isCi,
     timeout: 120_000,
   }, {
     command: "pnpm exec vite --host 127.0.0.1 --port 4173 --configLoader runner",
+    env: { QUANTOPS_API_URL: "http://127.0.0.1:8001" },
     url: "http://127.0.0.1:4173",
     reuseExistingServer: !isCi,
     timeout: 120_000,

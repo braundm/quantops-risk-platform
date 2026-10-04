@@ -911,6 +911,128 @@
         "title": "ClaimType",
         "type": "string"
       },
+      "CostBudget": {
+        "additionalProperties": false,
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/CostItem"
+            },
+            "maxItems": 200,
+            "title": "Items",
+            "type": "array"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "title": "CostBudget",
+        "type": "object"
+      },
+      "CostItem": {
+        "additionalProperties": false,
+        "properties": {
+          "amount": {
+            "anyOf": [
+              {
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}|(?=[\\d.]{1,25}0*$)\\d{0,14}\\.\\d{0,10}0*$)",
+                "type": "string"
+              }
+            ],
+            "title": "Amount"
+          },
+          "category": {
+            "enum": [
+              "commission",
+              "spread",
+              "conversion",
+              "financing",
+              "product",
+              "slippage",
+              "hedge",
+              "rebalance"
+            ],
+            "title": "Category",
+            "type": "string"
+          },
+          "frequency": {
+            "enum": [
+              "one_off",
+              "monthly",
+              "annual"
+            ],
+            "title": "Frequency",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "included_in_prices": {
+            "default": false,
+            "title": "Included In Prices",
+            "type": "boolean"
+          },
+          "source": {
+            "enum": [
+              "actual",
+              "estimated",
+              "user"
+            ],
+            "title": "Source",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "category",
+          "amount",
+          "frequency",
+          "source"
+        ],
+        "title": "CostItem",
+        "type": "object"
+      },
+      "CostSummary": {
+        "additionalProperties": false,
+        "properties": {
+          "excluded_from_total": {
+            "items": {
+              "format": "uuid",
+              "type": "string"
+            },
+            "title": "Excluded From Total",
+            "type": "array"
+          },
+          "model_version": {
+            "default": "cost-budget@1.0.0",
+            "title": "Model Version",
+            "type": "string"
+          },
+          "one_off": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "One Off",
+            "type": "string"
+          },
+          "recurring_annual": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Recurring Annual",
+            "type": "string"
+          }
+        },
+        "required": [
+          "one_off",
+          "recurring_annual",
+          "excluded_from_total"
+        ],
+        "title": "CostSummary",
+        "type": "object"
+      },
       "CsvIssue": {
         "additionalProperties": false,
         "properties": {
@@ -1256,6 +1378,402 @@
         "title": "HedgeResult",
         "type": "object"
       },
+      "HistoricalRisk": {
+        "additionalProperties": false,
+        "properties": {
+          "base_currency": {
+            "title": "Base Currency",
+            "type": "string"
+          },
+          "confidence": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Confidence",
+            "type": "string"
+          },
+          "correlation_symbols": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Correlation Symbols",
+            "type": "array"
+          },
+          "correlations": {
+            "items": {
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "type": "array"
+            },
+            "title": "Correlations",
+            "type": "array"
+          },
+          "daily_volatility": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Daily Volatility"
+          },
+          "es_amount": {
+            "anyOf": [
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Es Amount"
+          },
+          "es_fraction": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Es Fraction"
+          },
+          "maximum_drawdown": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Maximum Drawdown"
+          },
+          "model_version": {
+            "default": "current-units-history@1.0.0",
+            "title": "Model Version",
+            "type": "string"
+          },
+          "observation_count": {
+            "title": "Observation Count",
+            "type": "integer"
+          },
+          "period_end": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Period End"
+          },
+          "period_start": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Period Start"
+          },
+          "points": {
+            "items": {
+              "$ref": "#/components/schemas/HistoryPoint"
+            },
+            "title": "Points",
+            "type": "array"
+          },
+          "required_observations": {
+            "title": "Required Observations",
+            "type": "integer"
+          },
+          "source": {
+            "enum": [
+              "synthetic",
+              "user",
+              "mixed"
+            ],
+            "title": "Source",
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "ok",
+              "insufficient_data",
+              "invalid_data",
+              "unstable"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "tail_count": {
+            "default": 0,
+            "title": "Tail Count",
+            "type": "integer"
+          },
+          "var_amount": {
+            "anyOf": [
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Var Amount"
+          },
+          "var_fraction": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Var Fraction"
+          },
+          "warnings": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Warnings",
+            "type": "array"
+          }
+        },
+        "required": [
+          "status",
+          "source",
+          "base_currency",
+          "confidence",
+          "observation_count",
+          "required_observations",
+          "points",
+          "warnings"
+        ],
+        "title": "HistoricalRisk",
+        "type": "object"
+      },
+      "HistoryCsv": {
+        "additionalProperties": false,
+        "properties": {
+          "text": {
+            "maxLength": 1500000,
+            "title": "Text",
+            "type": "string"
+          }
+        },
+        "required": [
+          "text"
+        ],
+        "title": "HistoryCsv",
+        "type": "object"
+      },
+      "HistoryPoint": {
+        "additionalProperties": false,
+        "properties": {
+          "date": {
+            "format": "date",
+            "title": "Date",
+            "type": "string"
+          },
+          "value": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Value",
+            "type": "string"
+          }
+        },
+        "required": [
+          "date",
+          "value"
+        ],
+        "title": "HistoryPoint",
+        "type": "object"
+      },
+      "HistoryPreview": {
+        "additionalProperties": false,
+        "properties": {
+          "errors": {
+            "items": {
+              "$ref": "#/components/schemas/CsvIssue"
+            },
+            "title": "Errors",
+            "type": "array"
+          },
+          "importable": {
+            "title": "Importable",
+            "type": "boolean"
+          },
+          "rows": {
+            "items": {
+              "$ref": "#/components/schemas/HistoryRow-Output"
+            },
+            "title": "Rows",
+            "type": "array"
+          }
+        },
+        "required": [
+          "rows",
+          "errors",
+          "importable"
+        ],
+        "title": "HistoryPreview",
+        "type": "object"
+      },
+      "HistoryRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "confidence": {
+            "anyOf": [
+              {
+                "maximum": 0.99,
+                "minimum": 0.9,
+                "type": "number"
+              },
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                "type": "string"
+              }
+            ],
+            "default": "0.95",
+            "title": "Confidence"
+          },
+          "portfolio": {
+            "$ref": "#/components/schemas/Portfolio-Input"
+          },
+          "rows": {
+            "items": {
+              "$ref": "#/components/schemas/HistoryRow-Input"
+            },
+            "maxItems": 20000,
+            "title": "Rows",
+            "type": "array"
+          }
+        },
+        "required": [
+          "portfolio",
+          "rows"
+        ],
+        "title": "HistoryRequest",
+        "type": "object"
+      },
+      "HistoryRow-Input": {
+        "additionalProperties": false,
+        "properties": {
+          "date": {
+            "format": "date",
+            "title": "Date",
+            "type": "string"
+          },
+          "fx_to_base": {
+            "anyOf": [
+              {
+                "exclusiveMinimum": 0.0,
+                "type": "number"
+              },
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}|(?=[\\d.]{1,25}0*$)\\d{0,14}\\.\\d{0,10}0*$)",
+                "type": "string"
+              }
+            ],
+            "title": "Fx To Base"
+          },
+          "price": {
+            "anyOf": [
+              {
+                "exclusiveMinimum": 0.0,
+                "type": "number"
+              },
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}|(?=[\\d.]{1,25}0*$)\\d{0,14}\\.\\d{0,10}0*$)",
+                "type": "string"
+              }
+            ],
+            "title": "Price"
+          },
+          "source": {
+            "enum": [
+              "synthetic",
+              "user"
+            ],
+            "title": "Source",
+            "type": "string"
+          },
+          "symbol": {
+            "pattern": "^[A-Z0-9][A-Z0-9._/-]{0,31}$",
+            "title": "Symbol",
+            "type": "string"
+          }
+        },
+        "required": [
+          "date",
+          "symbol",
+          "price",
+          "fx_to_base",
+          "source"
+        ],
+        "title": "HistoryRow",
+        "type": "object"
+      },
+      "HistoryRow-Output": {
+        "additionalProperties": false,
+        "properties": {
+          "date": {
+            "format": "date",
+            "title": "Date",
+            "type": "string"
+          },
+          "fx_to_base": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}|(?=[\\d.]{1,25}0*$)\\d{0,14}\\.\\d{0,10}0*$)",
+            "title": "Fx To Base",
+            "type": "string"
+          },
+          "price": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}|(?=[\\d.]{1,25}0*$)\\d{0,14}\\.\\d{0,10}0*$)",
+            "title": "Price",
+            "type": "string"
+          },
+          "source": {
+            "enum": [
+              "synthetic",
+              "user"
+            ],
+            "title": "Source",
+            "type": "string"
+          },
+          "symbol": {
+            "pattern": "^[A-Z0-9][A-Z0-9._/-]{0,31}$",
+            "title": "Symbol",
+            "type": "string"
+          }
+        },
+        "required": [
+          "date",
+          "symbol",
+          "price",
+          "fx_to_base",
+          "source"
+        ],
+        "title": "HistoryRow",
+        "type": "object"
+      },
       "Holding-Input": {
         "additionalProperties": false,
         "properties": {
@@ -1507,6 +2025,261 @@
           "metadata"
         ],
         "title": "InstrumentResponse",
+        "type": "object"
+      },
+      "LabChoice": {
+        "additionalProperties": false,
+        "properties": {
+          "confidence": {
+            "anyOf": [
+              {
+                "maximum": 1.0,
+                "minimum": 0.5,
+                "type": "number"
+              },
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                "type": "string"
+              }
+            ],
+            "title": "Confidence"
+          },
+          "cost_bps": {
+            "anyOf": [
+              {
+                "maximum": 1000.0,
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                "type": "string"
+              }
+            ],
+            "default": "10",
+            "title": "Cost Bps"
+          },
+          "direction": {
+            "enum": [
+              "up",
+              "down",
+              "skip"
+            ],
+            "title": "Direction",
+            "type": "string"
+          },
+          "token": {
+            "maxLength": 1000,
+            "title": "Token",
+            "type": "string"
+          }
+        },
+        "required": [
+          "token",
+          "direction",
+          "confidence"
+        ],
+        "title": "LabChoice",
+        "type": "object"
+      },
+      "LabOutcome": {
+        "additionalProperties": false,
+        "properties": {
+          "benchmark_return": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Benchmark Return",
+            "type": "string"
+          },
+          "brier_score": {
+            "anyOf": [
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Brier Score"
+          },
+          "confidence": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Confidence",
+            "type": "string"
+          },
+          "correct": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Correct"
+          },
+          "cost": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Cost",
+            "type": "string"
+          },
+          "direction": {
+            "enum": [
+              "up",
+              "down",
+              "skip"
+            ],
+            "title": "Direction",
+            "type": "string"
+          },
+          "gross_return": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Gross Return",
+            "type": "string"
+          },
+          "market_return": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Market Return",
+            "type": "string"
+          },
+          "net_return": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Net Return",
+            "type": "string"
+          },
+          "step": {
+            "title": "Step",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "step",
+          "direction",
+          "confidence",
+          "correct",
+          "market_return",
+          "gross_return",
+          "net_return",
+          "benchmark_return",
+          "cost",
+          "brier_score"
+        ],
+        "title": "LabOutcome",
+        "type": "object"
+      },
+      "LabRound": {
+        "additionalProperties": false,
+        "properties": {
+          "correct_count": {
+            "default": 0,
+            "title": "Correct Count",
+            "type": "integer"
+          },
+          "cumulative_benchmark": {
+            "default": "0",
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Cumulative Benchmark",
+            "type": "string"
+          },
+          "cumulative_cost": {
+            "default": "0",
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Cumulative Cost",
+            "type": "string"
+          },
+          "cumulative_gross": {
+            "default": "0",
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Cumulative Gross",
+            "type": "string"
+          },
+          "cumulative_net": {
+            "default": "0",
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Cumulative Net",
+            "type": "string"
+          },
+          "exercise": {
+            "title": "Exercise",
+            "type": "integer"
+          },
+          "max_steps": {
+            "default": 10,
+            "title": "Max Steps",
+            "type": "integer"
+          },
+          "mean_brier": {
+            "anyOf": [
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Mean Brier"
+          },
+          "mean_confidence": {
+            "anyOf": [
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Mean Confidence"
+          },
+          "model_version": {
+            "default": "anonymous-synthetic-lab@1.0.0",
+            "title": "Model Version",
+            "type": "string"
+          },
+          "outcome": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/LabOutcome"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "step": {
+            "title": "Step",
+            "type": "integer"
+          },
+          "synthetic": {
+            "default": true,
+            "title": "Synthetic",
+            "type": "boolean"
+          },
+          "token": {
+            "title": "Token",
+            "type": "string"
+          },
+          "traded_count": {
+            "default": 0,
+            "title": "Traded Count",
+            "type": "integer"
+          },
+          "visible_prices": {
+            "items": {
+              "type": "number"
+            },
+            "title": "Visible Prices",
+            "type": "array"
+          }
+        },
+        "required": [
+          "token",
+          "exercise",
+          "step",
+          "visible_prices"
+        ],
+        "title": "LabRound",
         "type": "object"
       },
       "MainFactor": {
@@ -2556,6 +3329,234 @@
           "average_cost"
         ],
         "title": "PositionWrite",
+        "type": "object"
+      },
+      "PreferenceReview": {
+        "additionalProperties": false,
+        "properties": {
+          "capacity_fraction": {
+            "anyOf": [
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Capacity Fraction"
+          },
+          "flags": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Flags",
+            "type": "array"
+          },
+          "model_version": {
+            "default": "explanation-preferences@1.0.0",
+            "title": "Model Version",
+            "type": "string"
+          },
+          "willingness_amount_from_fraction": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Willingness Amount From Fraction",
+            "type": "string"
+          }
+        },
+        "required": [
+          "willingness_amount_from_fraction",
+          "capacity_fraction",
+          "flags"
+        ],
+        "title": "PreferenceReview",
+        "type": "object"
+      },
+      "Preferences": {
+        "additionalProperties": false,
+        "properties": {
+          "asset_experience": {
+            "additionalProperties": {
+              "enum": [
+                "none",
+                "basic",
+                "experienced"
+              ],
+              "type": "string"
+            },
+            "propertyNames": {
+              "enum": [
+                "equity",
+                "etf",
+                "bonds",
+                "forex",
+                "options"
+              ]
+            },
+            "title": "Asset Experience",
+            "type": "object"
+          },
+          "cash": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                "type": "string"
+              }
+            ],
+            "title": "Cash"
+          },
+          "concentration_limit": {
+            "anyOf": [
+              {
+                "maximum": 1.0,
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                "type": "string"
+              }
+            ],
+            "title": "Concentration Limit"
+          },
+          "constraints": {
+            "maxLength": 2000,
+            "title": "Constraints",
+            "type": "string"
+          },
+          "equity": {
+            "anyOf": [
+              {
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}|(?=[\\d.]{1,25}0*$)\\d{0,14}\\.\\d{0,10}0*$)",
+                "type": "string"
+              }
+            ],
+            "title": "Equity"
+          },
+          "goal": {
+            "maxLength": 300,
+            "title": "Goal",
+            "type": "string"
+          },
+          "horizon_months": {
+            "maximum": 1200.0,
+            "minimum": 1.0,
+            "title": "Horizon Months",
+            "type": "integer"
+          },
+          "liquidity_reserve": {
+            "anyOf": [
+              {
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}|(?=[\\d.]{1,25}0*$)\\d{0,14}\\.\\d{0,10}0*$)",
+                "type": "string"
+              }
+            ],
+            "title": "Liquidity Reserve"
+          },
+          "loss_capacity": {
+            "anyOf": [
+              {
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}|(?=[\\d.]{1,25}0*$)\\d{0,14}\\.\\d{0,10}0*$)",
+                "type": "string"
+              }
+            ],
+            "title": "Loss Capacity"
+          },
+          "monthly_inflow": {
+            "anyOf": [
+              {
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}|(?=[\\d.]{1,25}0*$)\\d{0,14}\\.\\d{0,10}0*$)",
+                "type": "string"
+              }
+            ],
+            "title": "Monthly Inflow"
+          },
+          "monthly_outflow": {
+            "anyOf": [
+              {
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}|(?=[\\d.]{1,25}0*$)\\d{0,14}\\.\\d{0,10}0*$)",
+                "type": "string"
+              }
+            ],
+            "title": "Monthly Outflow"
+          },
+          "understands_leverage": {
+            "title": "Understands Leverage",
+            "type": "boolean"
+          },
+          "understands_margin": {
+            "title": "Understands Margin",
+            "type": "boolean"
+          },
+          "willingness_amount": {
+            "anyOf": [
+              {
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}|(?=[\\d.]{1,25}0*$)\\d{0,14}\\.\\d{0,10}0*$)",
+                "type": "string"
+              }
+            ],
+            "title": "Willingness Amount"
+          },
+          "willingness_fraction": {
+            "anyOf": [
+              {
+                "maximum": 1.0,
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                "type": "string"
+              }
+            ],
+            "title": "Willingness Fraction"
+          }
+        },
+        "required": [
+          "equity",
+          "cash",
+          "horizon_months",
+          "goal",
+          "monthly_inflow",
+          "monthly_outflow",
+          "liquidity_reserve",
+          "willingness_fraction",
+          "willingness_amount",
+          "loss_capacity",
+          "concentration_limit",
+          "asset_experience",
+          "understands_leverage",
+          "understands_margin",
+          "constraints"
+        ],
+        "title": "Preferences",
         "type": "object"
       },
       "PriceBarResponse": {
@@ -7354,6 +8355,47 @@
         ]
       }
     },
+    "/api/v1/retail/cost-budget": {
+      "post": {
+        "operationId": "cost_budget_api_v1_retail_cost_budget_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CostBudget"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CostSummary"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Cost Budget",
+        "tags": [
+          "User assumptions and cost budgets"
+        ]
+      }
+    },
     "/api/v1/retail/csv-preview": {
       "post": {
         "description": "Validate every row before confirmation; never infer transactions from holdings.",
@@ -7415,6 +8457,218 @@
         "summary": "Demo Portfolio",
         "tags": [
           "Local portfolio sensitivity"
+        ]
+      }
+    },
+    "/api/v1/retail/history-demo": {
+      "get": {
+        "description": "Return a fixed synthetic fixture, not retrospectively selected market winners.",
+        "operationId": "demo_history_api_v1_retail_history_demo_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/HistoryRow-Output"
+                  },
+                  "title": "Response Demo History Api V1 Retail History Demo Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Demo History",
+        "tags": [
+          "Historical portfolio simulation"
+        ]
+      }
+    },
+    "/api/v1/retail/history-preview": {
+      "post": {
+        "operationId": "preview_history_api_v1_retail_history_preview_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/HistoryCsv"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HistoryPreview"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Preview History",
+        "tags": [
+          "Historical portfolio simulation"
+        ]
+      }
+    },
+    "/api/v1/retail/history-risk": {
+      "post": {
+        "description": "Reprice fixed current units on fully aligned prices and dated FX; no gap filling.",
+        "operationId": "historical_risk_api_v1_retail_history_risk_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/HistoryRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HistoricalRisk"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Historical Risk",
+        "tags": [
+          "Historical portfolio simulation"
+        ]
+      }
+    },
+    "/api/v1/retail/lab/decision": {
+      "post": {
+        "operationId": "lab_decision_api_v1_retail_lab_decision_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LabChoice"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LabRound"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Lab Decision",
+        "tags": [
+          "Synthetic education exercise"
+        ]
+      }
+    },
+    "/api/v1/retail/lab/start": {
+      "post": {
+        "operationId": "start_lab_api_v1_retail_lab_start_post",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LabRound"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Start Lab",
+        "tags": [
+          "Synthetic education exercise"
+        ]
+      }
+    },
+    "/api/v1/retail/preferences": {
+      "post": {
+        "operationId": "review_preferences_api_v1_retail_preferences_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Preferences"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PreferenceReview"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Review Preferences",
+        "tags": [
+          "User assumptions and cost budgets"
         ]
       }
     },

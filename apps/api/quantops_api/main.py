@@ -10,6 +10,9 @@ from quantops_api import __version__
 from quantops_api.api.middleware import FixedWindowRateLimiter, request_context_middleware
 from quantops_api.api.problems import install_problem_handlers
 from quantops_api.api.retail import router as retail_router
+from quantops_api.api.retail_history import router as retail_history_router
+from quantops_api.api.retail_lab import router as retail_lab_router
+from quantops_api.api.retail_planning import router as retail_planning_router
 from quantops_api.api.router import router
 from quantops_api.application.ai_service import DeterministicAiApplicationService
 from quantops_api.application.demo_service import DemoQuantOpsService
@@ -78,6 +81,9 @@ def create_app(
     install_problem_handlers(application)
     application.include_router(router)
     application.include_router(retail_router)
+    application.include_router(retail_history_router)
+    application.include_router(retail_lab_router)
+    application.include_router(retail_planning_router)
     return application
 
 

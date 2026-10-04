@@ -282,6 +282,15 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v6.0.2
+      - name: Install pinned uv and Python for the calculation API
+        uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b # v8.1.0
+        with:
+          version: ${{ env.UV_VERSION }}
+          python-version: ${{ env.PYTHON_VERSION }}
+          enable-cache: true
+          cache-dependency-glob: uv.lock
+      - name: Install locked Python workspace for browser tests
+        run: uv sync --locked --all-packages --all-groups
       - name: Install pinned pnpm
         uses: pnpm/action-setup@v6.0.8
         with:

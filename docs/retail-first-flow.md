@@ -64,7 +64,8 @@ transaction history or reconstruct historical investor returns.
 New empty portfolios require user-entered FX instead of inheriting demo rates. Local saves are
 explicit, unsencrypted browser storage under `quantops.local-portfolio.v1`, not accounts in a
 database. Restore validates the saved portfolio through the API. The delete action removes the
-stored portfolio and current positions. The stateless API never stores portfolios or user prices.
+stored portfolio, current positions and the new history, cost, survey and exercise session state.
+The stateless API never stores portfolios or user prices.
 Separate clients do not share portfolio state. Do not use local storage on a shared workstation
 for sensitive account information. Existing research-demo APIs are separate.
 
@@ -106,20 +107,62 @@ risk. A forward, leveraged FX/CFD position and currency ETF are not equivalent p
 
 Actual: manual portfolios; strict preview/confirm CSV; local save/restore/delete; Decimal valuation;
 signed exposures and concentration; combined hypothetical price/FX scenarios; terminal forward
-comparisons; entry/holding estimates; before/after valuation; report export; Polish responsive UI.
+comparisons; entry/holding estimates; before/after valuation; report export; Polish responsive UI;
+aligned historical risk, interactive charts, a cost budget and optional goals/limits survey.
 
-Synthetic: demonstration symbols, positions, prices, FX and the pre-existing research risk dataset.
+Synthetic: demonstration symbols, positions, prices, FX, history, educational exercise paths and
+the pre-existing research risk dataset.
 Demo dates are intentionally fixed. Data older than 24 hours triggers visible price/FX warnings.
 Mixing user and synthetic inputs is explicitly labelled; editing fictional holdings retains their
 synthetic origin. Rates copied from the demo retain synthetic provenance.
 
-Deferred: onboarding survey; historical prices and transaction/flow import for a user's portfolio;
-historical VaR/ES, volatility, drawdown and correlation in the personal workspace; saved scenario
-library; a complete portfolio cost ledger; constrained allocation optimization; educational
-prediction/calibration experiment; derivative valuation; tenant authentication and PostgreSQL
+Deferred: transaction/flow import and investor performance reconstruction; saved scenario
+library; a complete transaction-linked cost ledger; constrained allocation optimization;
+market-data validation of educational exercises; derivative valuation; tenant authentication and PostgreSQL
 persistence; read-only MT5/Bossa adapters. No live integration or entire retail MVP completion is
 claimed. Existing risk-core historical calculations remain available and independently tested.
 
 Broker-specific adapters require separate documented implementation. MT5 requires a local terminal
 bridge; Bossa access and data-display conditions must be verified before implementation. Neither
 is connected, and this slice adds no brokerage SDK, credentials or order submission.
+
+## Historical risk and charts
+
+The history CSV columns are `date,symbol,price,fx_to_base,source`. Preview and explicit confirmation
+validate at most 20,000 rows / 1.5 MB. Every non-base-cash holding requires identical observation
+dates, including foreign cash (price 1). Same-currency rows must use the same dated FX, base FX
+must equal 1, and duplicate date/symbol pairs or ambiguous symbol/currency mappings are rejected.
+There is no gap filling. Each date reprices the current fixed quantities using dated prices and FX;
+base-currency cash remains constant. This is not the investor's realized performance.
+
+The existing pure risk core computes empirical VaR, ES, sample volatility, drawdown and correlations.
+At least 252 returns and enough observations to expect five tail observations are required (500
+returns at 99% confidence). Insufficient samples suppress numeric risk metrics. VaR/ES fractions
+are applied to positive current net equity for monetary amounts. The horizon is one observation;
+calendar gaps are flagged, volatility is not annualized, and VaR is not a maximum loss.
+Prices must be reviewed for corporate actions; dividends, taxes, flows and transaction costs are
+not reconstructed. The 340-date example is fixed and visibly synthetic. Chart readouts are
+keyboard-accessible; changing portfolio inputs or confidence invalidates previous risk results.
+
+## Costs, preferences and education
+
+The separate cost budget accepts actual, estimated or user-entered monetary fees. One-time fees
+and annual recurring fees are separate; monthly amounts multiply by 12. Fees marked included in
+prices are excluded, preventing double counting. This budget is not automatically deducted from
+price history or the forward model. Changing base currency clears the budget.
+
+The optional survey distinguishes willingness to take losses from financial capacity, checks
+percentage/amount consistency and liquidity needs, and applies a user-selected concentration
+threshold. It does not determine product suitability or provide investment recommendations.
+Survey and cost state remain in memory for the session; only the current portfolio has an explicit
+local save action. Export includes completed risk/cost/survey results alongside scenario inputs.
+
+The education exercise uses four server-side deterministic synthetic paths. The browser sees 40
+observations initially; each decision reveals five more, for ten trials. An HMAC-signed cursor binds
+the exercise and cumulative statistics, expiring after one hour or API restart. This local prototype
+uses one API process: multiple workers would need a shared cursor key. Cursors can be replayed and
+paths revisited, so this is an educational demonstration, not a tamper-proof strategy evaluation.
+Directional returns, costs, an always-up benchmark and Brier calibration are computed by Python.
+Each trial uses an equal independent nominal; sums are not compounded strategy returns. Skips
+have zero return and cost and do not enter directional accuracy or calibration. The benchmark
+trades each trial and incurs its entered cost. No market edge can be inferred from ten synthetic trials.

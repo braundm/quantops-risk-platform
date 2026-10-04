@@ -5,7 +5,7 @@ export const retailLocales = {
     subtitle: "Zobacz ekspozycje i sprawdź konsekwencje zmian, zanim podejmiesz decyzję.",
     warnings: {
       quotation_currency_only: "Waluta notowania nie oznacza pełnej ekspozycji ekonomicznej. Brak look-through aktywów ETF.",
-      no_historical_returns: "Brak historii cen i przepływów. VaR, ES, zmienność i wyniki inwestora są niedostępne dla tego portfela.",
+      no_historical_returns: "Brak historii cen i przepływów w samej migawce pozycji. Osobny panel historii oblicza miary dla stałych ilości po wczytaniu danych; wyniki inwestora nie są rekonstruowane.",
       terminal_forward_model: "Forward: model rozliczenia w terminie, bez dyskontowania wyniku. Nie obejmuje depozytu, płynności ani ryzyka kontrahenta.",
       user_cost_estimates: "Koszty są założeniami użytkownika. Opłaty produktowe, podatki i koszty zmiany alokacji nie są tu wyliczane.",
       no_broker_quote: "Kurs forward jest teoretyczny, wyliczony z podanych stóp. Nie jest ofertą brokera. CFD i ETF nie są równoważnym zabezpieczeniem.",

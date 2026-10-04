@@ -2,7 +2,12 @@ import { useEffect, useRef, useState, type FormEvent } from "react";
 
 import { csvExample, retailRequest, type Analysis, type AnalysisInput, type CsvPreview, type Holding, type Portfolio } from "../data/retailApi";
 import { retailLocales } from "../lib/retailLocale";
+import { RiskHistoryPanel, type HistoricalRisk } from "../components/RiskHistoryPanel";
+import { EducationLab } from "../components/EducationLab";
+import { CostPanel, type CostSummary } from "../components/CostPanel";
+import { PreferencesPanel, type PreferenceReview } from "../components/PreferencesPanel";
 import "../styles/retail.css";
+import "../styles/retail-next.css";
 
 const copy = retailLocales.pl;
 const STORAGE_KEY = "quantops.local-portfolio.v1";
@@ -37,6 +42,11 @@ export function RetailPage() {
   const [portfolio, setPortfolio] = useState<Portfolio | null>(null);
   const [result, setResult] = useState<{ input: AnalysisInput; data: Analysis } | null>(null);
   const [baseline, setBaseline] = useState<Analysis | null>(null);
+  const [history, setHistory] = useState<HistoricalRisk | null>(null);
+  const [costBudget, setCostBudget] = useState<CostSummary | null>(null);
+  const [preferences, setPreferences] = useState<PreferenceReview | null>(null);
+  const [concentrationLimit, setConcentrationLimit] = useState(0.4);
+  const [sessionKey, setSessionKey] = useState(0);
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
   const [busy, setBusy] = useState(false);
@@ -110,6 +120,17 @@ export function RetailPage() {
   }
 
   function changePortfolio(next: Portfolio) { invalidate(); setPortfolio(next); }
+  function deletePersonalData() {
+    if (!portfolio) return;
+    try {
+      localStorage.removeItem(STORAGE_KEY);
+      changePortfolio({ ...portfolio, positions: [], fx: { [portfolio.base_currency]: "1" }, fx_source: "user" });
+      setSessionKey((key) => key + 1); setHistory(null); setCostBudget(null); setPreferences(null);
+      setConcentrationLimit(0.4); setBaseline(null); setCsv(""); setPreview(null); csvRequest.current++;
+      setSymbol(""); setAccount("Własny"); setQuantity("1"); setPrice("100");
+      setNotice("Usunięto lokalny zapis, pozycje, historię, koszty i odpowiedzi z bieżącej sesji.");
+    } catch { setError("Nie udało się usunąć lokalnego zapisu."); }
+  }
   function parameter(setter: (value: string) => void) { return (value: string) => { invalidate(); setter(value); }; }
 
   async function confirmHolding(event: FormEvent<HTMLFormElement>) {
@@ -186,6 +207,9 @@ export function RetailPage() {
       "", "Porównanie zabezpieczeń (nominał walutowy / wpływ łączny po kosztach):",
       ...data.hedges.map((h) => `${percent(h.ratio)}: ${decimal(h.signed_foreign_notional)} ${input.currency} / ${money(h.portfolio_impact, data.base_currency)}; wejście ${money(h.entry_cost, data.base_currency)}, utrzymanie ${money(h.holding_cost, data.base_currency)}; kurs teoretyczny ${decimal(h.theoretical_forward)}`),
       "", "Założenia i ograniczenia:", ...data.warnings.map((w) => copy.warnings[w] ?? w),
+      ...(history ? ["", "Symulacja historyczna obecnych ilości:", JSON.stringify(history, null, 2)] : []),
+      ...(costBudget ? ["", "Osobny budżet kosztów (nie odejmowany ponownie od cen):", JSON.stringify(costBudget, null, 2)] : []),
+      ...(preferences ? ["", "Spójność odpowiedzi i własne limity:", JSON.stringify(preferences, null, 2)] : []),
       "Szok cen dotyczy wszystkich papierów; gotówka podlega tylko szokowi walutowemu.",
       "Ceny i waluta są przeliczane łącznie: (1 + szok ceny) × (1 + szok waluty).",
       "Zabezpieczenie ma stały nominał początkowy. Zmiana cen może prowadzić do nadmiernego zabezpieczenia.",
@@ -208,8 +232,13 @@ export function RetailPage() {
         <a href="#overview">◫ <span>Przegląd portfela</span></a>
         <a href="#positions">▤ <span>Pozycje i import</span></a>
         <a href="#exposures">◎ <span>Ekspozycje</span></a>
+        <a href="#risk">∿ <span>Ryzyko historyczne</span></a>
         <a href="#scenario">↗ <span>Scenariusze</span></a>
         <a href="#hedge">⇄ <span>Zabezpieczenia i koszty</span></a>
+        <a href="#costs">◷ <span>Budżet kosztów</span></a>
+        <a href="#lab">◇ <span>Laboratorium</span></a>
+        <a href="#profile">◉ <span>Moje cele i limity</span></a>
+        <a href="#integrations">⊞ <span>Integracje</span></a>
         <a href="#assumptions">ⓘ <span>Metoda i dane</span></a>
       </nav>
       <div className="qo-sidebar-bottom"><strong>Analiza przed decyzją</strong><p>Sprawdź konsekwencje. Zabezpieczenie waluty nie usuwa ryzyka aktywów.</p><a href="/research">Środowisko badawcze →</a></div>
@@ -239,14 +268,15 @@ export function RetailPage() {
               <p className="qo-note">ETF notowany w EUR może posiadać aktywa w USD. Pełna ekspozycja aktywów bazowych nie jest dostępna.</p>
             </section>
             <section className="qo-panel"><p className="qo-eyebrow">DANE ZAMIAST POJEDYNCZEJ OCENY</p><h2>Co warto sprawdzić</h2>
-              {data ? <><div className="qo-observation"><span>01</span><div><strong>{Number(data.concentration) > 0.4 ? "Koncentracja powyżej 40%" : "Sprawdź strukturę ekspozycji"}</strong><p>Największa pozycja ma {percent(data.concentration)} ekspozycji brutto papierów. Źródło: ilości, ceny i kursy w tabeli pozycji.</p></div></div>
+              {data ? <><div className="qo-observation"><span>01</span><div><strong>{Number(data.concentration) > concentrationLimit ? `Koncentracja powyżej Twojego limitu ${percent(String(concentrationLimit))}` : "Sprawdź strukturę ekspozycji"}</strong><p>Największa pozycja ma {percent(data.concentration)} ekspozycji brutto papierów. Źródło: ilości, ceny i kursy w tabeli pozycji.</p></div></div>
                 <div className="qo-observation"><span>02</span><div><strong>{data.warnings.includes("stale_prices") || data.warnings.includes("stale_fx") ? "Wycena wymaga aktualizacji" : "Wycena według wpisanych danych"}</strong><p>Kursy z {stamp(portfolio.fx_as_of)}. Daty cen znajdziesz przy każdej pozycji.</p></div></div>
-                <dl className="qo-stat-list"><div><dt>Ekspozycja brutto papierów</dt><dd>{money(data.gross_exposure, base)}</dd></div><div><dt>Ekspozycja netto papierów</dt><dd>{money(data.net_exposure, base)}</dd></div><div><dt>Brutto / wartość netto</dt><dd>{data.gross_to_equity === null ? "Brak danych" : decimal(data.gross_to_equity) + "×"}</dd></div><div><dt>VaR i Expected Shortfall</dt><dd>Brak historii</dd></div></dl></> : <p>Obserwacje pojawią się po przeliczeniu. Stare wyniki są ukrywane po zmianie danych.</p>}
+                <dl className="qo-stat-list"><div><dt>Ekspozycja brutto papierów</dt><dd>{money(data.gross_exposure, base)}</dd></div><div><dt>Ekspozycja netto papierów</dt><dd>{money(data.net_exposure, base)}</dd></div><div><dt>Brutto / wartość netto</dt><dd>{data.gross_to_equity === null ? "Brak danych" : decimal(data.gross_to_equity) + "×"}</dd></div><div><dt>VaR i Expected Shortfall</dt><dd>{history?.status === "ok" ? "Obliczono z historii" : "Wczytaj historię poniżej"}</dd></div></dl></> : <p>Obserwacje pojawią się po przeliczeniu. Stare wyniki są ukrywane po zmianie danych.</p>}
             </section>
           </div>
 
+          <RiskHistoryPanel key={`history-${sessionKey}`} portfolio={portfolio} onResult={setHistory} />
           <section className="qo-panel" id="positions"><div className="qo-panel-heading"><div><p className="qo-eyebrow">POZYCJE I WYCENA</p><h2>Twój portfel</h2></div><button className="qo-button" onClick={() => { changePortfolio({ ...portfolio, positions: [], fx: { [base]: "1", [base === "USD" ? "PLN" : "USD"]: "" }, fx_source: "user" }); setCurrency(base === "USD" ? "PLN" : "USD"); setBaseline(null); }}>Utwórz pusty portfel</button></div>
-            <div className="qo-actions"><button className="qo-button" disabled={!data} onClick={() => { if (data) { setBaseline(data); setNotice("Zapisano punkt odniesienia. Zmień pozycje i przelicz wariant."); } }}>Zapisz punkt porównania</button><button className="qo-button" onClick={() => { try { localStorage.setItem(STORAGE_KEY, JSON.stringify(portfolio)); setNotice("Zapisano w tej przeglądarce. Zapis lokalny nie jest szyfrowany."); } catch { setError("Przeglądarka nie pozwala zapisać danych."); } }}>Zapisz lokalnie</button><button className="qo-button" onClick={() => void restoreLocal()}>Wczytaj zapis</button><button className="qo-button" onClick={() => { try { localStorage.removeItem(STORAGE_KEY); changePortfolio({ ...portfolio, positions: [] }); setBaseline(null); setNotice("Usunięto lokalny zapis i pozycje z bieżącej sesji."); } catch { setError("Nie udało się usunąć lokalnego zapisu."); } }}>Usuń moje dane</button></div>
+            <div className="qo-actions"><button className="qo-button" disabled={!data} onClick={() => { if (data) { setBaseline(data); setNotice("Zapisano punkt odniesienia. Zmień pozycje i przelicz wariant."); } }}>Zapisz punkt porównania</button><button className="qo-button" onClick={() => { try { localStorage.setItem(STORAGE_KEY, JSON.stringify(portfolio)); setNotice("Zapisano w tej przeglądarce. Zapis lokalny nie jest szyfrowany."); } catch { setError("Przeglądarka nie pozwala zapisać danych."); } }}>Zapisz lokalnie</button><button className="qo-button" onClick={() => void restoreLocal()}>Wczytaj zapis</button><button className="qo-button" onClick={deletePersonalData}>Usuń moje dane</button></div>
             <div className="qo-table-wrap" role="region" aria-label="Pozycje portfela" tabIndex={0}><table><caption className="sr-only">Bieżące pozycje, kierunek i wycena</caption><thead><tr><th>Instrument / rachunek</th><th>Klasa / waluta</th><th>Ilość</th><th>Cena</th><th>Wartość w {base}</th><th>Stan danych</th><th>Zmiana</th></tr></thead><tbody>{portfolio.positions.map((p) => <tr key={p.id}><th scope="row">{p.symbol}<small>{p.account} · {Number(p.quantity) < 0 ? "krótka / zobowiązanie" : "długa"}</small></th><td>{classNames[p.asset_class]}<small>{p.currency}</small></td><td><input aria-label={`Ilość ${p.symbol}`} type="number" step="any" value={p.quantity} onChange={(e) => changePortfolio({ ...portfolio, positions: portfolio.positions.map((item) => item.id === p.id ? { ...item, quantity: e.target.value } : item) })} /></td><td><input aria-label={`Cena ${p.symbol}`} type="number" min="0" step="any" disabled={p.asset_class === "cash"} value={p.price} onChange={(e) => changePortfolio({ ...portfolio, positions: portfolio.positions.map((item) => item.id === p.id ? { ...item, price: e.target.value } : item) })} /></td><td>{data?.positions.find((item) => item.id === p.id) ? money(data.positions.find((item) => item.id === p.id)!.value, base) : "—"}</td><td><span className="qo-tag">{p.source === "synthetic" ? "Syntetyczne" : "Wprowadzone"}</span><small>{stamp(p.as_of)}</small></td><td><button className="qo-text-button" aria-label={`Usuń ${p.symbol}`} onClick={() => changePortfolio({ ...portfolio, positions: portfolio.positions.filter((item) => item.id !== p.id) })}>Usuń</button></td></tr>)}</tbody></table></div>
             {portfolio.positions.length === 0 ? <p>Portfel jest pusty. Dodaj pozycję lub zaimportuj CSV.</p> : null}
             <details className="qo-details"><summary>Dodaj pozycję ręcznie</summary><form className="qo-form-grid" onSubmit={(event) => void confirmHolding(event)}>
@@ -343,7 +373,11 @@ export function RetailPage() {
             </form>
           </section>
 
-          <section className="qo-panel" id="assumptions"><p className="qo-eyebrow">PRZEJRZYSTOŚĆ OBLICZEŃ</p><h2>Założenia i ograniczenia</h2><p>Wycena: ilość × cena × kurs. Scenariusz: stałe pozycje, wspólny szok wszystkich akcji i ETF, osobny szok wybranej waluty. Model forward: F = S × (1 + stopa bazowa × dni/365) / (1 + stopa obca × dni/365). Wynik: podpisany nominał × (F − kurs po szoku), pomniejszony o koszty.</p><ul>{(data?.warnings ?? ["quotation_currency_only", "no_historical_returns", "terminal_forward_model", "no_broker_quote"]).map((warning) => <li key={warning}>{copy.warnings[warning] ?? warning}</li>)}</ul><p className="qo-note">Pierwszy działający przepływ: portfel, CSV, ekspozycje, scenariusz, model forward, koszty i raport. Ankieta, analiza historii własnego portfela, laboratorium edukacyjne oraz MT5 i Bossa pozostają kolejnymi etapami. Istniejące badawcze VaR i ES są dostępne w <a href="/dashboard">środowisku syntetycznym</a>.</p>{data ? <p className="qo-metadata">{data.model_version} · obliczono {stamp(data.calculated_at)} · ID scenariusza <code>{data.run_id ?? "pusty portfel"}</code></p> : null}</section>
+          <CostPanel key={`cost-${sessionKey}`} currency={base} onResult={setCostBudget} />
+          <EducationLab key={`lab-${sessionKey}`} />
+          <PreferencesPanel key={`profile-${sessionKey}-${base}`} analysis={data ?? null} onLimit={setConcentrationLimit} onResult={setPreferences} />
+          <section className="qo-panel" id="integrations"><p className="qo-eyebrow">TWOJE ŹRÓDŁA DANYCH</p><h2>Integracje i import</h2><div className="qo-integration-grid"><article><span className="qo-integration-icon">CSV</span><h3>Pliki i dane ręczne</h3><p>Aktywne · pozycje i historia cen z podglądem oraz walidacją.</p><a href="#positions">Importuj pozycje →</a></article><article><span className="qo-integration-icon">MT5</span><h3>MetaTrader 5</h3><p>Planowany adapter tylko do odczytu. Wymaga terminala i lokalnego komponentu pośredniczącego. Niepołączony.</p></article><article><span className="qo-integration-icon">B</span><h3>Bossa</h3><p>Niepołączona. Sposób dostępu i warunki użycia danych wymagają weryfikacji przed wdrożeniem.</p></article></div></section>
+          <section className="qo-panel" id="assumptions"><p className="qo-eyebrow">PRZEJRZYSTOŚĆ OBLICZEŃ</p><h2>Założenia i ograniczenia</h2><p>Wycena: ilość × cena × kurs. Scenariusz: stałe pozycje, wspólny szok wszystkich akcji i ETF, osobny szok wybranej waluty. Model forward: F = S × (1 + stopa bazowa × dni/365) / (1 + stopa obca × dni/365). Wynik: podpisany nominał × (F − kurs po szoku), pomniejszony o koszty.</p><ul>{(data?.warnings ?? ["quotation_currency_only", "no_historical_returns", "terminal_forward_model", "no_broker_quote"]).map((warning) => <li key={warning}>{copy.warnings[warning] ?? warning}</li>)}</ul><p className="qo-note">Dostępne: portfel, CSV, ekspozycje, historia cen, scenariusze, model forward, budżet kosztów, ankieta i laboratorium. Integracje brokerskie, historia transakcji i przepływów oraz wspólna baza użytkowników pozostają kolejnymi etapami. Istniejące badawcze VaR i ES są dostępne w <a href="/dashboard">środowisku syntetycznym</a>.</p>{data ? <p className="qo-metadata">{data.model_version} · obliczono {stamp(data.calculated_at)} · ID scenariusza <code>{data.run_id ?? "pusty portfel"}</code></p> : null}</section>
         </>}
       </main><footer className="qo-footer">QuantOps · Zrozumienie ryzyka przed decyzją.<span>Bez wykonywania transakcji · Daty w UTC</span></footer>
     </div>

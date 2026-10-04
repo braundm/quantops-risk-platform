@@ -2,6 +2,31 @@
 
 Last updated: 2026-10-04
 
+## Retail history, education and visual refinement
+
+The personal workspace now includes aligned historical price/FX CSV preview, VaR/ES, volatility,
+drawdown, correlation and a keyboard-accessible chart. It reprices current fixed quantities, not
+investor transaction performance. Insufficient/inconsistent history suppresses precise metrics.
+An optional survey checks loss willingness/capacity and applies a personal concentration threshold.
+A separate cost budget excludes fees already embedded in prices. The ten-step synthetic education
+exercise reveals future observations only after a decision and reports costs and Brier calibration.
+The UI has a refined green/cream palette, clearer cards, responsive chart panels and a scrollable
+sidebar. Delete clears the portfolio and all added session panels. Method details and exclusions
+are maintained in `docs/retail-first-flow.md`.
+
+Python verification: 531 tests plus 20 subtests passed, one PostgreSQL integration test skipped;
+strict typechecks passed across 11 groups. Frontend lint, 14 Vitest tests and build passed.
+Desktop/mobile Playwright coverage passed all 28 tests, including automated accessibility checks.
+Documentation checks passed for 49 Markdown files; repository-wide Ruff checks passed.
+Updated Python and production Node audits found no known vulnerabilities. The browser CI job now installs
+the locked Python API required by its tests. The local Python environment was restored to 3.12
+after a locked-process interruption; the temporary repair environment was removed.
+
+Remaining work includes transaction/flow history, persisted named scenarios, authenticated durable
+storage and any separately scoped read-only data adapters. The education cursor is intentionally
+single-process and replayable; synthetic trials are not evidence of strategy performance. No full
+retail MVP completion, external-service verification or production readiness is claimed.
+
 ## Retail flow added on 2026-10-04
 
 The default `/` route now serves a Polish personal portfolio workspace connected to FastAPI.
@@ -22,10 +47,9 @@ no isolated database was configured. API/risk strict typechecks passed. Frontend
 14 Vitest tests, production build and 22 desktop/mobile Playwright tests passed, including report
 contents, CSV rejection, local data deletion and axe checks. Exact commands are in `docs/progress.md`.
 
-Next retail action: add aligned historical price/FX inputs and transaction/flow contracts, connect
-the existing historical risk core to user portfolios, and implement the educational decision
-experiment without future-data leakage. Onboarding and broker-specific read-only adapters remain
-separate deferred work. This is the requested first vertical flow, not completion of the entire
+The follow-up above adds historical risk, the optional survey and synthetic education. Transaction/
+flow contracts and broker-specific read-only adapters remain separate deferred work.
+This is a working retail application slice, not completion of the entire
 retail MVP or the original master-spec Definition of Done. The owner explicitly authorized a Git
 commit and GitHub publication on 2026-10-04, overriding the earlier publication restriction for
 this change. Publish on the existing `agent/portfolio-polish` branch and update draft PR #11;

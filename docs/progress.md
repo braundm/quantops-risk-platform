@@ -4,6 +4,52 @@ Last updated: 2026-10-04
 
 This file records observed results only. An unchecked item is not implemented or has not yet met its exit evidence.
 
+## Retail history and education follow-up — 2026-10-04
+
+- [x] Add strict historical CSV preview/confirmation and dated-FX repricing of current units.
+- [x] Reuse historical risk calculations, suppress insufficient samples, validate aligned dates,
+  reject duplicate/ambiguous mappings and label synthetic/stale history.
+- [x] Add interactive charts, separate fee budgets, optional goals/limits and a ten-step synthetic
+  decision experiment with signed cursors, costs, benchmark and confidence calibration.
+- [x] Refine the responsive visual design and clear all new session data on explicit deletion.
+- [x] Restore the local Python 3.12 environment after a blocked recreation attempt; remove the
+  temporary repair environment. No source or portfolio data was lost.
+- [x] Fix the frontend CI API prerequisite and upgrade dependencies flagged by the previous audit.
+
+Observed verification:
+
+```text
+.venv/Scripts/python.exe -m pytest -q -o cache_dir=artifacts/pytest-retail-cache
+# 531 passed, 1 skipped (isolated PostgreSQL unavailable), 20 subtests passed
+.venv/Scripts/python.exe scripts/typecheck.py
+# all 11 strict groups passed
+.venv/Scripts/python.exe -m ruff check apps/api
+.venv/Scripts/python.exe -m ruff format --check apps/api
+# passed; 40 files formatted
+pnpm --filter @quantops/web lint
+pnpm --filter @quantops/web test
+pnpm --filter @quantops/web build
+# passed; 14 Vitest tests; production bundle built
+.venv/Scripts/python.exe -m pip_audit --progress-spinner off --format json --output artifacts/updated-python-audit.json
+pnpm audit --prod
+# both passed; no known vulnerabilities in the audited installed/production dependencies
+pnpm --filter @quantops/web test:e2e --workers=2
+# 28 passed (desktop/mobile), including axe accessibility checks
+.venv/Scripts/python.exe scripts/docs_check.py
+.venv/Scripts/python.exe -m ruff check .
+.venv/Scripts/python.exe -m ruff format --check .
+# passed; 49 Markdown files; 218 Python files already formatted
+.venv/Scripts/python.exe scripts/security_scan.py
+git diff --cached --check
+# passed after staging all new source files; no secret/hygiene or whitespace findings
+# Running Vite proxy: /api/v1/health returned ok; /api/v1/retail/history-demo returned 1020 rows
+```
+
+Browser testing first found one desktop contrast issue: the expanded menu overflowed its dark
+sidebar. Adding scroll containment corrected the actual layout; no accessibility rule was disabled.
+Desktop and mobile history screenshots were visually reviewed. Optional service/production gates
+remain separate from these local checks.
+
 ## Retail first vertical flow — 2026-10-04
 
 - [x] Preserve React/FastAPI, pure valuation/scenario calculations and existing research routes.
@@ -16,8 +62,10 @@ This file records observed results only. An unchecked item is not implemented or
   rate reset, synthetic provenance and responsive keyboard/axe accessibility.
 - [x] Document synthetic inputs, missing history, stale prices, no ETF look-through, model exclusions
   and actual/deferred scope in `docs/retail-first-flow.md`.
-- [ ] Implement onboarding, user historical-risk data, educational decision experiment, complete cost
-  ledger, persistence/tenant authentication and broker-specific read-only adapters.
+- [x] Add optional onboarding, user historical-risk data and a synthetic educational experiment
+  in the follow-up recorded above.
+- [ ] Complete a transaction-linked cost ledger, persistence/tenant authentication and separately
+  scoped broker-specific read-only adapters.
 
 Observed scoped gates:
 
