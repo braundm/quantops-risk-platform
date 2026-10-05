@@ -212,3 +212,72 @@ def test_preferences_distinguish_willingness_from_financial_capacity() -> None:
     assert "inconsistent_loss_answers" in result["flags"]
     assert "willingness_exceeds_capacity" in result["flags"]
     assert "explain_leverage_and_margin" in result["flags"]
+
+
+def test_forecast_quiz_hides_future_until_reveal_and_summarises_calibration() -> None:
+    with TestClient(create_app(settings=Settings(expensive_rate_limit=1000))) as client:
+        started = client.post(f"{PATH}/forecast/start", json={"confidence_style": "numeric"})
+        assert started.status_code == 200
+        current = started.json()
+        assert current["synthetic"] is True
+        assert current["reveal"] is None
+        assert len(current["hist_values"]) == 120
+        assert current["total"] == 12
+
+        for step in range(1, 5):
+            answered = client.post(
+                f"{PATH}/forecast/answer",
+                json={"token": current["token"], "prediction": "up", "confidence": 70},
+            )
+            assert answered.status_code == 200
+            current = answered.json()
+            if step < 4:
+                assert current["reveal"] is None
+                assert current["finished"] is False
+            else:
+                assert current["reveal"] is not None
+                assert len(current["reveal"]["future_values"]) == 20
+                assert current["reveal"]["result"] in {"hit", "miss", "sideways"}
+                # Future must not have been present before reveal; history stays fixed length.
+                assert len(current["hist_values"]) == 120
+
+        continued = client.post(f"{PATH}/forecast/continue", json={"token": current["token"]})
+        assert continued.status_code == 200
+        current = continued.json()
+        assert current["reveal"] is None
+        assert current["question_no"] == 5
+
+        while not current["finished"]:
+            if current.get("reveal") is not None:
+                current = client.post(
+                    f"{PATH}/forecast/continue", json={"token": current["token"]}
+                ).json()
+                continue
+            current = client.post(
+                f"{PATH}/forecast/answer",
+                json={"token": current["token"], "prediction": "down", "confidence": 60},
+            ).json()
+
+        assert current["finished"] is True
+        assert current["summary"] is not None
+        summary = current["summary"]
+        assert summary["hits"] + summary["misses"] + summary["sideways"] == 12
+        assert summary["mean_brier"] is not None or summary["sideways"] == 12
+
+        rejected = client.post(
+            f"{PATH}/forecast/answer",
+            json={"token": current["token"], "prediction": "up", "confidence": 70},
+        )
+        assert rejected.status_code == 422
+
+
+def test_forecast_quiz_rejects_invalid_confidence_and_lookahead_continue() -> None:
+    with TestClient(create_app(settings=Settings(expensive_rate_limit=1000))) as client:
+        token = client.post(f"{PATH}/forecast/start", json={}).json()["token"]
+        bad = client.post(
+            f"{PATH}/forecast/answer",
+            json={"token": token, "prediction": "up", "confidence": 55},
+        )
+        assert bad.status_code == 422
+        early = client.post(f"{PATH}/forecast/continue", json={"token": token})
+        assert early.status_code == 422

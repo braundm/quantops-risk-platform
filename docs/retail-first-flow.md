@@ -108,7 +108,9 @@ risk. A forward, leveraged FX/CFD position and currency ETF are not equivalent p
 Actual: manual portfolios; strict preview/confirm CSV; local save/restore/delete; Decimal valuation;
 signed exposures and concentration; combined hypothetical price/FX scenarios; terminal forward
 comparisons; entry/holding estimates; before/after valuation; report export; Polish responsive UI;
-aligned historical risk, interactive charts, a cost budget and optional goals/limits survey.
+aligned historical risk, interactive charts, a cost budget, a YNAB-style cash-envelope budget,
+optional goals/limits survey, a local login/onboarding gate, and a synthetic market-direction
+forecast quiz with periodic reveal and calibration summary.
 
 Synthetic: demonstration symbols, positions, prices, FX, history, educational exercise paths and
 the pre-existing research risk dataset.
@@ -144,12 +146,17 @@ Prices must be reviewed for corporate actions; dividends, taxes, flows and trans
 not reconstructed. The 340-date example is fixed and visibly synthetic. Chart readouts are
 keyboard-accessible; changing portfolio inputs or confidence invalidates previous risk results.
 
-## Costs, preferences and education
+## Costs, preferences, cash envelopes and education
 
 The separate cost budget accepts actual, estimated or user-entered monetary fees. One-time fees
 and annual recurring fees are separate; monthly amounts multiply by 12. Fees marked included in
 prices are excluded, preventing double counting. This budget is not automatically deducted from
 price history or the forward model. Changing base currency clears the budget.
+
+The personal cash-envelope panel (YNAB-style) is a local zero-based budget: monthly income,
+Ready-to-Assign, category assigned/activity/available, and optional import of portfolio cash.
+It stores per-user browser state under `quantops.cash-budget.v1.<userId>`, resets money amounts
+when the portfolio base currency changes, and is not investment advice or a broker ledger.
 
 The optional survey distinguishes willingness to take losses from financial capacity, checks
 percentage/amount consistency and liquidity needs, and applies a user-selected concentration
@@ -166,3 +173,13 @@ Directional returns, costs, an always-up benchmark and Brier calibration are com
 Each trial uses an equal independent nominal; sums are not compounded strategy returns. Skips
 have zero return and cost and do not enter directional accuracy or calibration. The benchmark
 trades each trial and incurs its entered cost. No market edge can be inferred from ten synthetic trials.
+
+## Synthetic forecast quiz
+
+The forecast quiz shows 12 anonymous synthetic series cut at **TERAZ**. The client chooses up/down
+and a confidence level (numeric percent or word labels). Every four answers, and after the last
+question, the server reveals the held-back future segment and grades hit / miss / sideways
+(|return| ≤ 2.5%). A signed cursor prevents lookahead; futures are never sent before reveal.
+The closing summary reports effectiveness, mean confidence, Brier score and accuracy by confidence
+bucket. Paths are deterministic synthetics with SYN-* labels — not live market data and not
+investment advice.

@@ -2,10 +2,32 @@ import { useEffect, useRef, useState, type FormEvent } from "react";
 
 import { csvExample, retailRequest, type Analysis, type AnalysisInput, type CsvPreview, type Holding, type Portfolio } from "../data/retailApi";
 import { retailLocales } from "../lib/retailLocale";
+import {
+  clearSession,
+  completeOnboarding,
+  createSession,
+  DEFAULT_ONBOARDING,
+  readSession,
+  writeSession,
+  type OnboardingAnswers,
+  type RetailSession,
+} from "../lib/retailSession";
 import { RiskHistoryPanel, type HistoricalRisk } from "../components/RiskHistoryPanel";
 import { EducationLab } from "../components/EducationLab";
+import { ForecastQuiz } from "../components/ForecastQuiz";
 import { CostPanel, type CostSummary } from "../components/CostPanel";
 import { PreferencesPanel, type PreferenceReview } from "../components/PreferencesPanel";
+import { CashBudgetPanel } from "../components/CashBudgetPanel";
+import { RetailLogin } from "../components/RetailLogin";
+import { OnboardingSurvey } from "../components/OnboardingSurvey";
+import {
+  changeCurrency,
+  clearCashBudget,
+  createDefaultBudget,
+  readCashBudget,
+  writeCashBudget,
+  type CashBudget,
+} from "../lib/cashBudget";
 import "../styles/retail.css";
 import "../styles/retail-next.css";
 
@@ -39,17 +61,20 @@ function Field({ label, value, onChange, min, max, step = "any", unit }: {
 }
 
 export function RetailPage() {
+  const [session, setSession] = useState<RetailSession | null>(() => readSession());
   const [portfolio, setPortfolio] = useState<Portfolio | null>(null);
   const [result, setResult] = useState<{ input: AnalysisInput; data: Analysis } | null>(null);
   const [baseline, setBaseline] = useState<Analysis | null>(null);
   const [history, setHistory] = useState<HistoricalRisk | null>(null);
   const [costBudget, setCostBudget] = useState<CostSummary | null>(null);
   const [preferences, setPreferences] = useState<PreferenceReview | null>(null);
-  const [concentrationLimit, setConcentrationLimit] = useState(0.4);
+  const [cashBudget, setCashBudget] = useState<CashBudget | null>(null);
+  const [concentrationLimit, setConcentrationLimit] = useState(() => readSession()?.concentrationLimit ?? 0.4);
   const [sessionKey, setSessionKey] = useState(0);
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
   const [busy, setBusy] = useState(false);
+  const [settingsOpen, setSettingsOpen] = useState(false);
   const [currency, setCurrency] = useState("USD");
   const [fxShock, setFxShock] = useState("-10");
   const [assetShock, setAssetShock] = useState("0");
@@ -73,16 +98,93 @@ export function RetailPage() {
   const analysisRequest = useRef(0);
   const csvRequest = useRef(0);
   const initialized = useRef(false);
+  const ready = session?.onboardingComplete === true;
 
   useEffect(() => {
     document.documentElement.lang = "pl";
     document.title = "QuantOps — Twój portfel i ryzyko";
+  }, []);
+
+  useEffect(() => {
+    if (!ready || !session) return;
+    const saved = readCashBudget(session.userId);
+    setCashBudget(saved ?? createDefaultBudget(portfolio?.base_currency ?? "PLN"));
+  }, [ready, session?.userId, sessionKey]);
+
+  useEffect(() => {
+    if (!ready) return;
     const controller = new AbortController();
     void retailRequest<Portfolio>("demo", undefined, controller.signal)
       .then(setPortfolio)
       .catch((err: unknown) => { if (!controller.signal.aborted) setError(`Uruchom API na porcie 8000. ${err instanceof Error ? err.message : "Brak połączenia."}`); });
     return () => controller.abort();
-  }, []);
+  }, [ready]);
+
+  useEffect(() => {
+    if (!session || !cashBudget || !portfolio) return;
+    if (cashBudget.currency === portfolio.base_currency) return;
+    try {
+      const next = changeCurrency(cashBudget, portfolio.base_currency);
+      writeCashBudget(session.userId, next);
+      setCashBudget(next);
+    } catch {
+      const next = createDefaultBudget(portfolio.base_currency);
+      writeCashBudget(session.userId, next);
+      setCashBudget(next);
+    }
+  }, [portfolio?.base_currency, session?.userId, cashBudget?.currency]);
+
+  function persistSession(next: RetailSession) {
+    writeSession(next);
+    setSession(next);
+    setConcentrationLimit(next.concentrationLimit);
+  }
+
+  function persistCashBudget(next: CashBudget) {
+    if (!session) return;
+    writeCashBudget(session.userId, next);
+    setCashBudget(next);
+  }
+
+  function login(displayName: string) {
+    persistSession(createSession(displayName));
+    setNotice("");
+    setError("");
+  }
+
+  function finishOnboarding(answers: OnboardingAnswers, mode: "survey" | "defaults") {
+    if (!session) return;
+    persistSession(completeOnboarding(session, answers, mode));
+    setNotice(mode === "defaults"
+      ? "Zastosowano ustawienia domyślne z pełnym dostępem. Limit koncentracji = 100%."
+      : "Zapisano ankietę ryzyka. Pełną ankietę możesz uzupełnić w sekcji „Moje cele i limity”.");
+  }
+
+  function applyDefaultAccess() {
+    if (!session) return;
+    persistSession(completeOnboarding(session, DEFAULT_ONBOARDING, "defaults"));
+    setSettingsOpen(false);
+    setNotice("Zastosowano ustawienia domyślne — pełny dostęp do wszystkich opcji.");
+  }
+
+  function logout() {
+    if (session) clearCashBudget(session.userId);
+    clearSession();
+    setSession(null);
+    setPortfolio(null);
+    setResult(null);
+    setBaseline(null);
+    setHistory(null);
+    setCostBudget(null);
+    setPreferences(null);
+    setCashBudget(null);
+    setSettingsOpen(false);
+    setConcentrationLimit(0.4);
+    setSessionKey((key) => key + 1);
+    initialized.current = false;
+    setNotice("");
+    setError("");
+  }
 
   async function analyzePortfolio(current: Portfolio) {
     const token = ++analysisRequest.current;
@@ -124,14 +226,34 @@ export function RetailPage() {
     if (!portfolio) return;
     try {
       localStorage.removeItem(STORAGE_KEY);
+      if (session) clearCashBudget(session.userId);
+      clearSession();
+      setSession(null);
       changePortfolio({ ...portfolio, positions: [], fx: { [portfolio.base_currency]: "1" }, fx_source: "user" });
-      setSessionKey((key) => key + 1); setHistory(null); setCostBudget(null); setPreferences(null);
+      setSessionKey((key) => key + 1); setHistory(null); setCostBudget(null); setPreferences(null); setCashBudget(null);
       setConcentrationLimit(0.4); setBaseline(null); setCsv(""); setPreview(null); csvRequest.current++;
       setSymbol(""); setAccount("Własny"); setQuantity("1"); setPrice("100");
-      setNotice("Usunięto lokalny zapis, pozycje, historię, koszty i odpowiedzi z bieżącej sesji.");
+      setSettingsOpen(false);
+      initialized.current = false;
+      setNotice("Usunięto lokalny zapis, sesję, pozycje, historię, koszty, budżet kopert i odpowiedzi.");
     } catch { setError("Nie udało się usunąć lokalnego zapisu."); }
   }
   function parameter(setter: (value: string) => void) { return (value: string) => { invalidate(); setter(value); }; }
+
+  function reopenOnboarding() {
+    if (!session) return;
+    const next: RetailSession = { ...session, onboardingComplete: false, accessMode: null, onboarding: null };
+    persistSession(next);
+    setPortfolio(null);
+    setResult(null);
+    setSettingsOpen(false);
+    initialized.current = false;
+  }
+
+  if (!session) return <RetailLogin onLogin={login} />;
+  if (!session.onboardingComplete) {
+    return <OnboardingSurvey displayName={session.displayName} onComplete={finishOnboarding} onLogout={logout} />;
+  }
 
   async function confirmHolding(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -236,7 +358,9 @@ export function RetailPage() {
         <a href="#scenario">↗ <span>Scenariusze</span></a>
         <a href="#hedge">⇄ <span>Zabezpieczenia i koszty</span></a>
         <a href="#costs">◷ <span>Budżet kosztów</span></a>
+        <a href="#budget">▣ <span>Budżet gotówki</span></a>
         <a href="#lab">◇ <span>Laboratorium</span></a>
+        <a href="#forecast">◈ <span>Quiz prognoz</span></a>
         <a href="#profile">◉ <span>Moje cele i limity</span></a>
         <a href="#integrations">⊞ <span>Integracje</span></a>
         <a href="#assumptions">ⓘ <span>Metoda i dane</span></a>
@@ -244,7 +368,30 @@ export function RetailPage() {
       <div className="qo-sidebar-bottom"><strong>Analiza przed decyzją</strong><p>Sprawdź konsekwencje. Zabezpieczenie waluty nie usuwa ryzyka aktywów.</p><a href="/research">Środowisko badawcze →</a></div>
     </aside>
     <div className="qo-column">
-      <header className="qo-topbar"><span>Przestrzeń osobista <b>/</b> Portfel</span><span className="qo-tag">Lokalnie · bez połączenia z brokerem</span></header>
+      <header className="qo-topbar">
+        <span>Przestrzeń osobista <b>/</b> {session.displayName}</span>
+        <div className="qo-topbar-actions">
+          <span className="qo-tag">{session.accessMode === "defaults" ? "Domyślne · pełny dostęp" : "Po ankiecie ryzyka"}</span>
+          <a className="qo-button qo-primary" href="#forecast">Quiz prognoz</a>
+          <button className="qo-button" type="button" aria-expanded={settingsOpen} aria-controls="settings-panel" onClick={() => setSettingsOpen((open) => !open)}>
+            Ustawienia
+          </button>
+          <button className="qo-button" type="button" onClick={logout}>Wyloguj</button>
+        </div>
+      </header>
+      {settingsOpen ? <section className="qo-settings" id="settings-panel" aria-label="Ustawienia sesji">
+        <div>
+          <strong>Sesja lokalna</strong>
+          <p>Użytkownik: {session.displayName}. Ankieta: {session.accessMode === "defaults" ? "ustawienia domyślne" : "wypełniona"}. Limit koncentracji: {percent(String(concentrationLimit))}.</p>
+        </div>
+        <div className="qo-actions">
+          <button className="qo-button qo-primary" type="button" onClick={applyDefaultAccess}>Ustawienia domyślne — pełny dostęp</button>
+          <button className="qo-button" type="button" onClick={reopenOnboarding}>Wróć do ankiety startowej</button>
+          <a className="qo-button" href="#forecast">Quiz prognoz</a>
+          <a className="qo-button" href="#profile">Pełna ankieta ryzyka</a>
+          <button className="qo-button" type="button" onClick={logout}>Wyloguj</button>
+        </div>
+      </section> : null}
       <main id="main-content" tabIndex={-1}>
         <section className="qo-heading" id="overview"><div><p className="qo-eyebrow">WIESZ WIĘCEJ. DECYDUJESZ ŚWIADOMIE.</p><h1>{copy.title}</h1><p>{copy.subtitle}</p></div><button className="qo-button" disabled={!result} onClick={report}>↓ Eksportuj raport</button></section>
         {error ? <div className="qo-alert qo-error" role="alert">{error}</div> : null}
@@ -374,10 +521,20 @@ export function RetailPage() {
           </section>
 
           <CostPanel key={`cost-${sessionKey}`} currency={base} onResult={setCostBudget} />
+          {cashBudget ? (
+            <CashBudgetPanel
+              key={`budget-${sessionKey}`}
+              currency={base}
+              portfolioCash={data?.cash_value ?? null}
+              budget={cashBudget}
+              onChange={persistCashBudget}
+            />
+          ) : null}
           <EducationLab key={`lab-${sessionKey}`} />
+          <ForecastQuiz key={`forecast-${sessionKey}`} />
           <PreferencesPanel key={`profile-${sessionKey}-${base}`} analysis={data ?? null} onLimit={setConcentrationLimit} onResult={setPreferences} />
           <section className="qo-panel" id="integrations"><p className="qo-eyebrow">TWOJE ŹRÓDŁA DANYCH</p><h2>Integracje i import</h2><div className="qo-integration-grid"><article><span className="qo-integration-icon">CSV</span><h3>Pliki i dane ręczne</h3><p>Aktywne · pozycje i historia cen z podglądem oraz walidacją.</p><a href="#positions">Importuj pozycje →</a></article><article><span className="qo-integration-icon">MT5</span><h3>MetaTrader 5</h3><p>Planowany adapter tylko do odczytu. Wymaga terminala i lokalnego komponentu pośredniczącego. Niepołączony.</p></article><article><span className="qo-integration-icon">B</span><h3>Bossa</h3><p>Niepołączona. Sposób dostępu i warunki użycia danych wymagają weryfikacji przed wdrożeniem.</p></article></div></section>
-          <section className="qo-panel" id="assumptions"><p className="qo-eyebrow">PRZEJRZYSTOŚĆ OBLICZEŃ</p><h2>Założenia i ograniczenia</h2><p>Wycena: ilość × cena × kurs. Scenariusz: stałe pozycje, wspólny szok wszystkich akcji i ETF, osobny szok wybranej waluty. Model forward: F = S × (1 + stopa bazowa × dni/365) / (1 + stopa obca × dni/365). Wynik: podpisany nominał × (F − kurs po szoku), pomniejszony o koszty.</p><ul>{(data?.warnings ?? ["quotation_currency_only", "no_historical_returns", "terminal_forward_model", "no_broker_quote"]).map((warning) => <li key={warning}>{copy.warnings[warning] ?? warning}</li>)}</ul><p className="qo-note">Dostępne: portfel, CSV, ekspozycje, historia cen, scenariusze, model forward, budżet kosztów, ankieta i laboratorium. Integracje brokerskie, historia transakcji i przepływów oraz wspólna baza użytkowników pozostają kolejnymi etapami. Istniejące badawcze VaR i ES są dostępne w <a href="/dashboard">środowisku syntetycznym</a>.</p>{data ? <p className="qo-metadata">{data.model_version} · obliczono {stamp(data.calculated_at)} · ID scenariusza <code>{data.run_id ?? "pusty portfel"}</code></p> : null}</section>
+          <section className="qo-panel" id="assumptions"><p className="qo-eyebrow">PRZEJRZYSTOŚĆ OBLICZEŃ</p><h2>Założenia i ograniczenia</h2><p>Wycena: ilość × cena × kurs. Scenariusz: stałe pozycje, wspólny szok wszystkich akcji i ETF, osobny szok wybranej waluty. Model forward: F = S × (1 + stopa bazowa × dni/365) / (1 + stopa obca × dni/365). Wynik: podpisany nominał × (F − kurs po szoku), pomniejszony o koszty.</p><ul>{(data?.warnings ?? ["quotation_currency_only", "no_historical_returns", "terminal_forward_model", "no_broker_quote"]).map((warning) => <li key={warning}>{copy.warnings[warning] ?? warning}</li>)}</ul><p className="qo-note">Dostępne: portfel, CSV, ekspozycje, historia cen, scenariusze, model forward, budżet kosztów, budżet gotówki (koperty), laboratorium, quiz prognoz, ankieta. Integracje brokerskie, historia transakcji i przepływów oraz wspólna baza użytkowników pozostają kolejnymi etapami. Istniejące badawcze VaR i ES są dostępne w <a href="/dashboard">środowisku syntetycznym</a>.</p>{data ? <p className="qo-metadata">{data.model_version} · obliczono {stamp(data.calculated_at)} · ID scenariusza <code>{data.run_id ?? "pusty portfel"}</code></p> : null}</section>
         </>}
       </main><footer className="qo-footer">QuantOps · Zrozumienie ryzyka przed decyzją.<span>Bez wykonywania transakcji · Daty w UTC</span></footer>
     </div>

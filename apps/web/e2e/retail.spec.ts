@@ -2,10 +2,10 @@ import AxeBuilder from "@axe-core/playwright";
 import { expect, test } from "@playwright/test";
 
 import { csvExample } from "../src/data/retailApi";
+import { enterRetailWorkspace } from "./retailGate";
 
 test("portfolio, combined shock, signed hedge, stale-result protection and report", async ({ page }) => {
-  await page.goto("/");
-  await expect(page.getByRole("heading", { name: "Zrozum swój portfel." })).toBeVisible();
+  await enterRetailWorkspace(page);
   await expect(page.getByText("Demo · dane syntetyczne", { exact: true })).toBeVisible();
   const metrics = page.getByRole("region", { name: "Podsumowanie portfela" });
   await expect(metrics).toContainText("81 500");
@@ -45,7 +45,7 @@ test("portfolio, combined shock, signed hedge, stale-result protection and repor
 });
 
 test("CSV preview rejects duplicates before confirming a replacement", async ({ page }) => {
-  await page.goto("/");
+  await enterRetailWorkspace(page);
   await expect(page.locator(".qo-hedge-cards article")).toHaveCount(3);
   await page.getByText("Import CSV z podglądem", { exact: true }).click();
   await page.getByLabel("Treść CSV").fill(csvExample + csvExample.split("\n")[1]! + "\n");
@@ -63,7 +63,7 @@ test("CSV preview rejects duplicates before confirming a replacement", async ({ 
 });
 
 test("manual portfolio, local restore, allocation comparison and deletion", async ({ page }) => {
-  await page.goto("/");
+  await enterRetailWorkspace(page);
   await expect(page.locator(".qo-hedge-cards article")).toHaveCount(3);
   await page.getByRole("button", { name: "Utwórz pusty portfel" }).click();
   await page.getByLabel("Kurs USD/PLN").fill("4");
@@ -86,12 +86,12 @@ test("manual portfolio, local restore, allocation comparison and deletion", asyn
   await page.getByRole("button", { name: "Wczytaj zapis" }).click();
   await expect(page.getByLabel("Ilość OWN")).toHaveValue("50");
   await page.getByRole("button", { name: "Usuń moje dane" }).click();
-  await expect(page.getByText("Portfel jest pusty.", { exact: false })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Zaloguj się lokalnie" })).toBeVisible();
   expect(await page.evaluate(() => localStorage.getItem("quantops.local-portfolio.v1"))).toBeNull();
 });
 
 test("Polish dashboard supports keyboard access and automated accessibility checks", async ({ page }) => {
-  await page.goto("/");
+  await enterRetailWorkspace(page);
   await page.keyboard.press("Tab");
   await expect(page.getByRole("link", { name: "Przejdź do treści" })).toBeFocused();
   await page.keyboard.press("Enter");

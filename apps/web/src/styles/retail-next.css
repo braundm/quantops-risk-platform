@@ -95,6 +95,174 @@
 .qo-integration-grid h3 { margin-bottom: 10px; }
 .qo-integration-grid p { font-size: 12px; color: #556d5d; }
 .qo-integration-grid a { color: #226445; font-size: 12px; }
-@media (max-width: 1100px) { .qo-profile-fields, .qo-cost-form { grid-template-columns: repeat(2, minmax(0, 1fr)); } .qo-cost-form .qo-checkbox { grid-column: span 1; } .qo-risk-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); } .qo-risk-strip article { border-bottom: 1px solid #e0e8df; } .qo-experience { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
-@media (max-width: 760px) { .qo-history-panel { padding: 20px; } .qo-sidebar nav a { padding: 8px 12px; min-height: 34px; } .qo-sidebar { padding: 18px; } .qo-line-chart svg { min-height: 160px; } .qo-chart-slider { padding: 8px 0; } .qo-panel h2 { font-size: 21px; } .qo-risk-strip strong { font-size: 22px; } .qo-risk-strip article { padding: 14px; } .qo-history-empty { padding: 20px; gap: 15px; } .qo-history-empty > span { font-size: 65px; } .qo-lab-outcome { display: block; } .qo-lab-outcome span { display: block; margin-top: 7px; } .qo-decision-buttons { grid-template-columns: 1fr; gap: 8px; } .qo-lab-progress i { width: 15px; } .qo-experience { grid-template-columns: repeat(2, minmax(0, 1fr)); } .qo-profile-checks { display: grid; gap: 12px; } .qo-integration-grid { grid-template-columns: 1fr; } .qo-heading h1 { font-size: 37px; } }
+
+/* Local login / onboarding gate */
+.qo-gate {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 28px 18px;
+  background:
+    radial-gradient(ellipse at top left, #d7ebda 0, transparent 45%),
+    radial-gradient(ellipse at bottom right, #e8f0df 0, transparent 50%),
+    #f3f6f1;
+  color: #16332e;
+}
+.qo-gate-card {
+  width: min(640px, 100%);
+  padding: 34px 32px;
+  border: 1px solid #d7e3d4;
+  border-radius: 16px;
+  background: #fbfcf8;
+  box-shadow: 0 18px 40px #1d3a2812;
+}
+.qo-gate-wide { width: min(860px, 100%); }
+.qo-gate-top { display: flex; justify-content: space-between; gap: 16px; align-items: start; margin-bottom: 8px; }
+.qo-gate h1 { margin: 0 0 12px; font-size: clamp(28px, 4vw, 40px); letter-spacing: -.04em; }
+.qo-gate p { color: #566d64; font-size: 14px; }
+.qo-gate-form { display: grid; gap: 16px; margin: 22px 0 12px; }
+.qo-gate-link { display: inline-block; margin-top: 18px; color: #216449; font-size: 13px; }
+.qo-defaults-banner {
+  display: flex;
+  gap: 18px;
+  align-items: center;
+  justify-content: space-between;
+  margin: 22px 0;
+  padding: 18px 20px;
+  border: 1px solid #b9d4bc;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #eaf5e8, #f7faf4);
+}
+.qo-defaults-banner strong { display: block; margin-bottom: 6px; color: #174d3b; }
+.qo-defaults-banner p { margin: 0; font-size: 13px; }
+.qo-gate-divider { border: 0; border-top: 1px solid #dce5dc; margin: 28px 0 20px; }
+.qo-topbar-actions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.qo-settings {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  align-items: center;
+  flex-wrap: wrap;
+  margin: 0 36px;
+  padding: 16px 18px;
+  border-bottom: 1px solid #dce5dc;
+  background: #f4f8f1;
+}
+.qo-settings p { margin: 6px 0 0; color: #566d64; font-size: 12px; }
+
+/* YNAB-style cash envelopes */
+.qo-cash-budget .qo-budget-ready {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 22px;
+  margin: 20px 0;
+  padding: 22px;
+  border-radius: 14px;
+  border: 1px solid #d5e4d3;
+  background: #f4f8f0;
+}
+.qo-budget-ready[data-state="positive"] { background: #eef6e8; border-color: #b7d4b4; }
+.qo-budget-ready[data-state="negative"] { background: #f8efe8; border-color: #e0c4b4; }
+.qo-budget-ready[data-state="zero"] { background: #e8f3ec; border-color: #9fc4ae; }
+.qo-budget-ready > div span { display: block; font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: #56705f; }
+.qo-budget-ready > div strong { display: block; margin: 10px 0 8px; font-size: clamp(28px, 3vw, 40px); letter-spacing: -.04em; font-variant-numeric: tabular-nums; }
+.qo-budget-ready > div small { color: #5c725f; font-size: 12px; }
+.qo-budget-ready dl { display: grid; gap: 12px; margin: 0; align-content: center; }
+.qo-budget-ready dl > div { display: flex; justify-content: space-between; gap: 12px; font-size: 13px; }
+.qo-budget-ready dt { color: #5a7167; }
+.qo-budget-ready dd { margin: 0; font-weight: 600; font-variant-numeric: tabular-nums; }
+.qo-budget-controls {
+  display: grid;
+  grid-template-columns: minmax(140px, 180px) minmax(180px, 1fr) auto;
+  gap: 14px;
+  align-items: end;
+  margin-bottom: 18px;
+}
+.qo-budget-table-wrap { overflow-x: auto; border: 1px solid #e0e7df; border-radius: 12px; }
+.qo-budget-table { width: 100%; border-collapse: collapse; min-width: 720px; font-size: 13px; }
+.qo-budget-table th, .qo-budget-table td { padding: 12px 14px; border-bottom: 1px solid #e7eee4; text-align: left; vertical-align: middle; }
+.qo-budget-table thead th { font-size: 11px; color: #5a7167; background: #f5f8f2; }
+.qo-budget-group th { background: #eef4ea; color: #335845; font-size: 12px; letter-spacing: .04em; text-transform: uppercase; }
+.qo-budget-table input[type="number"] {
+  width: 110px;
+  min-height: 36px;
+  padding: 6px 8px;
+  border: 1px solid #cfdccf;
+  border-radius: 6px;
+  background: #fff;
+}
+.qo-budget-over { color: #9b4235; }
+.qo-budget-row-actions { display: flex; gap: 8px; flex-wrap: wrap; white-space: nowrap; }
+.qo-budget-add {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(140px, 220px) auto;
+  gap: 12px;
+  align-items: end;
+  margin-top: 18px;
+}
+
+/* Forecast direction quiz */
+.qo-forecast-style { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin: 18px 0; }
+.qo-forecast-instrument { font-size: 13px; color: #4d6656; margin: 8px 0 12px; font-weight: 600; }
+.qo-forecast-confidence { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 8px; margin: 12px 0 18px; }
+.qo-forecast-words { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.qo-forecast-verdict { font-size: 1.45rem; font-weight: 750; margin: 8px 0 12px; }
+.qo-forecast-verdict.qo-hit { color: #1d7a4a; }
+.qo-forecast-verdict.qo-miss { color: #a33d35; }
+.qo-forecast-verdict.qo-sideways { color: #6a7358; }
+.qo-forecast-buckets { margin: 18px 0; padding: 16px 18px; border-radius: 12px; background: #f1f6ec; border: 1px solid #d7e5d3; }
+.qo-forecast-buckets h4 { margin: 0 0 12px; font-size: 15px; }
+.qo-forecast-buckets ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.qo-forecast-buckets li { display: grid; grid-template-columns: 70px 1fr auto; gap: 12px; align-items: baseline; font-size: 13px; }
+.qo-forecast-play h3, .qo-forecast-reveal h3, .qo-forecast-results h3 { margin-top: 18px; }
+.qo-forecast-chart { margin: 8px 0 16px; }
+.qo-research-forecast { max-width: 960px; }
+.qo-research-forecast .page-header { display: flex; justify-content: space-between; gap: 20px; align-items: start; margin-bottom: 18px; flex-wrap: wrap; }
+.qo-research-forecast .page-header h1 { margin: 0 0 8px; font-size: clamp(28px, 3vw, 40px); letter-spacing: -.04em; }
+.qo-research-forecast .page-header p { max-width: 640px; color: var(--muted, #5a6d66); }
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media (max-width: 1100px) {
+  .qo-profile-fields, .qo-cost-form { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .qo-cost-form .qo-checkbox { grid-column: span 1; }
+  .qo-risk-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .qo-risk-strip article { border-bottom: 1px solid #e0e8df; }
+  .qo-experience { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .qo-cash-budget .qo-budget-ready, .qo-budget-controls, .qo-budget-add { grid-template-columns: 1fr; }
+  .qo-defaults-banner { flex-direction: column; align-items: stretch; }
+  .qo-forecast-confidence { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+@media (max-width: 760px) {
+  .qo-history-panel { padding: 20px; }
+  .qo-sidebar nav a { padding: 8px 12px; min-height: 34px; }
+  .qo-sidebar { padding: 18px; }
+  .qo-line-chart svg { min-height: 160px; }
+  .qo-chart-slider { padding: 8px 0; }
+  .qo-panel h2 { font-size: 21px; }
+  .qo-risk-strip strong { font-size: 22px; }
+  .qo-risk-strip article { padding: 14px; }
+  .qo-history-empty { padding: 20px; gap: 15px; }
+  .qo-history-empty > span { font-size: 65px; }
+  .qo-lab-outcome { display: block; }
+  .qo-lab-outcome span { display: block; margin-top: 7px; }
+  .qo-decision-buttons { grid-template-columns: 1fr; gap: 8px; }
+  .qo-lab-progress i { width: 15px; }
+  .qo-experience { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .qo-profile-checks { display: grid; gap: 12px; }
+  .qo-integration-grid { grid-template-columns: 1fr; }
+  .qo-heading h1 { font-size: 37px; }
+  .qo-settings { margin: 0 16px; }
+  .qo-gate-card { padding: 24px 18px; }
+}
 @media (prefers-reduced-motion: reduce) { .qo-button { transition: none; } }

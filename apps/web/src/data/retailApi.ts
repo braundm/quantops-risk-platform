@@ -73,8 +73,23 @@ export async function retailRequest<T>(path: string, body?: unknown, signal?: Ab
     signal,
   });
   if (!response.ok) {
-    const problem = await response.json() as { detail?: string; errors?: { location: string[]; message: string }[] };
-    throw new Error(problem.errors?.map((issue) => `${issue.location.join(".")}: ${issue.message}`).join("; ") ?? problem.detail ?? "Nie udało się wykonać obliczeń.");
+    let detail: string;
+    try {
+      const problem = await response.json() as { detail?: string | { msg?: string }[]; errors?: { location: string[]; message: string }[]; title?: string };
+      detail = problem.errors?.map((issue) => `${issue.location.join(".")}: ${issue.message}`).join("; ")
+        ?? (typeof problem.detail === "string" ? problem.detail : undefined)
+        ?? problem.title
+        ?? "";
+    } catch {
+      detail = "";
+    }
+    if (response.status === 404) {
+      throw new Error(
+        "API nie zna endpointu quizu (404). Zrestartuj serwer API z aktualnym kodem: "
+        + "python -m uvicorn quantops_api.main:app --host 127.0.0.1 --port 8000 --reload",
+      );
+    }
+    throw new Error(detail || `Nie udało się wykonać obliczeń (HTTP ${response.status}).`);
   }
   return await response.json() as T;
 }

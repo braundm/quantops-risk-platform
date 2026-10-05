@@ -11,6 +11,7 @@ import {
 import { ArchitecturePage } from "./pages/ArchitecturePage";
 import { DashboardPage } from "./pages/DashboardPage";
 import { EvidencePage } from "./pages/EvidencePage";
+import { ForecastPage } from "./pages/ForecastPage";
 import { LandingPage } from "./pages/LandingPage";
 import { MethodologyPage } from "./pages/MethodologyPage";
 import { AuditPage, MarketPage, ModelsPage } from "./pages/OperationalPages";
@@ -18,6 +19,7 @@ import { PipelinePage } from "./pages/PipelinePage";
 import { PortfolioPage } from "./pages/PortfolioPage";
 import { ScenarioPage } from "./pages/ScenarioPage";
 import { RetailPage } from "./pages/RetailPage";
+import { InvestorPage } from "./pages/InvestorPage";
 
 type DataRoute = "dashboard" | "portfolio" | "scenarios" | "pipelines" | "evidence" | "briefs" | "market";
 
@@ -73,13 +75,14 @@ function DataPage({ mode, route }: { readonly mode: DemoMode; readonly route: Da
   }
 }
 
-function routeFor(path: string): DataRoute | "methodology" | "architecture" | "models" | "audit" | "not-found" {
+function routeFor(path: string): DataRoute | "methodology" | "architecture" | "models" | "audit" | "forecast" | "not-found" {
   if (path === "/dashboard") return "dashboard";
   if (path === "/pipelines") return "pipelines";
   if (path === "/evidence") return "evidence";
   if (path === "/market") return "market";
   if (path === "/models") return "models";
   if (path === "/audit") return "audit";
+  if (path === "/forecast") return "forecast";
   if (path === "/methodology") return "methodology";
   if (path === "/architecture") return "architecture";
   if (/^\/portfolios\/[^/]+\/scenarios\/?$/.test(path)) return "scenarios";
@@ -101,7 +104,8 @@ function NotFoundPage() {
 
 export function App() {
   const path = window.location.pathname.replace(/\/$/, "") || "/";
-  if (path === "/" || path === "/personal") return <RetailPage />;
+  if (path === "/" || path === "/investor") return <InvestorPage />;
+  if (path === "/personal") return <RetailPage />;
   if (path === "/research") return <LandingPage />;
 
   const route = routeFor(path);
@@ -115,6 +119,8 @@ export function App() {
         return <ModelsPage />;
       case "audit":
         return <AuditPage />;
+      case "forecast":
+        return <ForecastPage />;
       case "not-found":
         return <NotFoundPage />;
       default:

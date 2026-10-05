@@ -6,7 +6,7 @@ interface NavigationItem {
   readonly href: string;
   readonly label: string;
   readonly group: "Research" | "Assurance";
-  readonly icon: "grid" | "portfolio" | "scenario" | "market" | "model" | "pipeline" | "evidence" | "audit" | "method" | "architecture";
+  readonly icon: "grid" | "portfolio" | "scenario" | "market" | "model" | "pipeline" | "evidence" | "audit" | "method" | "architecture" | "forecast";
 }
 
 const navigation: readonly NavigationItem[] = [
@@ -23,6 +23,7 @@ const navigation: readonly NavigationItem[] = [
     group: "Research",
     icon: "scenario",
   },
+  { href: "/forecast", label: "Forecast quiz", group: "Research", icon: "forecast" },
   { href: "/market", label: "Market data", group: "Research", icon: "market" },
   { href: "/models", label: "Models", group: "Research", icon: "model" },
   { href: "/pipelines", label: "Data quality", group: "Assurance", icon: "pipeline" },
@@ -46,6 +47,7 @@ function NavIcon({ name }: { readonly name: NavigationItem["icon"] }) {
     grid: <path d="M3 3h7v7H3zm11 0h7v7h-7zM3 14h7v7H3zm11 0h7v7h-7z" />,
     portfolio: <path d="M4 6h16v14H4zM8 6V3h8v3M4 11h16M10 15h4" />,
     scenario: <path d="M4 19V5m0 14h16M8 15l3-4 3 2 5-7" />,
+    forecast: <path d="M4 18V6m0 12h16M7 14l3-4 3 2 5-7M17 7h3v3" />,
     market: <path d="M3 18h18M5 15V9m5 6V5m5 10v-3m5 3V7" />,
     model: <path d="M12 3v4m0 10v4M3 12h4m10 0h4M6 6l3 3m6 6 3 3m0-12-3 3m-6 6-3 3M9 9h6v6H9z" />,
     pipeline: <path d="M4 5h6v6H4zm10 8h6v6h-6zM10 8h4a3 3 0 0 1 3 3v2" />,
@@ -129,6 +131,9 @@ export function Shell({ path, children }: ShellProps) {
             <strong>Deterministic fixture 1.0.0</strong>
           </div>
           <div className="topbar-actions">
+            <a className="quiet-link" href="/forecast">
+              Forecast quiz
+            </a>
             <a className="quiet-link" href="/evidence">
               View evidence
             </a>

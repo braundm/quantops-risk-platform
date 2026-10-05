@@ -1,8 +1,49 @@
 # QuantOps implementation progress
 
-Last updated: 2026-10-04
+Last updated: 2026-10-05
 
 This file records observed results only. An unchecked item is not implemented or has not yet met its exit evidence.
+
+## Investor workspace pre-publication verification — 2026-10-05
+
+The owner authorized committing and publishing the existing local investor-workspace, cash-budget,
+onboarding and synthetic forecast changes on the existing PR #11 branch. Transaction history,
+flow-aware performance and named scenarios are now supported in browser-local storage; durable
+hosted tenants and the full retail MVP remain outside the verified scope.
+
+```text
+.venv\Scripts\python.exe -m pytest -m "not integration and not e2e" -q -o cache_dir=.pytest_cache_publish
+# exit 0; 549 passed, 1 deselected, 20 subtests passed in 22.39s
+.venv\Scripts\python.exe scripts/typecheck.py
+# exit 0; 11 strict isolated groups passed
+.venv\Scripts\ruff.exe check .
+# exit 0; all checks passed
+.venv\Scripts\ruff.exe format --check .
+# exit 0; 225 files already formatted
+pnpm --filter @quantops/web lint
+# exit 0
+pnpm --filter @quantops/web test
+# exit 0; 3 files, 20 tests passed
+pnpm --filter @quantops/web build
+# exit 0; TypeScript and Vite production build passed
+pnpm --filter @quantops/web test:e2e --workers=2
+# exit 0; all 36 desktop/mobile tests passed (1.6m), including axe checks
+.venv\Scripts\python.exe scripts/docs_check.py
+# exit 0; 52 Markdown files initially, 53 on the final rerun after the separate pytest cache was created
+.venv\Scripts\python.exe scripts/security_scan.py
+# exit 0; no high-confidence secret or hygiene findings
+git diff --check
+# exit 0
+```
+
+Initial sandboxed frontend commands failed with EPERM; reruns outside that restriction passed.
+The first frontend lint attempt raced with Playwright replacing its results directory; the
+subsequent lint passed. The first browser run passed 35 tests and timed out during mobile browser
+context teardown for the education exercise; the full two-worker rerun passed all 36 tests without
+changing assertions or timeout settings. The first sandboxed Python run stalled and was interrupted;
+the subsequent full run reached 100% but failed writing the existing pytest cache. The final full
+run used a separate cache directory and exited successfully. Live provider refresh, production
+storage and hosted CI for this new commit are not established by these local checks.
 
 ## Synthetic forecast quiz — 2026-10-04
 

@@ -887,6 +887,254 @@
         "title": "AuditEventResponse",
         "type": "object"
       },
+      "BookResult": {
+        "properties": {
+          "annual_volatility": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Annual Volatility"
+          },
+          "as_of": {
+            "format": "date",
+            "title": "As Of",
+            "type": "string"
+          },
+          "cash": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Cash",
+            "type": "string"
+          },
+          "cash_after_margin": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Cash After Margin",
+            "type": "string"
+          },
+          "correlation_symbols": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Correlation Symbols",
+            "type": "array"
+          },
+          "correlations": {
+            "items": {
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "type": "array"
+            },
+            "title": "Correlations",
+            "type": "array"
+          },
+          "curve": {
+            "items": {
+              "$ref": "#/components/schemas/CurvePoint"
+            },
+            "title": "Curve",
+            "type": "array"
+          },
+          "dividends": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Dividends",
+            "type": "string"
+          },
+          "effective_positions": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Effective Positions"
+          },
+          "equity": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Equity",
+            "type": "string"
+          },
+          "es95": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Es95"
+          },
+          "fees": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Fees",
+            "type": "string"
+          },
+          "gross_exposure": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Gross Exposure",
+            "type": "string"
+          },
+          "leverage": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Leverage"
+          },
+          "margin_estimate": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Margin Estimate",
+            "type": "string"
+          },
+          "market_points": {
+            "items": {
+              "$ref": "#/components/schemas/MarketPoint"
+            },
+            "title": "Market Points",
+            "type": "array"
+          },
+          "max_drawdown": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Max Drawdown"
+          },
+          "model_version": {
+            "title": "Model Version",
+            "type": "string"
+          },
+          "net_deposits": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Net Deposits",
+            "type": "string"
+          },
+          "observations": {
+            "title": "Observations",
+            "type": "integer"
+          },
+          "positions": {
+            "items": {
+              "$ref": "#/components/schemas/Position"
+            },
+            "title": "Positions",
+            "type": "array"
+          },
+          "profit": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Profit",
+            "type": "string"
+          },
+          "realized_pnl": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Realized Pnl",
+            "type": "string"
+          },
+          "risk_status": {
+            "enum": [
+              "ok",
+              "insufficient_data",
+              "invalid_data"
+            ],
+            "title": "Risk Status",
+            "type": "string"
+          },
+          "top_weight": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Top Weight"
+          },
+          "twr": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Twr"
+          },
+          "var95": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Var95"
+          },
+          "warnings": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Warnings",
+            "type": "array"
+          }
+        },
+        "required": [
+          "model_version",
+          "as_of",
+          "equity",
+          "cash",
+          "net_deposits",
+          "profit",
+          "fees",
+          "dividends",
+          "realized_pnl",
+          "gross_exposure",
+          "leverage",
+          "margin_estimate",
+          "cash_after_margin",
+          "twr",
+          "max_drawdown",
+          "effective_positions",
+          "top_weight",
+          "risk_status",
+          "var95",
+          "es95",
+          "annual_volatility",
+          "observations",
+          "positions",
+          "curve",
+          "market_points",
+          "correlation_symbols",
+          "correlations",
+          "warnings"
+        ],
+        "title": "BookResult",
+        "type": "object"
+      },
       "CanonicalUnit": {
         "enum": [
           "ratio",
@@ -1088,19 +1336,60 @@
         "title": "CsvPreview",
         "type": "object"
       },
-      "CsvRequest": {
-        "additionalProperties": false,
+      "CurvePoint": {
         "properties": {
-          "text": {
-            "maxLength": 200000,
-            "title": "Text",
+          "day": {
+            "format": "date",
+            "title": "Day",
             "type": "string"
+          },
+          "drawdown": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Drawdown"
+          },
+          "equity": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Equity",
+            "type": "string"
+          },
+          "net_deposits": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Net Deposits",
+            "type": "string"
+          },
+          "profit": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Profit",
+            "type": "string"
+          },
+          "return_index": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Return Index"
           }
         },
         "required": [
-          "text"
+          "day",
+          "equity",
+          "net_deposits",
+          "profit",
+          "return_index",
+          "drawdown"
         ],
-        "title": "CsvRequest",
+        "title": "CurvePoint",
         "type": "object"
       },
       "DataQualityIssueResponse": {
@@ -1251,6 +1540,373 @@
           "gross_base"
         ],
         "title": "Exposure",
+        "type": "object"
+      },
+      "ForecastAnswer": {
+        "additionalProperties": false,
+        "properties": {
+          "confidence": {
+            "maximum": 100.0,
+            "minimum": 50.0,
+            "title": "Confidence",
+            "type": "integer"
+          },
+          "prediction": {
+            "enum": [
+              "up",
+              "down"
+            ],
+            "title": "Prediction",
+            "type": "string"
+          },
+          "token": {
+            "maxLength": 4000,
+            "title": "Token",
+            "type": "string"
+          }
+        },
+        "required": [
+          "token",
+          "prediction",
+          "confidence"
+        ],
+        "title": "ForecastAnswer",
+        "type": "object"
+      },
+      "ForecastAnswerRow": {
+        "additionalProperties": false,
+        "properties": {
+          "actual": {
+            "enum": [
+              "up",
+              "down",
+              "sideways"
+            ],
+            "title": "Actual",
+            "type": "string"
+          },
+          "case_id": {
+            "title": "Case Id",
+            "type": "integer"
+          },
+          "confidence": {
+            "title": "Confidence",
+            "type": "integer"
+          },
+          "future_return_pct": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Future Return Pct",
+            "type": "string"
+          },
+          "prediction": {
+            "enum": [
+              "up",
+              "down"
+            ],
+            "title": "Prediction",
+            "type": "string"
+          },
+          "question_no": {
+            "title": "Question No",
+            "type": "integer"
+          },
+          "result": {
+            "enum": [
+              "hit",
+              "miss",
+              "sideways"
+            ],
+            "title": "Result",
+            "type": "string"
+          }
+        },
+        "required": [
+          "question_no",
+          "case_id",
+          "prediction",
+          "confidence",
+          "future_return_pct",
+          "actual",
+          "result"
+        ],
+        "title": "ForecastAnswerRow",
+        "type": "object"
+      },
+      "ForecastContinue": {
+        "additionalProperties": false,
+        "properties": {
+          "token": {
+            "maxLength": 4000,
+            "title": "Token",
+            "type": "string"
+          }
+        },
+        "required": [
+          "token"
+        ],
+        "title": "ForecastContinue",
+        "type": "object"
+      },
+      "ForecastReveal": {
+        "additionalProperties": false,
+        "properties": {
+          "actual": {
+            "enum": [
+              "up",
+              "down",
+              "sideways"
+            ],
+            "title": "Actual",
+            "type": "string"
+          },
+          "future_return_pct": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Future Return Pct",
+            "type": "string"
+          },
+          "future_values": {
+            "items": {
+              "type": "number"
+            },
+            "title": "Future Values",
+            "type": "array"
+          },
+          "result": {
+            "enum": [
+              "hit",
+              "miss",
+              "sideways"
+            ],
+            "title": "Result",
+            "type": "string"
+          }
+        },
+        "required": [
+          "future_values",
+          "future_return_pct",
+          "actual",
+          "result"
+        ],
+        "title": "ForecastReveal",
+        "type": "object"
+      },
+      "ForecastRound": {
+        "additionalProperties": false,
+        "properties": {
+          "confidence_style": {
+            "enum": [
+              "numeric",
+              "words"
+            ],
+            "title": "Confidence Style",
+            "type": "string"
+          },
+          "finished": {
+            "default": false,
+            "title": "Finished",
+            "type": "boolean"
+          },
+          "hist_values": {
+            "items": {
+              "type": "number"
+            },
+            "title": "Hist Values",
+            "type": "array"
+          },
+          "instrument": {
+            "title": "Instrument",
+            "type": "string"
+          },
+          "model_version": {
+            "default": "synthetic-forecast-quiz@1.0.0",
+            "title": "Model Version",
+            "type": "string"
+          },
+          "progress": {
+            "items": {
+              "$ref": "#/components/schemas/ForecastAnswerRow"
+            },
+            "title": "Progress",
+            "type": "array"
+          },
+          "question_no": {
+            "title": "Question No",
+            "type": "integer"
+          },
+          "reveal": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ForecastReveal"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "summary": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ForecastSummary"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "synthetic": {
+            "default": true,
+            "title": "Synthetic",
+            "type": "boolean"
+          },
+          "token": {
+            "title": "Token",
+            "type": "string"
+          },
+          "total": {
+            "default": 12,
+            "title": "Total",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "token",
+          "question_no",
+          "instrument",
+          "hist_values",
+          "confidence_style"
+        ],
+        "title": "ForecastRound",
+        "type": "object"
+      },
+      "ForecastStart": {
+        "additionalProperties": false,
+        "properties": {
+          "confidence_style": {
+            "default": "numeric",
+            "enum": [
+              "numeric",
+              "words"
+            ],
+            "title": "Confidence Style",
+            "type": "string"
+          }
+        },
+        "title": "ForecastStart",
+        "type": "object"
+      },
+      "ForecastSummary": {
+        "additionalProperties": false,
+        "properties": {
+          "by_confidence": {
+            "items": {
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                    "type": "string"
+                  },
+                  {
+                    "type": "integer"
+                  },
+                  {
+                    "type": "string"
+                  }
+                ]
+              },
+              "type": "object"
+            },
+            "title": "By Confidence",
+            "type": "array"
+          },
+          "effectiveness_pct": {
+            "anyOf": [
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Effectiveness Pct"
+          },
+          "hits": {
+            "title": "Hits",
+            "type": "integer"
+          },
+          "mean_brier": {
+            "anyOf": [
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Mean Brier"
+          },
+          "mean_confidence": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Mean Confidence",
+            "type": "string"
+          },
+          "mean_confidence_hit": {
+            "anyOf": [
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Mean Confidence Hit"
+          },
+          "mean_confidence_miss": {
+            "anyOf": [
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Mean Confidence Miss"
+          },
+          "misses": {
+            "title": "Misses",
+            "type": "integer"
+          },
+          "most_confident": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ForecastAnswerRow"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "sideways": {
+            "title": "Sideways",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "hits",
+          "misses",
+          "sideways",
+          "effectiveness_pct",
+          "mean_confidence",
+          "mean_confidence_hit",
+          "mean_confidence_miss",
+          "mean_brier",
+          "by_confidence",
+          "most_confident"
+        ],
+        "title": "ForecastSummary",
         "type": "object"
       },
       "HTTPValidationError": {
@@ -1949,6 +2605,183 @@
         "title": "Holding",
         "type": "object"
       },
+      "InstrumentModel-Input": {
+        "additionalProperties": false,
+        "properties": {
+          "currency": {
+            "const": "USD",
+            "default": "USD",
+            "title": "Currency",
+            "type": "string"
+          },
+          "expiry": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Expiry"
+          },
+          "kind": {
+            "enum": [
+              "equity",
+              "etf",
+              "forex",
+              "future"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "margin_rate": {
+            "anyOf": [
+              {
+                "maximum": 1.0,
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                "type": "string"
+              }
+            ],
+            "title": "Margin Rate"
+          },
+          "multiplier": {
+            "anyOf": [
+              {
+                "exclusiveMinimum": 0.0,
+                "type": "number"
+              },
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}|(?=[\\d.]{1,25}0*$)\\d{0,14}\\.\\d{0,10}0*$)",
+                "type": "string"
+              }
+            ],
+            "title": "Multiplier"
+          },
+          "name": {
+            "maxLength": 100,
+            "title": "Name",
+            "type": "string"
+          },
+          "sector": {
+            "maxLength": 100,
+            "title": "Sector",
+            "type": "string"
+          },
+          "spec_url": {
+            "anyOf": [
+              {
+                "maxLength": 300,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Spec Url"
+          },
+          "symbol": {
+            "maxLength": 40,
+            "title": "Symbol",
+            "type": "string"
+          }
+        },
+        "required": [
+          "symbol",
+          "name",
+          "kind",
+          "sector",
+          "multiplier",
+          "margin_rate"
+        ],
+        "title": "InstrumentModel",
+        "type": "object"
+      },
+      "InstrumentModel-Output": {
+        "additionalProperties": false,
+        "properties": {
+          "currency": {
+            "const": "USD",
+            "default": "USD",
+            "title": "Currency",
+            "type": "string"
+          },
+          "expiry": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Expiry"
+          },
+          "kind": {
+            "enum": [
+              "equity",
+              "etf",
+              "forex",
+              "future"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "margin_rate": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Margin Rate",
+            "type": "string"
+          },
+          "multiplier": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}|(?=[\\d.]{1,25}0*$)\\d{0,14}\\.\\d{0,10}0*$)",
+            "title": "Multiplier",
+            "type": "string"
+          },
+          "name": {
+            "maxLength": 100,
+            "title": "Name",
+            "type": "string"
+          },
+          "sector": {
+            "maxLength": 100,
+            "title": "Sector",
+            "type": "string"
+          },
+          "spec_url": {
+            "anyOf": [
+              {
+                "maxLength": 300,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Spec Url"
+          },
+          "symbol": {
+            "maxLength": 40,
+            "title": "Symbol",
+            "type": "string"
+          }
+        },
+        "required": [
+          "symbol",
+          "name",
+          "kind",
+          "sector",
+          "multiplier",
+          "margin_rate"
+        ],
+        "title": "InstrumentModel",
+        "type": "object"
+      },
       "InstrumentResponse": {
         "additionalProperties": false,
         "properties": {
@@ -2346,6 +3179,160 @@
           "evidence_ids"
         ],
         "title": "MainFactor",
+        "type": "object"
+      },
+      "Market-Input": {
+        "additionalProperties": false,
+        "properties": {
+          "as_of": {
+            "format": "date",
+            "title": "As Of",
+            "type": "string"
+          },
+          "catalog": {
+            "items": {
+              "$ref": "#/components/schemas/InstrumentModel-Input"
+            },
+            "maxItems": 6,
+            "minItems": 1,
+            "title": "Catalog",
+            "type": "array"
+          },
+          "fetched_at": {
+            "format": "date-time",
+            "title": "Fetched At",
+            "type": "string"
+          },
+          "price_basis": {
+            "const": "unadjusted_daily_close",
+            "title": "Price Basis",
+            "type": "string"
+          },
+          "provider": {
+            "maxLength": 80,
+            "title": "Provider",
+            "type": "string"
+          },
+          "series": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/Series-Input"
+            },
+            "title": "Series",
+            "type": "object"
+          },
+          "version": {
+            "const": 1,
+            "default": 1,
+            "title": "Version",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "provider",
+          "fetched_at",
+          "as_of",
+          "price_basis",
+          "catalog",
+          "series"
+        ],
+        "title": "Market",
+        "type": "object"
+      },
+      "Market-Output": {
+        "additionalProperties": false,
+        "properties": {
+          "as_of": {
+            "format": "date",
+            "title": "As Of",
+            "type": "string"
+          },
+          "catalog": {
+            "items": {
+              "$ref": "#/components/schemas/InstrumentModel-Output"
+            },
+            "maxItems": 6,
+            "minItems": 1,
+            "title": "Catalog",
+            "type": "array"
+          },
+          "fetched_at": {
+            "format": "date-time",
+            "title": "Fetched At",
+            "type": "string"
+          },
+          "price_basis": {
+            "const": "unadjusted_daily_close",
+            "title": "Price Basis",
+            "type": "string"
+          },
+          "provider": {
+            "maxLength": 80,
+            "title": "Provider",
+            "type": "string"
+          },
+          "series": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/Series-Output"
+            },
+            "title": "Series",
+            "type": "object"
+          },
+          "version": {
+            "const": 1,
+            "default": 1,
+            "title": "Version",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "provider",
+          "fetched_at",
+          "as_of",
+          "price_basis",
+          "catalog",
+          "series"
+        ],
+        "title": "Market",
+        "type": "object"
+      },
+      "MarketPoint": {
+        "properties": {
+          "annual_volatility": {
+            "title": "Annual Volatility",
+            "type": "number"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "period_return": {
+            "title": "Period Return",
+            "type": "number"
+          },
+          "risk_contribution": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Risk Contribution"
+          },
+          "symbol": {
+            "title": "Symbol",
+            "type": "string"
+          }
+        },
+        "required": [
+          "symbol",
+          "name",
+          "period_return",
+          "annual_volatility",
+          "risk_contribution"
+        ],
+        "title": "MarketPoint",
         "type": "object"
       },
       "ModelCatalogResponse": {
@@ -3123,6 +4110,111 @@
         "title": "PortfolioResponse",
         "type": "object"
       },
+      "Position": {
+        "properties": {
+          "average_price": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Average Price",
+            "type": "string"
+          },
+          "expiry": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Expiry"
+          },
+          "holding_days": {
+            "title": "Holding Days",
+            "type": "integer"
+          },
+          "kind": {
+            "enum": [
+              "equity",
+              "etf",
+              "forex",
+              "future"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "margin": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Margin",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "notional": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Notional",
+            "type": "string"
+          },
+          "opened": {
+            "format": "date",
+            "title": "Opened",
+            "type": "string"
+          },
+          "price": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Price",
+            "type": "string"
+          },
+          "quantity": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Quantity",
+            "type": "string"
+          },
+          "sector": {
+            "title": "Sector",
+            "type": "string"
+          },
+          "symbol": {
+            "title": "Symbol",
+            "type": "string"
+          },
+          "unrealized_pnl": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Unrealized Pnl",
+            "type": "string"
+          },
+          "value": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Value",
+            "type": "string"
+          },
+          "weight": {
+            "title": "Weight",
+            "type": "number"
+          }
+        },
+        "required": [
+          "symbol",
+          "name",
+          "kind",
+          "sector",
+          "quantity",
+          "average_price",
+          "price",
+          "opened",
+          "holding_days",
+          "value",
+          "notional",
+          "unrealized_pnl",
+          "margin",
+          "weight",
+          "expiry"
+        ],
+        "title": "Position",
+        "type": "object"
+      },
       "PositionReplacement": {
         "additionalProperties": false,
         "properties": {
@@ -3629,6 +4721,55 @@
           "is_synthetic"
         ],
         "title": "PriceBarResponse",
+        "type": "object"
+      },
+      "PriceRow-Input": {
+        "additionalProperties": false,
+        "properties": {
+          "close": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}|(?=[\\d.]{1,25}0*$)\\d{0,14}\\.\\d{0,10}0*$)",
+                "type": "string"
+              }
+            ],
+            "title": "Close"
+          },
+          "date": {
+            "format": "date",
+            "title": "Date",
+            "type": "string"
+          }
+        },
+        "required": [
+          "date",
+          "close"
+        ],
+        "title": "PriceRow",
+        "type": "object"
+      },
+      "PriceRow-Output": {
+        "additionalProperties": false,
+        "properties": {
+          "close": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}|(?=[\\d.]{1,25}0*$)\\d{0,14}\\.\\d{0,10}0*$)",
+            "title": "Close",
+            "type": "string"
+          },
+          "date": {
+            "format": "date",
+            "title": "Date",
+            "type": "string"
+          }
+        },
+        "required": [
+          "date",
+          "close"
+        ],
+        "title": "PriceRow",
         "type": "object"
       },
       "ProblemDetails": {
@@ -4217,6 +5358,134 @@
         "title": "RiskSnapshotResponse",
         "type": "object"
       },
+      "Scenario-Input": {
+        "additionalProperties": false,
+        "properties": {
+          "forex_shock": {
+            "anyOf": [
+              {
+                "exclusiveMinimum": -1.0,
+                "maximum": 5.0,
+                "type": "number"
+              },
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}|(?=[\\d.]{1,25}0*$)\\d{0,14}\\.\\d{0,10}0*$)",
+                "type": "string"
+              }
+            ],
+            "default": "-0.05",
+            "title": "Forex Shock"
+          },
+          "fx_shock": {
+            "anyOf": [
+              {
+                "exclusiveMinimum": -1.0,
+                "maximum": 5.0,
+                "type": "number"
+              },
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}|(?=[\\d.]{1,25}0*$)\\d{0,14}\\.\\d{0,10}0*$)",
+                "type": "string"
+              }
+            ],
+            "default": "0.1",
+            "title": "Fx Shock"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "name": {
+            "maxLength": 80,
+            "minLength": 1,
+            "title": "Name",
+            "type": "string"
+          },
+          "oil_shock": {
+            "anyOf": [
+              {
+                "exclusiveMinimum": -1.0,
+                "maximum": 5.0,
+                "type": "number"
+              },
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}|(?=[\\d.]{1,25}0*$)\\d{0,14}\\.\\d{0,10}0*$)",
+                "type": "string"
+              }
+            ],
+            "default": "-0.25",
+            "title": "Oil Shock"
+          },
+          "price_shock": {
+            "anyOf": [
+              {
+                "exclusiveMinimum": -1.0,
+                "maximum": 5.0,
+                "type": "number"
+              },
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}|(?=[\\d.]{1,25}0*$)\\d{0,14}\\.\\d{0,10}0*$)",
+                "type": "string"
+              }
+            ],
+            "default": "-0.15",
+            "title": "Price Shock"
+          }
+        },
+        "required": [
+          "id",
+          "name"
+        ],
+        "title": "Scenario",
+        "type": "object"
+      },
+      "Scenario-Output": {
+        "additionalProperties": false,
+        "properties": {
+          "forex_shock": {
+            "default": "-0.05",
+            "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}|(?=[\\d.]{1,25}0*$)\\d{0,14}\\.\\d{0,10}0*$)",
+            "title": "Forex Shock",
+            "type": "string"
+          },
+          "fx_shock": {
+            "default": "0.1",
+            "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}|(?=[\\d.]{1,25}0*$)\\d{0,14}\\.\\d{0,10}0*$)",
+            "title": "Fx Shock",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "name": {
+            "maxLength": 80,
+            "minLength": 1,
+            "title": "Name",
+            "type": "string"
+          },
+          "oil_shock": {
+            "default": "-0.25",
+            "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}|(?=[\\d.]{1,25}0*$)\\d{0,14}\\.\\d{0,10}0*$)",
+            "title": "Oil Shock",
+            "type": "string"
+          },
+          "price_shock": {
+            "default": "-0.15",
+            "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}|(?=[\\d.]{1,25}0*$)\\d{0,14}\\.\\d{0,10}0*$)",
+            "title": "Price Shock",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name"
+        ],
+        "title": "Scenario",
+        "type": "object"
+      },
       "ScenarioCreate": {
         "additionalProperties": false,
         "properties": {
@@ -4257,6 +5526,23 @@
           "assumptions"
         ],
         "title": "ScenarioCreate",
+        "type": "object"
+      },
+      "ScenarioOutput": {
+        "additionalProperties": false,
+        "properties": {
+          "result": {
+            "$ref": "#/components/schemas/StressResult"
+          },
+          "scenario": {
+            "$ref": "#/components/schemas/Scenario-Output"
+          }
+        },
+        "required": [
+          "scenario",
+          "result"
+        ],
+        "title": "ScenarioOutput",
         "type": "object"
       },
       "ScenarioPositionResultResponse": {
@@ -4500,6 +5786,316 @@
         "title": "ScenarioShockWrite",
         "type": "object"
       },
+      "Series-Input": {
+        "additionalProperties": false,
+        "properties": {
+          "history_url": {
+            "maxLength": 400,
+            "title": "History Url",
+            "type": "string"
+          },
+          "rows": {
+            "items": {
+              "$ref": "#/components/schemas/PriceRow-Input"
+            },
+            "maxItems": 800,
+            "minItems": 1,
+            "title": "Rows",
+            "type": "array"
+          },
+          "url": {
+            "maxLength": 400,
+            "title": "Url",
+            "type": "string"
+          }
+        },
+        "required": [
+          "url",
+          "history_url",
+          "rows"
+        ],
+        "title": "Series",
+        "type": "object"
+      },
+      "Series-Output": {
+        "additionalProperties": false,
+        "properties": {
+          "history_url": {
+            "maxLength": 400,
+            "title": "History Url",
+            "type": "string"
+          },
+          "rows": {
+            "items": {
+              "$ref": "#/components/schemas/PriceRow-Output"
+            },
+            "maxItems": 800,
+            "minItems": 1,
+            "title": "Rows",
+            "type": "array"
+          },
+          "url": {
+            "maxLength": 400,
+            "title": "Url",
+            "type": "string"
+          }
+        },
+        "required": [
+          "url",
+          "history_url",
+          "rows"
+        ],
+        "title": "Series",
+        "type": "object"
+      },
+      "StressResult": {
+        "properties": {
+          "equity_after": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Equity After",
+            "type": "string"
+          },
+          "impacts": {
+            "additionalProperties": {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            },
+            "title": "Impacts",
+            "type": "object"
+          },
+          "loss_fraction": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Loss Fraction"
+          },
+          "pnl": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Pnl",
+            "type": "string"
+          }
+        },
+        "required": [
+          "pnl",
+          "equity_after",
+          "loss_fraction",
+          "impacts"
+        ],
+        "title": "StressResult",
+        "type": "object"
+      },
+      "Transaction-Input": {
+        "additionalProperties": false,
+        "properties": {
+          "action": {
+            "enum": [
+              "buy",
+              "sell",
+              "deposit",
+              "withdrawal",
+              "dividend",
+              "fee"
+            ],
+            "title": "Action",
+            "type": "string"
+          },
+          "amount_pln": {
+            "anyOf": [
+              {
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}|(?=[\\d.]{1,25}0*$)\\d{0,14}\\.\\d{0,10}0*$)",
+                "type": "string"
+              }
+            ],
+            "default": "0",
+            "title": "Amount Pln"
+          },
+          "date": {
+            "format": "date",
+            "title": "Date",
+            "type": "string"
+          },
+          "fee_pln": {
+            "anyOf": [
+              {
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}|(?=[\\d.]{1,25}0*$)\\d{0,14}\\.\\d{0,10}0*$)",
+                "type": "string"
+              }
+            ],
+            "default": "0",
+            "title": "Fee Pln"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "price": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}|(?=[\\d.]{1,25}0*$)\\d{0,14}\\.\\d{0,10}0*$)",
+                "type": "string"
+              }
+            ],
+            "default": "0",
+            "title": "Price"
+          },
+          "quantity": {
+            "anyOf": [
+              {
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}|(?=[\\d.]{1,25}0*$)\\d{0,14}\\.\\d{0,10}0*$)",
+                "type": "string"
+              }
+            ],
+            "default": "0",
+            "title": "Quantity"
+          },
+          "source": {
+            "default": "user",
+            "enum": [
+              "synthetic",
+              "user"
+            ],
+            "title": "Source",
+            "type": "string"
+          },
+          "symbol": {
+            "default": "",
+            "maxLength": 40,
+            "title": "Symbol",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "date",
+          "action"
+        ],
+        "title": "Transaction",
+        "type": "object"
+      },
+      "Transaction-Output": {
+        "additionalProperties": false,
+        "properties": {
+          "action": {
+            "enum": [
+              "buy",
+              "sell",
+              "deposit",
+              "withdrawal",
+              "dividend",
+              "fee"
+            ],
+            "title": "Action",
+            "type": "string"
+          },
+          "amount_pln": {
+            "default": "0",
+            "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}|(?=[\\d.]{1,25}0*$)\\d{0,14}\\.\\d{0,10}0*$)",
+            "title": "Amount Pln",
+            "type": "string"
+          },
+          "date": {
+            "format": "date",
+            "title": "Date",
+            "type": "string"
+          },
+          "fee_pln": {
+            "default": "0",
+            "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}|(?=[\\d.]{1,25}0*$)\\d{0,14}\\.\\d{0,10}0*$)",
+            "title": "Fee Pln",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "price": {
+            "default": "0",
+            "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}|(?=[\\d.]{1,25}0*$)\\d{0,14}\\.\\d{0,10}0*$)",
+            "title": "Price",
+            "type": "string"
+          },
+          "quantity": {
+            "default": "0",
+            "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}|(?=[\\d.]{1,25}0*$)\\d{0,14}\\.\\d{0,10}0*$)",
+            "title": "Quantity",
+            "type": "string"
+          },
+          "source": {
+            "default": "user",
+            "enum": [
+              "synthetic",
+              "user"
+            ],
+            "title": "Source",
+            "type": "string"
+          },
+          "symbol": {
+            "default": "",
+            "maxLength": 40,
+            "title": "Symbol",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "date",
+          "action"
+        ],
+        "title": "Transaction",
+        "type": "object"
+      },
+      "TransactionPreview": {
+        "additionalProperties": false,
+        "properties": {
+          "errors": {
+            "items": {
+              "$ref": "#/components/schemas/CsvIssue"
+            },
+            "title": "Errors",
+            "type": "array"
+          },
+          "importable": {
+            "title": "Importable",
+            "type": "boolean"
+          },
+          "rows": {
+            "items": {
+              "$ref": "#/components/schemas/Transaction-Output"
+            },
+            "title": "Rows",
+            "type": "array"
+          }
+        },
+        "required": [
+          "rows",
+          "errors",
+          "importable"
+        ],
+        "title": "TransactionPreview",
+        "type": "object"
+      },
       "Uncertainty": {
         "additionalProperties": false,
         "properties": {
@@ -4590,6 +6186,162 @@
           "methodology_version"
         ],
         "title": "VersionResponse",
+        "type": "object"
+      },
+      "Workspace-Input": {
+        "additionalProperties": false,
+        "properties": {
+          "market": {
+            "$ref": "#/components/schemas/Market-Input"
+          },
+          "name": {
+            "default": "M\u00f3j portfel",
+            "maxLength": 80,
+            "title": "Name",
+            "type": "string"
+          },
+          "scenarios": {
+            "items": {
+              "$ref": "#/components/schemas/Scenario-Input"
+            },
+            "maxItems": 20,
+            "title": "Scenarios",
+            "type": "array"
+          },
+          "transactions": {
+            "items": {
+              "$ref": "#/components/schemas/Transaction-Input"
+            },
+            "maxItems": 2000,
+            "title": "Transactions",
+            "type": "array"
+          },
+          "version": {
+            "const": 1,
+            "default": 1,
+            "title": "Version",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "market",
+          "transactions",
+          "scenarios"
+        ],
+        "title": "Workspace",
+        "type": "object"
+      },
+      "Workspace-Output": {
+        "additionalProperties": false,
+        "properties": {
+          "market": {
+            "$ref": "#/components/schemas/Market-Output"
+          },
+          "name": {
+            "default": "M\u00f3j portfel",
+            "maxLength": 80,
+            "title": "Name",
+            "type": "string"
+          },
+          "scenarios": {
+            "items": {
+              "$ref": "#/components/schemas/Scenario-Output"
+            },
+            "maxItems": 20,
+            "title": "Scenarios",
+            "type": "array"
+          },
+          "transactions": {
+            "items": {
+              "$ref": "#/components/schemas/Transaction-Output"
+            },
+            "maxItems": 2000,
+            "title": "Transactions",
+            "type": "array"
+          },
+          "version": {
+            "const": 1,
+            "default": 1,
+            "title": "Version",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "market",
+          "transactions",
+          "scenarios"
+        ],
+        "title": "Workspace",
+        "type": "object"
+      },
+      "WorkspaceResult": {
+        "additionalProperties": false,
+        "properties": {
+          "price_provenance": {
+            "enum": [
+              "provider_snapshot",
+              "user_supplied"
+            ],
+            "title": "Price Provenance",
+            "type": "string"
+          },
+          "result": {
+            "$ref": "#/components/schemas/BookResult"
+          },
+          "scenarios": {
+            "items": {
+              "$ref": "#/components/schemas/ScenarioOutput"
+            },
+            "title": "Scenarios",
+            "type": "array"
+          },
+          "transaction_provenance": {
+            "enum": [
+              "synthetic",
+              "user",
+              "mixed"
+            ],
+            "title": "Transaction Provenance",
+            "type": "string"
+          }
+        },
+        "required": [
+          "result",
+          "scenarios",
+          "price_provenance",
+          "transaction_provenance"
+        ],
+        "title": "WorkspaceResult",
+        "type": "object"
+      },
+      "quantops_api__api__investor__CsvRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "text": {
+            "maxLength": 600000,
+            "title": "Text",
+            "type": "string"
+          }
+        },
+        "required": [
+          "text"
+        ],
+        "title": "CsvRequest",
+        "type": "object"
+      },
+      "quantops_api__api__retail__CsvRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "text": {
+            "maxLength": 200000,
+            "title": "Text",
+            "type": "string"
+          }
+        },
+        "required": [
+          "text"
+        ],
+        "title": "CsvRequest",
         "type": "object"
       }
     }
@@ -5699,6 +7451,130 @@
         "summary": "List Prices",
         "tags": [
           "market data"
+        ]
+      }
+    },
+    "/api/v1/investor/analyze": {
+      "post": {
+        "operationId": "analyze_workspace_api_v1_investor_analyze_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Workspace-Input"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkspaceResult"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Analyze Workspace",
+        "tags": [
+          "Local investor workspace"
+        ]
+      }
+    },
+    "/api/v1/investor/csv-preview": {
+      "post": {
+        "operationId": "transaction_csv_api_v1_investor_csv_preview_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/quantops_api__api__investor__CsvRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TransactionPreview"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Transaction Csv",
+        "tags": [
+          "Local investor workspace"
+        ]
+      }
+    },
+    "/api/v1/investor/demo": {
+      "get": {
+        "operationId": "investor_demo_api_v1_investor_demo_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Workspace-Output"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Investor Demo",
+        "tags": [
+          "Local investor workspace"
+        ]
+      }
+    },
+    "/api/v1/investor/refresh": {
+      "post": {
+        "operationId": "refresh_market_api_v1_investor_refresh_post",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Market-Output"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Refresh Market",
+        "tags": [
+          "Local investor workspace"
         ]
       }
     },
@@ -8404,7 +10280,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CsvRequest"
+                "$ref": "#/components/schemas/quantops_api__api__retail__CsvRequest"
               }
             }
           },
@@ -8457,6 +10333,136 @@
         "summary": "Demo Portfolio",
         "tags": [
           "Local portfolio sensitivity"
+        ]
+      }
+    },
+    "/api/v1/retail/forecast/answer": {
+      "post": {
+        "operationId": "answer_forecast_api_v1_retail_forecast_answer_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ForecastAnswer"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ForecastRound"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Answer Forecast",
+        "tags": [
+          "Synthetic forecast quiz"
+        ]
+      }
+    },
+    "/api/v1/retail/forecast/continue": {
+      "post": {
+        "operationId": "continue_after_reveal_api_v1_retail_forecast_continue_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ForecastContinue"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ForecastRound"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Continue After Reveal",
+        "tags": [
+          "Synthetic forecast quiz"
+        ]
+      }
+    },
+    "/api/v1/retail/forecast/start": {
+      "post": {
+        "operationId": "start_forecast_api_v1_retail_forecast_start_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "anyOf": [
+                  {
+                    "$ref": "#/components/schemas/ForecastStart"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Request"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ForecastRound"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Start Forecast",
+        "tags": [
+          "Synthetic forecast quiz"
         ]
       }
     },

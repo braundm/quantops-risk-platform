@@ -1,8 +1,10 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test } from "@playwright/test";
 
+import { enterRetailWorkspace } from "./retailGate";
+
 test("historical risk, insufficient sample and accessible chart", async ({ page }, testInfo) => {
-  await page.goto("/");
+  await enterRetailWorkspace(page);
   await page.getByRole("button", { name: "Wczytaj syntetyczną historię demo" }).click();
   await expect(page.locator(".qo-history-status")).toContainText("Obliczono · 339");
   await expect(page.locator(".qo-risk-strip").first()).toContainText("2118");
@@ -19,7 +21,7 @@ test("historical risk, insufficient sample and accessible chart", async ({ page 
 });
 
 test("education reveals ten decisions and costs only after commitment", async ({ page }) => {
-  await page.goto("/");
+  await enterRetailWorkspace(page);
   await page.getByRole("button", { name: "Rozpocznij ćwiczenie" }).click();
   await expect(page.locator(".qo-lab-progress")).toContainText("Próby: 0 / 10");
   await expect(page.locator("#lab .qo-chart-readout")).toContainText("Obserwacja 40");
@@ -33,7 +35,7 @@ test("education reveals ten decisions and costs only after commitment", async ({
 });
 
 test("cost exclusions, preference consistency and session data removal", async ({ page }) => {
-  await page.goto("/");
+  await enterRetailWorkspace(page);
   await expect(page.locator(".qo-hedge-cards article")).toHaveCount(3);
   await page.getByLabel("Kwota kosztu (PLN)").fill("10");
   await page.getByLabel("Okres opłaty").selectOption("monthly");
@@ -49,7 +51,24 @@ test("cost exclusions, preference consistency and session data removal", async (
   await expect(page.locator(".qo-preference-review")).toContainText("niespójne");
   await expect(page.locator(".qo-preference-review")).toContainText("przekracza finansową zdolność");
   await page.getByRole("button", { name: "Usuń moje dane" }).click();
-  await expect(page.locator(".qo-cost-list")).toHaveCount(0);
-  await expect(page.locator(".qo-preference-review")).toHaveCount(0);
-  await expect(page.getByLabel("Tolerowana strata w pieniądzu")).toHaveValue("0");
+  await expect(page.getByRole("heading", { name: "Zaloguj się lokalnie" })).toBeVisible();
+});
+
+test("YNAB-style cash envelopes assign every unit and import portfolio cash", async ({ page }) => {
+  await enterRetailWorkspace(page, "BudgetUser");
+  await page.locator('a[href="#budget"]').click();
+  await expect(page.getByRole("heading", { name: "Budżet gotówki · koperty" })).toBeVisible();
+  await page.getByLabel("Dochód / środki do przypisania (PLN)").fill("1000");
+  await expect(page.locator(".qo-budget-ready")).toContainText(/1\s?000,00/);
+  const housingAssigned = page.getByLabel("Przypisano: Mieszkanie / czynsz");
+  await housingAssigned.fill("600");
+  await page.getByLabel("Wydano: Mieszkanie / czynsz").fill("100");
+  await expect(page.locator(".qo-budget-ready")).toContainText("400");
+  await page.getByRole("button", { name: "Przypisz resztę" }).first().click();
+  await expect(page.locator(".qo-budget-ready")).toContainText("Każda złotówka ma zadanie");
+  await expect(housingAssigned).toHaveValue("1000");
+  await page.getByRole("button", { name: "Użyj gotówki z portfela" }).click();
+  await expect(page.getByLabel("Dochód / środki do przypisania (PLN)")).not.toHaveValue("1000");
+  const axe = await new AxeBuilder({ page }).include("#budget").withTags(["wcag2a", "wcag2aa"]).analyze();
+  expect(axe.violations).toEqual([]);
 });

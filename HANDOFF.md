@@ -1,6 +1,26 @@
 # QuantOps handoff
 
-Last updated: 2026-10-04
+Last updated: 2026-10-05
+
+## Investor workspace publication — 2026-10-05
+
+The default `/` and `/investor` routes now provide a browser-local transaction ledger,
+flow-adjusted performance, historical risk, diversification, named scenarios and JSON backup/restore.
+Bundled sourced historical closes are identified separately from fictional example ownership.
+The previous workshop remains at `/personal`; local onboarding, cash envelopes and the synthetic
+forecast calibration quiz are included. See `docs/investor-workspace.md` for accounting conventions,
+derivative assumptions, supported instruments and storage limitations.
+
+Pre-publication verification passed: 549 Python tests and 20 subtests (one integration test
+deselected), 11 strict typecheck groups, Ruff lint/format, frontend lint, 20 Vitest tests,
+production build and all 36 desktop/mobile Playwright tests with two workers. Documentation
+checks passed for 53 Markdown files on the final rerun; the deterministic security scan passed. Exact commands and
+initial environment failures are recorded in `docs/progress.md`.
+
+The owner authorized committing and publishing these local changes to the existing PR #11 branch
+on 2026-10-05. Hosted CI for the new commit must be checked separately. Hosted tenant persistence,
+broker adapters, full retail MVP completion and the original Definition of Done remain open.
+Browser-local transaction/scenario persistence does not establish production readiness.
 
 ## Synthetic forecast quiz
 

@@ -11,14 +11,15 @@ QuantOps is a production-style portfolio project for reproducible multi-asset ma
 
 ![QuantOps risk dashboard](docs/images/quantops-dashboard.png)
 
-> **Observed status:** the Polish personal workspace now connects to FastAPI for portfolio valuation, quotation-currency exposures, combined price/FX scenarios and model-forward comparisons. The existing research UI uses a typed local demo adapter and its API uses a deterministic process-local service. Live PostgreSQL, Redpanda, Airflow, MLflow, and observability profiles remain environment-dependent and are not claimed as verified. See [implementation progress](docs/progress.md).
+> **Observed status:** the Polish investor workspace uses sourced historical market closes and visibly fictional transactions, with a dated ledger, performance charts, diversification, risk, saved scenarios and browser-local backups. The research demo retains synthetic fixtures. Infrastructure-dependent production readiness is not claimed. See [implementation progress](docs/progress.md).
 
 ## Personal portfolio: first working flow
 
-The default page is a Polish portfolio workspace with a visibly synthetic demo, manual positions,
-CSV preview and confirmation, signed exposures, concentration, hypothetical price/FX shocks,
-no/partial/full forward comparisons, separate cost estimates, local save/delete, before/after
-valuation and a readable report. The existing research landing page remains at `/research`.
+The default `/` and `/investor` pages provide eight clear sections: overview, dated transactions,
+diversification, return and risk, saved scenarios, cash budget and costs, learning, and data settings.
+The example holds Apple, Microsoft, SPY, TLT, modeled EUR/USD and a December 2026 WTI futures
+contract. Ownership is fictional; the bundled Yahoo Finance closing-price snapshot is sourced.
+The previous personal workshop remains at `/personal`, and the research landing at `/research`.
 
 After workspace setup, run these commands in two terminals from the repository root:
 
@@ -28,17 +29,18 @@ pnpm --filter @quantops/web dev --host 127.0.0.1
 ```
 
 Open `http://localhost:5173/`. No database, Docker, broker credentials or market provider is needed.
-The first flow uses spot equities, ETFs and cash; its forward is a terminal educational model,
-not a broker quote. Historical risk for user portfolios, onboarding, the educational decision
-experiment, complete cost accounting and MT5/Bossa adapters remain deferred. See the
-[flow, CSV mapping, model assumptions and limitations](docs/retail-first-flow.md) and the
-[synthetic CSV example](data/retail-synthetic-positions.csv).
+The checked-in price snapshot works offline. Explicit price refresh requires internet access and
+retains the last valid snapshot on failure. CSV transactions, named scenarios, browser-local save,
+JSON backup/restore, fees and external flows are supported. Storage is local to this browser;
+there are no hosted accounts. See [investor methods and limitations](docs/investor-workspace.md),
+the [previous workshop guide](docs/retail-first-flow.md) and its
+[synthetic positions CSV](data/retail-synthetic-positions.csv).
 
 ## The problem
 
 Risk numbers are easy to display and difficult to trust. QuantOps is designed around the questions that follow a metric: Which portfolio version? Which prices? Which methodology? Was the data complete? Can the explanation be reconciled to immutable evidence?
 
-The project deliberately does **not** connect to brokers, execute orders, forecast guaranteed returns, or provide buy/sell recommendations. Every bundled market record, portfolio, and research document is fictional and marked synthetic.
+The project deliberately does **not** connect to brokers, execute orders, forecast guaranteed returns, or provide buy/sell recommendations. Research fixtures and example ownership are fictional and marked synthetic. The investor workspace separately identifies sourced historical market prices and their retrieval dates.
 
 ## Five-minute demo story
 
