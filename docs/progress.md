@@ -1,8 +1,223 @@
 # QuantOps implementation progress
 
-Last updated: 2026-07-19
+Last updated: 2026-10-05
 
 This file records observed results only. An unchecked item is not implemented or has not yet met its exit evidence.
+
+## Investor workspace pre-publication verification — 2026-10-05
+
+The owner authorized committing and publishing the existing local investor-workspace, cash-budget,
+onboarding and synthetic forecast changes on the existing PR #11 branch. Transaction history,
+flow-aware performance and named scenarios are now supported in browser-local storage; durable
+hosted tenants and the full retail MVP remain outside the verified scope.
+
+```text
+.venv\Scripts\python.exe -m pytest -m "not integration and not e2e" -q -o cache_dir=.pytest_cache_publish
+# exit 0; 549 passed, 1 deselected, 20 subtests passed in 22.39s
+.venv\Scripts\python.exe scripts/typecheck.py
+# exit 0; 11 strict isolated groups passed
+.venv\Scripts\ruff.exe check .
+# exit 0; all checks passed
+.venv\Scripts\ruff.exe format --check .
+# exit 0; 225 files already formatted
+pnpm --filter @quantops/web lint
+# exit 0
+pnpm --filter @quantops/web test
+# exit 0; 3 files, 20 tests passed
+pnpm --filter @quantops/web build
+# exit 0; TypeScript and Vite production build passed
+pnpm --filter @quantops/web test:e2e --workers=2
+# exit 0; all 36 desktop/mobile tests passed (1.6m), including axe checks
+.venv\Scripts\python.exe scripts/docs_check.py
+# exit 0; 52 Markdown files initially, 53 on the final rerun after the separate pytest cache was created
+.venv\Scripts\python.exe scripts/security_scan.py
+# exit 0; no high-confidence secret or hygiene findings
+git diff --check
+# exit 0
+```
+
+Initial sandboxed frontend commands failed with EPERM; reruns outside that restriction passed.
+The first frontend lint attempt raced with Playwright replacing its results directory; the
+subsequent lint passed. The first browser run passed 35 tests and timed out during mobile browser
+context teardown for the education exercise; the full two-worker rerun passed all 36 tests without
+changing assertions or timeout settings. The first sandboxed Python run stalled and was interrupted;
+the subsequent full run reached 100% but failed writing the existing pytest cache. The final full
+run used a separate cache directory and exited successfully. Live provider refresh, production
+storage and hosted CI for this new commit are not established by these local checks.
+
+## Synthetic forecast quiz — 2026-10-04
+
+- [x] Add a no-lookahead market-direction quiz (12 synthetic charts, confidence, periodic reveal).
+- [x] Score hit/miss/sideways with calibration summary (effectiveness, Brier, buckets).
+- [x] Cover API invariants and refresh OpenAPI; wire Polish UI panel under Quiz prognoz.
+
+Observed verification:
+
+```text
+pytest apps/api/tests/test_retail_next.py -k forecast
+# 2 passed
+pytest apps/api/tests/test_health.py
+# 5 passed (OpenAPI routes + snapshot)
+apps/web: tsc + eslint
+# passed
+```
+
+## YNAB-style cash envelopes — 2026-10-04
+
+- [x] Add a local zero-based cash budget panel (Ready to Assign, envelopes, assigned/activity/available).
+- [x] Persist per-user browser state; clear on logout/delete; reset amounts on base-currency change.
+- [x] Cover envelope math with Vitest; extend retail e2e through the login/onboarding gate.
+
+Observed verification:
+
+```text
+apps/web: vitest run
+# 3 files, 20 passed (includes cashBudget tests)
+apps/web: tsc -b --pretty false
+# passed
+apps/web: eslint . --max-warnings 0
+# passed
+```
+
+E2E for the new budget panel was updated (`enterRetailWorkspace` + envelope assignment). Playwright
+browsers were unavailable in this environment (`npx playwright install` required), so the UI e2e
+was not executed here; Vitest/typecheck/lint passed.
+
+## Retail history and education follow-up — 2026-10-04
+
+- [x] Add strict historical CSV preview/confirmation and dated-FX repricing of current units.
+- [x] Reuse historical risk calculations, suppress insufficient samples, validate aligned dates,
+  reject duplicate/ambiguous mappings and label synthetic/stale history.
+- [x] Add interactive charts, separate fee budgets, optional goals/limits and a ten-step synthetic
+  decision experiment with signed cursors, costs, benchmark and confidence calibration.
+- [x] Refine the responsive visual design and clear all new session data on explicit deletion.
+- [x] Restore the local Python 3.12 environment after a blocked recreation attempt; remove the
+  temporary repair environment. No source or portfolio data was lost.
+- [x] Fix the frontend CI API prerequisite and upgrade dependencies flagged by the previous audit.
+
+Observed verification:
+
+```text
+.venv/Scripts/python.exe -m pytest -q -o cache_dir=artifacts/pytest-retail-cache
+# 531 passed, 1 skipped (isolated PostgreSQL unavailable), 20 subtests passed
+.venv/Scripts/python.exe scripts/typecheck.py
+# all 11 strict groups passed
+.venv/Scripts/python.exe -m ruff check apps/api
+.venv/Scripts/python.exe -m ruff format --check apps/api
+# passed; 40 files formatted
+pnpm --filter @quantops/web lint
+pnpm --filter @quantops/web test
+pnpm --filter @quantops/web build
+# passed; 14 Vitest tests; production bundle built
+.venv/Scripts/python.exe -m pip_audit --progress-spinner off --format json --output artifacts/updated-python-audit.json
+pnpm audit --prod
+# both passed; no known vulnerabilities in the audited installed/production dependencies
+pnpm --filter @quantops/web test:e2e --workers=2
+# 28 passed (desktop/mobile), including axe accessibility checks
+.venv/Scripts/python.exe scripts/docs_check.py
+.venv/Scripts/python.exe -m ruff check .
+.venv/Scripts/python.exe -m ruff format --check .
+# passed; 49 Markdown files; 218 Python files already formatted
+.venv/Scripts/python.exe scripts/security_scan.py
+git diff --cached --check
+# passed after staging all new source files; no secret/hygiene or whitespace findings
+# Running Vite proxy: /api/v1/health returned ok; /api/v1/retail/history-demo returned 1020 rows
+```
+
+Browser testing first found one desktop contrast issue: the expanded menu overflowed its dark
+sidebar. Adding scroll containment corrected the actual layout; no accessibility rule was disabled.
+Desktop and mobile history screenshots were visually reviewed. Optional service/production gates
+remain separate from these local checks.
+
+Hosted run `37211696446` passed all nine application, PostgreSQL, browser and security jobs.
+Its final container job exposed an existing packaging defect: separately resolved wheel builds
+collected both Pydantic 2.13.4 and 2.13.5, and wildcard installation demanded both. The API image
+now installs its production dependency closure once from `uv.lock` with non-editable workspace
+packages, then copies only the environment into the unprivileged runtime. Local Docker is
+unavailable; hosted container verification is required for this correction.
+
+The same `uv sync --locked --package quantops-api --no-dev --no-editable` command succeeded in a
+temporary Windows environment with 35 packages. Its installed API imported successfully and
+produced all 1020 synthetic history rows. The temporary environment was removed afterwards.
+This verifies dependency selection and packaging, not the Linux container runtime.
+
+The first follow-up exposed a static test still expecting the retired five-wheel build layout.
+Updated its guardrails to require locked production-only non-editable installation, source copies,
+an isolated runtime environment and the same non-root user; no runtime safety check was removed.
+The focused Dockerfile test passed (1 test); its Ruff lint/format, all documentation checks and
+diff whitespace checks passed before publication.
+
+Final hosted evidence: run `37212261658` completed successfully at commit `2cb2515`.
+All ten jobs passed, including Python tests, frontend/browser tests, dependency/security checks,
+PostgreSQL/pgvector migrations and both container builds/health smoke tests. This is hosted
+evidence; no local Docker run or full retail-product completion is claimed.
+
+## Retail first vertical flow — 2026-10-04
+
+- [x] Preserve React/FastAPI, pure valuation/scenario calculations and existing research routes.
+- [x] Connect the Polish personal workspace to stateless FastAPI calculations.
+- [x] Verify manual/current-position CSV inputs, signed values, cash, quotation-currency exposures
+  and concentration; reject unsupported derivatives and contract multipliers.
+- [x] Verify combined price/FX sensitivity, short/long hedge direction, no/partial/full forward
+  payoffs, separate costs, theoretical carry and oversized initial hedges after asset losses.
+- [x] Verify readable report contents, stale-result invalidation, local restore/delete, base-currency
+  rate reset, synthetic provenance and responsive keyboard/axe accessibility.
+- [x] Document synthetic inputs, missing history, stale prices, no ETF look-through, model exclusions
+  and actual/deferred scope in `docs/retail-first-flow.md`.
+- [x] Add optional onboarding, user historical-risk data and a synthetic educational experiment
+  in the follow-up recorded above.
+- [ ] Complete a transaction-linked cost ledger, persistence/tenant authentication and separately
+  scoped broker-specific read-only adapters.
+
+Observed scoped gates:
+
+```text
+.venv\Scripts\python.exe -m pytest apps/api/tests packages/risk_engine/tests -q -o cache_dir=artifacts/pytest-retail-cache
+# exit 0; 190 passed, 1 PostgreSQL integration test skipped, 14 subtests passed
+
+.venv\Scripts\python.exe scripts/typecheck.py --group api --group risk
+# exit 0; 35 API files and 30 risk files checked under strict mypy
+
+pnpm --filter @quantops/web lint
+pnpm --filter @quantops/web typecheck
+pnpm --filter @quantops/web test
+pnpm --filter @quantops/web build
+pnpm --filter @quantops/web test:e2e
+# exit 0; 14 Vitest tests, production build, 22 desktop/mobile Playwright tests
+
+.venv\Scripts\ruff.exe check <changed Python files>
+.venv\Scripts\ruff.exe format --check <changed Python files>
+# exit 0; lint passed and all 6 changed Python files already formatted
+
+.venv\Scripts\python.exe scripts/security_scan.py
+.venv\Scripts\python.exe scripts/docs_check.py
+git diff --check
+# exit 0; no high-confidence secret/hygiene findings, 48 Markdown files checked, clean diff
+```
+
+Initial verification caught an outdated exact route-set assertion (updated with the three new
+retail endpoints), global research-table colors leaking into the light personal workspace (fixed
+with scoped colors), and parallel browser tests exhausting the production-default 20/minute limit.
+The test server alone uses a 1000/minute budget; a dedicated API test verifies the normal configurable
+429 response and Retry-After header. Existing pytest cache permissions required a fresh ignored
+`artifacts/pytest-retail-cache`; no test or warning check was disabled. The public OpenAPI snapshot
+was regenerated and its existing equality gate passes. The owner subsequently explicitly
+authorized recording these changes in Git and publishing them to GitHub on 2026-10-04. This
+authorization overrides the prior publication restriction for this change; it does not mark the
+retail MVP or master-spec Definition of Done complete. Use the existing branch and draft PR #11.
+
+The entire retail MVP remains open. The completed scope is the specifically requested first flow:
+portfolio → exposures → currency scenario → hedge comparison, plus CSV, local data controls,
+before/after valuation and report export.
+
+Local preview started with the documented commands on loopback ports 8000 and 5173. A direct
+health request and a Vite-proxied demo request returned the healthy API and four synthetic positions.
+The Codex browser-panel opening request was queued by the app; use `http://127.0.0.1:5173/` directly
+if the preview panel is not visible. Development processes remain running for the owner to inspect.
+
+Pre-publication repository security, documentation and whitespace checks passed again. The commit
+contains only the 22 source, test, contract, example and documentation files belonging to this flow;
+preview artifacts, build output and test caches are excluded. No merge or release is requested.
 
 ## Milestone 0 — discovery and foundation
 
@@ -230,7 +445,7 @@ until the persistence critical path and generated live client are connected.
 - [x] Loading, empty, error, stale, partial, insufficient-history, and offline states.
 - [x] Frontend fixture risk/scenario values reconciled to the current API demo service.
 - [ ] Generated OpenAPI client and live API integration.
-- [ ] Automated accessibility scan and full keyboard/browser end-to-end suite.
+- [x] Automated accessibility scan and keyboard/browser critical-path end-to-end suite.
 
 Verified frontend gates:
 
@@ -242,15 +457,22 @@ pnpm --filter @quantops/web typecheck
 pnpm --filter @quantops/web test
 # exit 0; 2 files, 14 tests passed
 
+pnpm --filter @quantops/web test:e2e
+# exit 0; 14 Playwright tests passed across desktop Chromium and a Pixel 7 viewport
+# six representative product routes passed automated WCAG A/AA axe scans in each project
+
 pnpm --filter @quantops/web build
-# exit 0; 29 modules; JS 280.31 kB (80.75 kB gzip), CSS 48.38 kB (10.50 kB gzip)
+# exit 0; 29 modules; JS 280.54 kB (80.79 kB gzip), CSS 49.11 kB (10.60 kB gzip)
 ```
 
 Browser QA exercised the landing page, dashboard, scenario selection/custom validation, evidence
-briefs, desktop layout, and a 390 x 844 responsive viewport. No console warnings/errors or body
-horizontal overflow were observed. The mobile navigation scrollbar and scenario-export decimal
-rounding were corrected from that review. Milestone 5 remains incomplete until the generated API
-client, live integration, and automated accessibility/e2e gates are present.
+briefs, desktop layout, and a 390 x 844 responsive viewport. The automated suite now covers the
+landing page plus dashboard, scenario, grounded brief/evidence, model/drift, and pipeline-quality
+routes at desktop and mobile sizes. It also verifies skip-link focus, keyboard navigation, scenario
+execution, and evidence citation navigation. The mobile navigation scrollbar, scenario-export
+decimal rounding, metadata contrast, decorative ARIA, and scrollable-table keyboard access were
+corrected from these reviews. Milestone 5 remains incomplete only because the generated OpenAPI
+client and live API integration are not connected.
 
 ## Milestone 6 — streaming and outbox
 
@@ -461,6 +683,8 @@ future design and is not claimed.
 - [x] Document system, batch, streaming, risk/evidence, AI, and ML architecture flows.
 - [x] Add eight incident runbooks with detection, impact, diagnosis, safe mitigation, recovery, and
   verification.
+- [x] Add explicit backup/restore guidance, migration policy, a blameless sanitized postmortem
+  template, and an observability contract for the deferred telemetry profile.
 - [x] Keep API image multi-stage/non-root and build the grounded-AI wheel before the dependent API.
 - [ ] Add structured telemetry, bounded metrics, traces, and a verified optional observability profile.
 - [ ] Run core/optional Docker profiles and verify health, readiness, and graceful shutdown.
@@ -481,9 +705,10 @@ remain P2 and no resource or paid service has been created.
 - [x] Add a statically validated, least-privilege ten-job CI workflow, dependency updates,
   evidence artifacts, isolated PostgreSQL migration job, dependency/SBOM gates, and container smoke
   definitions.
-- [ ] Observe the first GitHub-hosted CI run, network vulnerability audits, PostgreSQL service job,
+- [x] Observe the first GitHub-hosted CI run, network vulnerability audits, PostgreSQL service job,
   and Docker image smoke jobs after publication.
-- [ ] Complete live PostgreSQL/Redpanda, automated browser accessibility/e2e, and clean-room tests.
+- [x] Complete automated browser accessibility and critical-path e2e tests on desktop/mobile Chromium.
+- [ ] Complete live PostgreSQL/Redpanda and clean-room service tests.
 
 Verified no-service repository gates after AI/stream/MCP integration:
 
@@ -536,9 +761,13 @@ pnpm --filter @quantops/web build
 - [x] Capture seven actual running-product images for the landing page, dashboard, scenario/stress,
   grounded brief, model/drift, and data-quality views.
 - [x] Keep architecture diagrams, methodology, model/AI cards, engineering evidence, runbooks,
-  threat model, and core ADRs linked and factual.
-- [ ] Add the interview guide and AI-assisted-development record required by the full specification.
-- [ ] Complete automated browser accessibility and Playwright critical-path coverage.
+  threat model, and all ten required decision topics linked and factual, including MLflow
+  reproducibility and safely optional infrastructure profiles.
+- [x] Add the interview guide with pitch, walkthrough, demo, domain explanations, 30 technical
+  questions, ten trade-off questions, concepts, and personal owner exercises.
+- [x] Add a truthful AI-assisted-development record with observed verification, concrete corrected
+  errors, review limits, and separate owner-review actions.
+- [x] Complete automated browser accessibility and Playwright critical-path coverage.
 
 ## Milestone 14 — clean-room verification and publication
 
@@ -547,18 +776,17 @@ pnpm --filter @quantops/web build
   results.
 - [ ] Run the Docker/PostgreSQL/Redpanda/clean-checkout gates on a Docker-capable host.
 - [x] Publish public `braundm/quantops-risk-platform`, configure `origin`, description, and ten concise
-  repository topics, and push `main` at verified commit `fe73a64`.
-- [ ] Observe the initial hosted CI run to completion; do not create a release tag while the full
+  repository topics, and push `main`; hosted CI passed at verified commit `4f7627b`.
+- [x] Observe the initial hosted CI run to completion; do not create a release tag while the full
   Definition of Done remains open.
 
 ## Current blockers
 
 - Docker is unavailable, so PostgreSQL/Redpanda integration gates cannot yet be claimed.
-- GitHub Actions run `29689753000` passed nine jobs but exposed a frontend container startup
-  failure: nginx could not create `/var/cache/nginx/client_temp` while running as UID 101. The image
-  now prepares and assigns the required cache and PID paths to that unprivileged runtime user.
-- The container fix has been validated statically and with the frontend production build, but must
-  still be confirmed by a fresh Docker-capable GitHub-hosted CI run.
+- GitHub Actions run `29694259171` passed on `main`, including the PostgreSQL migration and
+  unprivileged API/frontend container smoke jobs.
+- Local Docker remains unavailable, so the same service and container behavior cannot yet be
+  reproduced on this workstation.
 
 Scoped verification for the frontend container permission fix:
 
@@ -573,8 +801,7 @@ pnpm --filter @quantops/web build
 
 ## Next work
 
-Push the scoped container fix and observe the resulting hosted CI run without creating a release
-tag. Then use a Docker-capable
-clean host to run PostgreSQL migrations, persistence/Redpanda integration, image and
-Compose smoke tests, and browser e2e/accessibility. Keep service-dependent evidence unchecked until
-those real integrations pass.
+Connect the generated TypeScript client to the live API boundary, then implement and verify the
+PostgreSQL-backed critical application path and Redpanda adapter. On a Docker-capable clean host,
+repeat migrations, persistence/Redpanda integration, image, and Compose smoke tests. Keep the
+release tag and remaining service-dependent evidence unchecked until those gates pass.

@@ -1,0 +1,103 @@
+import AxeBuilder from "@axe-core/playwright";
+import { expect, test } from "@playwright/test";
+
+import { csvExample } from "../src/data/retailApi";
+import { enterRetailWorkspace } from "./retailGate";
+
+test("portfolio, combined shock, signed hedge, stale-result protection and report", async ({ page }) => {
+  await enterRetailWorkspace(page);
+  await expect(page.getByText("Demo · dane syntetyczne", { exact: true })).toBeVisible();
+  const metrics = page.getByRole("region", { name: "Podsumowanie portfela" });
+  await expect(metrics).toContainText("81 500");
+  await expect(page.locator(".qo-hedge-cards article")).toHaveCount(3);
+  await page.getByLabel("Stopa PLN (założenie)").fill("0");
+  await page.getByLabel("Stopa USD (założenie)").fill("0");
+  await page.getByLabel("Koszt wejścia").fill("0");
+  await page.getByRole("button", { name: "Przelicz portfel i zabezpieczenie" }).click();
+  await expect(page.locator(".qo-hedge-cards article").nth(0).locator("strong").first()).toContainText("-4000");
+  await expect(page.locator(".qo-hedge-cards article").nth(1).locator("strong").first()).toContainText("-2000");
+  await expect(page.locator(".qo-hedge-cards article").nth(2).locator("strong").first()).toContainText("0,00");
+  await page.getByLabel("Zmiana cen wszystkich papierów").fill("-20");
+  await expect(page.getByRole("button", { name: "Eksportuj raport" })).toBeDisabled();
+  await expect(page.locator(".qo-hedge-cards")).toHaveCount(0);
+  await page.getByRole("button", { name: "Przelicz portfel i zabezpieczenie" }).click();
+  await expect(page.locator(".qo-hedge-cards article").nth(2)).toContainText("Nadmierne zabezpieczenie");
+  const downloaded = page.waitForEvent("download");
+  await page.getByRole("button", { name: "Eksportuj raport" }).click();
+  const report = await downloaded;
+  expect(report.suggestedFilename()).toBe("QuantOps-raport.txt");
+  const stream = await report.createReadStream();
+  const chunks: Buffer[] = [];
+  for await (const chunk of stream) chunks.push(Buffer.from(chunk as Uint8Array));
+  const content = Buffer.concat(chunks).toString("utf8");
+  expect(content).toContain("retail-fx-forward@1.0.0");
+  expect(content).toContain('"asset_shock": "-0.2"');
+  expect(content).toContain("Brak historii cen");
+  await page.screenshot({ path: "../../artifacts/retail-dashboard.png", fullPage: true });
+  await page.getByLabel("Waluta bazowa", { exact: true }).selectOption("USD");
+  await expect(page.getByLabel("Kurs PLN/USD")).toHaveValue("");
+  await expect(page.getByLabel("Kurs EUR/USD")).toHaveValue("");
+  await expect(page.getByRole("button", { name: "Eksportuj raport" })).toBeDisabled();
+  await page.getByLabel("Kurs PLN/USD").fill("0.25");
+  await page.getByLabel("Kurs EUR/USD").fill("1.075");
+  await page.getByRole("button", { name: "Przelicz portfel i zabezpieczenie" }).click();
+  await expect(metrics).toContainText("20 375");
+});
+
+test("CSV preview rejects duplicates before confirming a replacement", async ({ page }) => {
+  await enterRetailWorkspace(page);
+  await expect(page.locator(".qo-hedge-cards article")).toHaveCount(3);
+  await page.getByText("Import CSV z podglądem", { exact: true }).click();
+  await page.getByLabel("Treść CSV").fill(csvExample + csvExample.split("\n")[1]! + "\n");
+  await page.getByRole("button", { name: "Sprawdź i pokaż podgląd" }).click();
+  await expect(page.locator(".qo-preview")).toContainText("Duplicate");
+  await expect(page.getByRole("button", { name: "Zatwierdź zastąpienie pozycji" })).toBeDisabled();
+  await page.getByLabel("Treść CSV").fill(csvExample.replaceAll("Demo,", "Mój,").replaceAll(",synthetic", ",user"));
+  await expect(page.locator(".qo-preview")).toHaveCount(0);
+  await page.getByRole("button", { name: "Sprawdź i pokaż podgląd" }).click();
+  await expect(page.getByRole("button", { name: "Zatwierdź zastąpienie pozycji" })).toBeEnabled();
+  await page.getByRole("button", { name: "Zatwierdź zastąpienie pozycji" }).click();
+  await expect(page.getByRole("button", { name: "Eksportuj raport" })).toBeDisabled();
+  await page.getByRole("button", { name: "Przelicz portfel i zabezpieczenie" }).click();
+  await expect(page.getByText("Dane mieszane · zawierają dane syntetyczne", { exact: true })).toBeVisible();
+});
+
+test("manual portfolio, local restore, allocation comparison and deletion", async ({ page }) => {
+  await enterRetailWorkspace(page);
+  await expect(page.locator(".qo-hedge-cards article")).toHaveCount(3);
+  await page.getByRole("button", { name: "Utwórz pusty portfel" }).click();
+  await page.getByLabel("Kurs USD/PLN").fill("4");
+  await page.getByText("Dodaj pozycję ręcznie", { exact: true }).click();
+  await page.getByLabel("Symbol", { exact: true }).fill("OWN");
+  await page.getByLabel("Waluta pozycji").selectOption("USD");
+  await page.getByLabel("Ilość (ujemna = short / dług)").fill("100");
+  await page.getByRole("button", { name: "Dodaj pozycję", exact: true }).click();
+  await expect(page.getByLabel("Ilość OWN")).toHaveValue("100");
+  await page.getByRole("button", { name: "Przelicz portfel i zabezpieczenie" }).click();
+  await expect(page.getByRole("button", { name: "Zapisz punkt porównania" })).toBeEnabled();
+  await page.getByRole("button", { name: "Zapisz punkt porównania" }).click();
+  await page.getByLabel("Ilość OWN").fill("50");
+  await page.getByRole("button", { name: "Przelicz portfel i zabezpieczenie" }).click();
+  await expect(page.locator(".qo-comparison")).toContainText("40 000");
+  await expect(page.locator(".qo-comparison")).toContainText("20 000");
+  await page.getByRole("button", { name: "Zapisz lokalnie" }).click();
+  await page.reload();
+  await expect(page.locator(".qo-hedge-cards article")).toHaveCount(3);
+  await page.getByRole("button", { name: "Wczytaj zapis" }).click();
+  await expect(page.getByLabel("Ilość OWN")).toHaveValue("50");
+  await page.getByRole("button", { name: "Usuń moje dane" }).click();
+  await expect(page.getByRole("heading", { name: "Zaloguj się lokalnie" })).toBeVisible();
+  expect(await page.evaluate(() => localStorage.getItem("quantops.local-portfolio.v1"))).toBeNull();
+});
+
+test("Polish dashboard supports keyboard access and automated accessibility checks", async ({ page }) => {
+  await enterRetailWorkspace(page);
+  await page.keyboard.press("Tab");
+  await expect(page.getByRole("link", { name: "Przejdź do treści" })).toBeFocused();
+  await page.keyboard.press("Enter");
+  await expect(page.locator("#main-content")).toBeFocused();
+  await expect(page.locator(".qo-hedge-cards article")).toHaveCount(3);
+  const result = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"]).analyze();
+  expect(result.violations, JSON.stringify(result.violations.map((v) => ({ id: v.id, nodes: v.nodes.map((n) => n.target) })))).toEqual([]);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+});

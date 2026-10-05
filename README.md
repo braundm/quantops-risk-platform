@@ -11,13 +11,36 @@ QuantOps is a production-style portfolio project for reproducible multi-asset ma
 
 ![QuantOps risk dashboard](docs/images/quantops-dashboard.png)
 
-> **Observed status:** the deterministic domain, risk, data-quality, API, UI, ML, AI, event-contract, broker-neutral streaming, scheduling-core, and read-only MCP boundaries are implemented and tested. The UI currently uses a typed local demo adapter and the API uses a deterministic process-local service. Live PostgreSQL, Redpanda, Airflow, MLflow, and observability profiles remain environment-dependent and are not claimed as verified. See [implementation progress](docs/progress.md).
+> **Observed status:** the Polish investor workspace uses sourced historical market closes and visibly fictional transactions, with a dated ledger, performance charts, diversification, risk, saved scenarios and browser-local backups. The research demo retains synthetic fixtures. Infrastructure-dependent production readiness is not claimed. See [implementation progress](docs/progress.md).
+
+## Personal portfolio: first working flow
+
+The default `/` and `/investor` pages provide eight clear sections: overview, dated transactions,
+diversification, return and risk, saved scenarios, cash budget and costs, learning, and data settings.
+The example holds Apple, Microsoft, SPY, TLT, modeled EUR/USD and a December 2026 WTI futures
+contract. Ownership is fictional; the bundled Yahoo Finance closing-price snapshot is sourced.
+The previous personal workshop remains at `/personal`, and the research landing at `/research`.
+
+After workspace setup, run these commands in two terminals from the repository root:
+
+```powershell
+.venv\Scripts\python.exe -m uvicorn quantops_api.main:app --host 127.0.0.1 --port 8000
+pnpm --filter @quantops/web dev --host 127.0.0.1
+```
+
+Open `http://localhost:5173/`. No database, Docker, broker credentials or market provider is needed.
+The checked-in price snapshot works offline. Explicit price refresh requires internet access and
+retains the last valid snapshot on failure. CSV transactions, named scenarios, browser-local save,
+JSON backup/restore, fees and external flows are supported. Storage is local to this browser;
+there are no hosted accounts. See [investor methods and limitations](docs/investor-workspace.md),
+the [previous workshop guide](docs/retail-first-flow.md) and its
+[synthetic positions CSV](data/retail-synthetic-positions.csv).
 
 ## The problem
 
 Risk numbers are easy to display and difficult to trust. QuantOps is designed around the questions that follow a metric: Which portfolio version? Which prices? Which methodology? Was the data complete? Can the explanation be reconciled to immutable evidence?
 
-The project deliberately does **not** connect to brokers, execute orders, forecast guaranteed returns, or provide buy/sell recommendations. Every bundled market record, portfolio, and research document is fictional and marked synthetic.
+The project deliberately does **not** connect to brokers, execute orders, forecast guaranteed returns, or provide buy/sell recommendations. Research fixtures and example ownership are fictional and marked synthetic. The investor workspace separately identifies sourced historical market prices and their retrieval dates.
 
 ## Five-minute demo story
 
@@ -59,7 +82,7 @@ The synchronous core is a modular monolith; batch, stream, scheduling, ML, AI, a
 | ML | Ten point-in-time features, rule baseline, fixed-seed candidate, chronological evaluation, promotion gates, model card, reproducible artifacts, and drift checks |
 | AI | Deterministic no-key brief, ten-tool read-only broker, scoped retrieval, citation/numerical validation, safe fallback/refusal, and 44 adversarial evaluation cases |
 | MCP | Exactly three bounded read-only tools and one fixed methodology resource over local stdio |
-| Product UI | Responsive research dashboard, portfolios, scenarios, evidence, data quality, model/drift, audit, methodology, and architecture views |
+| Product UI | Responsive research dashboard, portfolios, scenarios, evidence, data quality, model/drift, audit, methodology, and architecture views, covered by desktop/mobile Playwright and axe checks |
 
 ## Why this stack
 
@@ -130,12 +153,13 @@ uv run pytest -m "not integration and not e2e"
 pnpm lint
 pnpm typecheck
 pnpm test
+pnpm test:e2e
 pnpm build
 uv run python scripts/docs_check.py
 uv run python scripts/security_scan.py
 ```
 
-The latest recorded service-free core gate passed **428 Python tests plus 20 subtests** before the final scheduler/tooling additions; package-level branch coverage is recorded in [progress](docs/progress.md). The deterministic AI report passed **44/44 cases across 20 categories**. Live database/broker tests and container smoke checks remain explicitly pending because Docker is unavailable in the current build environment.
+The latest recorded service-free core gate passed **468 Python tests plus 20 subtests**, **14 Vitest tests**, and **14 Playwright tests** across desktop and mobile Chromium. The browser suite includes automated WCAG A/AA scans and a keyboard-only scenario/evidence journey. Package-level branch coverage is recorded in [progress](docs/progress.md). The deterministic AI report passed **44/44 cases across 20 categories**. Live database/broker tests and local container smoke checks remain explicitly pending because Docker is unavailable in the current workstation environment.
 
 ## Repository map
 

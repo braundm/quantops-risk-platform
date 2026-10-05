@@ -1,6 +1,102 @@
 # QuantOps handoff
 
-Last updated: 2026-07-19
+Last updated: 2026-10-05
+
+## Investor workspace publication — 2026-10-05
+
+The default `/` and `/investor` routes now provide a browser-local transaction ledger,
+flow-adjusted performance, historical risk, diversification, named scenarios and JSON backup/restore.
+Bundled sourced historical closes are identified separately from fictional example ownership.
+The previous workshop remains at `/personal`; local onboarding, cash envelopes and the synthetic
+forecast calibration quiz are included. See `docs/investor-workspace.md` for accounting conventions,
+derivative assumptions, supported instruments and storage limitations.
+
+Pre-publication verification passed: 549 Python tests and 20 subtests (one integration test
+deselected), 11 strict typecheck groups, Ruff lint/format, frontend lint, 20 Vitest tests,
+production build and all 36 desktop/mobile Playwright tests with two workers. Documentation
+checks passed for 53 Markdown files on the final rerun; the deterministic security scan passed. Exact commands and
+initial environment failures are recorded in `docs/progress.md`.
+
+The owner authorized committing and publishing these local changes to the existing PR #11 branch
+on 2026-10-05. Hosted CI for the new commit must be checked separately. Hosted tenant persistence,
+broker adapters, full retail MVP completion and the original Definition of Done remain open.
+Browser-local transaction/scenario persistence does not establish production readiness.
+
+## Synthetic forecast quiz
+
+The personal workspace includes a market-direction calibration quiz inspired by workshop-style
+forecast drills: 12 synthetic charts ending at NOW, up/down + confidence, periodic future reveal,
+and a closing calibration summary. Futures stay server-side until reveal (HMAC cursor). Distinct
+from the ten-step education lab; both are synthetic and non-advisory.
+
+## YNAB-style cash envelopes
+
+The personal workspace now includes a local zero-based cash budget (YNAB-style envelopes): monthly
+income, Ready-to-Assign, category groups, assigned/spent/available, “assign the rest”, and optional
+import of portfolio cash. State is browser-local per user id and clears with logout/delete. It is a
+liquidity planning aid, not investment advice or a transaction ledger. Retail e2e helpers enter
+through the local login and default-settings gate.
+
+## Retail history, education and visual refinement
+
+The personal workspace now includes aligned historical price/FX CSV preview, VaR/ES, volatility,
+drawdown, correlation and a keyboard-accessible chart. It reprices current fixed quantities, not
+investor transaction performance. Insufficient/inconsistent history suppresses precise metrics.
+An optional survey checks loss willingness/capacity and applies a personal concentration threshold.
+A separate cost budget excludes fees already embedded in prices. The ten-step synthetic education
+exercise reveals future observations only after a decision and reports costs and Brier calibration.
+The UI has a refined green/cream palette, clearer cards, responsive chart panels and a scrollable
+sidebar. Delete clears the portfolio and all added session panels. Method details and exclusions
+are maintained in `docs/retail-first-flow.md`.
+
+Python verification: 531 tests plus 20 subtests passed, one PostgreSQL integration test skipped;
+strict typechecks passed across 11 groups. Frontend lint, 14 Vitest tests and build passed.
+Desktop/mobile Playwright coverage passed all 28 tests, including automated accessibility checks.
+Documentation checks passed for 49 Markdown files; repository-wide Ruff checks passed.
+Updated Python and production Node audits found no known vulnerabilities. The browser CI job now installs
+the locked Python API required by its tests. The local Python environment was restored to 3.12
+after a locked-process interruption; the temporary repair environment was removed.
+
+Hosted application, PostgreSQL, frontend and security gates passed at `6fd665f`. The container job
+found duplicate independently resolved Pydantic wheels. The follow-up Dockerfile uses one locked,
+non-editable API dependency environment and retains the unprivileged runtime. Hosted run
+`37212261658` passed all ten jobs at `2cb2515`, including API/frontend container builds and smoke
+tests. Docker remains unavailable locally; the container evidence is from GitHub Actions.
+
+Remaining work includes transaction/flow history, persisted named scenarios, authenticated durable
+storage and any separately scoped read-only data adapters. The education cursor is intentionally
+single-process and replayable; synthetic trials are not evidence of strategy performance. No full
+retail MVP completion, external-service verification or production readiness is claimed.
+
+## Retail flow added on 2026-10-04
+
+The default `/` route now serves a Polish personal portfolio workspace connected to FastAPI.
+The former landing page is preserved at `/research`; existing research routes and risk calculations
+remain available. See `docs/retail-first-flow.md` for launch commands, the full CSV mapping, model
+assumptions, local data handling and the actual/synthetic/deferred capability split.
+
+Implemented and verified: manual current positions, atomic CSV preview/confirm, signed spot
+valuation and exposures, concentration, combined asset/FX shocks, no/partial/full signed forward
+comparisons with entry/holding estimates, before/after valuation, explicit local save/restore/delete,
+readable report export and stale-result invalidation. Synthetic origin is retained in the example
+CSV and modified fictional holdings. New portfolios require user FX; changing base currency clears
+foreign rates instead of silently reusing rates with different units. The API is stateless and
+rate-limited; it adds no hosted user accounts or PostgreSQL persistence.
+
+Scoped gates: 190 API/risk Python tests and 14 subtests passed; one PostgreSQL test skipped because
+no isolated database was configured. API/risk strict typechecks passed. Frontend lint, typecheck,
+14 Vitest tests, production build and 22 desktop/mobile Playwright tests passed, including report
+contents, CSV rejection, local data deletion and axe checks. Exact commands are in `docs/progress.md`.
+
+The follow-up above adds historical risk, the optional survey and synthetic education. Transaction/
+flow contracts and broker-specific read-only adapters remain separate deferred work.
+This is a working retail application slice, not completion of the entire
+retail MVP or the original master-spec Definition of Done. The owner explicitly authorized a Git
+commit and GitHub publication on 2026-10-04, overriding the earlier publication restriction for
+this change. Publish on the existing `agent/portfolio-polish` branch and update draft PR #11;
+do not merge or create a release tag as part of this request.
+
+## Previous research baseline (2026-07-19)
 
 ## Current state
 
@@ -9,14 +105,16 @@ framework-free domain and risk cores, deterministic data/quality pipelines, Post
 migrations, a 31-route FastAPI surface, a responsive typed-demo UI, versioned events, broker-neutral
 streaming, offline scheduling wrappers, a leakage-safe ML lifecycle, bounded grounded AI, and an
 official-SDK read-only MCP server. The final local service-free gate passes 468 Python tests plus 20
-subtests, strict typechecks across 11 isolated groups, all frontend gates, documentation checks, and
-the repository security scan.
+subtests, strict typechecks across 11 isolated groups, 14 Vitest tests, 14 desktop/mobile Playwright
+tests with axe scans, the frontend production build, documentation checks, and the repository
+security scan.
 
-The public repository is https://github.com/braundm/quantops-risk-platform. Local `main` tracks
-`origin/main`; the initial GitHub Actions CI run started against commit `fe73a64` after publication.
+The public repository is https://github.com/braundm/quantops-risk-platform. Local work is on
+`agent/portfolio-polish`, tracking the same branch on `origin`; draft PR #11 contains the current
+portfolio/documentation improvements.
 
-Focused commits through `fe73a64` preserve the implementation history. A final documentation-only
-commit records publication state; use `git log -1` for its immutable SHA.
+Focused commits through `4f7627b` on `main` preserve the published implementation history. Use
+`git log -1` on the active branch for its latest immutable SHA.
 
 ## Architecture in force
 
@@ -25,6 +123,10 @@ workers only for replay, scheduling, or isolation. PostgreSQL is the designed so
 Redpanda, Airflow, MLflow, external LLM providers, and observability remain optional boundaries. The
 current UI and API run deterministic local adapters independently, so live integration must not be
 claimed.
+
+Milestone 13 now includes `docs/interview-guide.md` and
+`docs/ai/ai-assisted-development.md`; both separate observed Codex verification from personal owner
+review and keep unavailable integrations explicitly qualified.
 
 ## Last successful local gates
 
@@ -45,12 +147,13 @@ claimed.
 pnpm --filter @quantops/web lint
 pnpm --filter @quantops/web typecheck
 pnpm --filter @quantops/web test
+pnpm --filter @quantops/web test:e2e
 pnpm --filter @quantops/web build
-# exit 0; 14 Vitest tests; Vite production build
+# exit 0; 14 Vitest tests; 14 desktop/mobile Playwright tests; Vite production build
 
 .venv\Scripts\python.exe scripts/docs_check.py
 .venv\Scripts\python.exe scripts/security_scan.py
-# exit 0; 48 Markdown files; no high-confidence secret/hygiene findings
+# exit 0; 56 Markdown files; no high-confidence secret/hygiene findings
 
 .venv\Scripts\pytest.exe -c apps/scheduler/pyproject.toml apps/scheduler/tests -q
 .venv\Scripts\uv.exe --cache-dir .uv-cache build --package quantops-scheduler --offline
@@ -64,21 +167,20 @@ does not include it in `PATH`. Docker, GNU Make, and Terraform remain absent fro
 ## Honest blockers and limitations
 
 - Docker-backed clean PostgreSQL, pgvector, Redpanda, image, and Compose gates were not runnable.
-- GitHub Actions run `29689753000` passed nine jobs; the container job failed because nginx lacked
-  permission to create its cache directory under runtime UID 101. `apps/web/Dockerfile` now assigns
-  the nginx cache and PID paths to that unprivileged user. A fresh hosted run must verify the fix.
-- Live Airflow/MLflow/provider/observability profiles, generated UI client integration, and browser
-  e2e/accessibility remain unverified.
+- GitHub Actions run `29694259171` passed on `main` after the unprivileged nginx cache/PID permission
+  correction in commit `4f7627b`.
+- Live Airflow/MLflow/provider/observability profiles and generated UI client integration remain
+  unverified.
 - The full master-spec Definition of Done remains open; do not create the `v0.1.0` release tag yet.
 
 ## Exact next action
 
-Push the scoped frontend container permission fix and observe its CI run at
-https://github.com/braundm/quantops-risk-platform/actions. On a Docker-capable clean host, run the remaining
-PostgreSQL/Redpanda/container/browser gates before creating a release tag or calling the project
+Connect the generated TypeScript client and PostgreSQL-backed critical application path. On a
+Docker-capable clean host, run the remaining Redpanda/clean-room gates and exercise the documented
+backup/migration/observability procedures before creating a release tag or calling the project
 complete.
 
 ## Working tree expectation
 
-The working tree should be clean after the final scoped commit. Preserve any existing remote and
-inspect `git status --short --branch` before future edits.
+The current work belongs to `agent/portfolio-polish` and draft PR #11. Preserve `origin`, keep
+commits narrowly scoped, and inspect `git status --short --branch` before future edits.

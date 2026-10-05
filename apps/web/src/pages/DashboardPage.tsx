@@ -62,7 +62,7 @@ export function DashboardPage({ result }: { readonly result: DemoResult }) {
             {portfolio.positions.map((position) => (
               <div className="exposure-row" key={position.symbol}>
                 <div><strong>{position.symbol}</strong><span>{formatCurrency(position.marketValue)}</span></div>
-                <div className="bar-track" aria-label={`${position.symbol} ${formatPercent(position.weight)} of portfolio`}>
+                <div className="bar-track" aria-hidden="true">
                   <span style={{ width: `${position.weight * 100}%` }} />
                 </div>
                 <b>{formatPercent(position.weight)}</b>
@@ -76,7 +76,7 @@ export function DashboardPage({ result }: { readonly result: DemoResult }) {
       <div className="content-grid content-grid-equal">
         <section className="panel" aria-labelledby="contributors-title">
           <header className="panel-header"><div><p className="panel-kicker">Signed Euler allocation</p><h2 id="contributors-title">Risk contribution</h2></div><a href="/evidence#evidence-risk-001">Evidence →</a></header>
-          <div className="table-wrap">
+          <div className="table-wrap" role="region" aria-label="Risk contribution table" tabIndex={0}>
             <table>
               <caption className="sr-only">Instrument contributions to parametric Value at Risk</caption>
               <thead><tr><th scope="col">Instrument</th><th scope="col">Contribution</th><th scope="col">Share</th><th scope="col">Status</th></tr></thead>

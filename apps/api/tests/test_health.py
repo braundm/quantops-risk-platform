@@ -78,6 +78,23 @@ def test_openapi_contains_the_required_versioned_routes() -> None:
         "/api/v1/audit-events",
         "/api/v1/reports/portfolios/{portfolio_id}.json",
         "/api/v1/reports/portfolios/{portfolio_id}.csv",
+        "/api/v1/retail/demo",
+        "/api/v1/retail/analyze",
+        "/api/v1/retail/csv-preview",
+        "/api/v1/retail/history-preview",
+        "/api/v1/retail/history-demo",
+        "/api/v1/retail/history-risk",
+        "/api/v1/retail/lab/start",
+        "/api/v1/retail/lab/decision",
+        "/api/v1/retail/forecast/start",
+        "/api/v1/retail/forecast/answer",
+        "/api/v1/retail/forecast/continue",
+        "/api/v1/retail/cost-budget",
+        "/api/v1/retail/preferences",
+        "/api/v1/investor/demo",
+        "/api/v1/investor/analyze",
+        "/api/v1/investor/refresh",
+        "/api/v1/investor/csv-preview",
     }
     with TestClient(create_app()) as client:
         response = client.get("/openapi.json")
