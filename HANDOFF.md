@@ -1,6 +1,164 @@
 # QuantOps handoff
 
-Last updated: 2026-10-05
+Last updated: 2026-10-12
+
+## Owner-authorized GitHub publication — 2026-10-12
+
+The owner explicitly requested publication of all current repository changes, overriding
+the earlier publication restriction for this update. Use the existing
+`agent/portfolio-polish` branch and draft PR #11; the original release Definition of Done
+remains open. The snapshot includes the local stock workspace, report imports, public
+instrument catalog, Treasury lab and visibly synthetic local demo accounts.
+
+Pre-publication checks passed: 626 service-free Python tests and 20 subtests, 23 frontend
+unit tests, all 11 strict Python typecheck groups, frontend lint and production build.
+The security scan now recognizes the reproducible 6.9 MB public broker catalog as a
+reviewed data artifact while retaining secret-pattern scanning; four scanner tests passed,
+including a regression proving that the size exception still detects secrets.
+Ruff lint/format and documentation checks passed; all 54 desktop/mobile browser tests
+passed in 2.3 minutes. See `docs/progress.md` for exact evidence.
+No release tag or production-readiness claim is authorized.
+
+## Default synthetic local accounts — 2026-10-11
+
+Owner requested `admin`/`admin` empty and `admin1`/`admin1` populated from the attached
+`quantum_ops_portfolio_test.xlsx`. Development initialization is loopback-only, idempotent,
+preserves existing login/UUID owners and report edits, and never enables server admin privileges.
+Normal registration still requires ten-character passwords. Two demo slots supplement ten custom
+profiles. Login screen and active demo profiles visibly identify the synthetic data.
+
+The workbook was read as data, retaining 20 open lots / 9 instruments, 26 closed positions and
+76 cash operations, account PLN, snapshot 2026-10-09T20:00:00Z. Its explicitly synthetic financial
+sections permit a normalized source fixture; prices are not seeded as verified provider marks.
+Parser now handles its known Sources provenance sheet and Open positions total footer.
+`scripts/build_local_demo.py` rebuilds the seed through the existing import pipeline and refuses
+unmarked sections. See `docs/local-workspace.md` for credentials, provenance and regeneration.
+
+Verified: 21 parser/API tests; 23 frontend unit tests; 10 desktop/mobile browser tests covering
+default logins, separation, retained edits, onboarding and existing XTB import; ESLint, TypeScript,
+production build, Ruff and mypy passed. Mobile portfolio screenshot was visually inspected.
+The running API was restarted and the actual workbook was previewed through localhost:5173's proxy.
+Security/documentation gates and exact command evidence are recorded in `docs/progress.md`.
+No publication or commit was made; pre-existing owner changes remain in the working tree.
+
+## Local login, optional onboarding and workspace layout — 2026-10-11
+
+The owner requested login/password registration, skippable questionnaire, broker setup
+and a more coherent layout. `/` and `/stocks` now provide that flow and six distinct
+views: Overview, Portfolio, Brokers/accounts, Import, History and Settings. Questionnaire
+skip is explicit and reversible from Settings; calculations and imports do not depend on it.
+Broker selection supports XTB and Bossa together; only the XTB importer is enabled.
+Adding an account opens Import; confirmed imports open Portfolio. Existing event and
+valuation behavior is retained. Legacy unprotected profiles can gain credentials while
+preserving their UUID and report storage. Profile exports omit credential verifiers.
+
+Local passwords use Web Crypto PBKDF2/SHA-256 with 600,000 iterations and random 128-bit
+salts. Plaintext passwords are not stored or sent to the API. A sessionStorage identifier
+provides a local UI gate, with logout and password verification. This is deliberately
+documented as a local prototype: client state is editable, reports remain unencrypted,
+there is no server authentication, ownership enforcement, email reset or synchronization.
+Do not deploy this as secure account access. See `docs/local-workspace.md`.
+
+Verified: TypeScript/production build and ESLint passed; all 20 existing frontend unit
+tests passed. Eight desktop/mobile onboarding and XTB browser tests passed, followed by
+four focused browser tests after the final questionnaire presentation adjustment.
+Axe scans, overflow checks, secret/hygiene, docs and whitespace gates passed. Synthetic
+screenshots were inspected. Existing local web/API servers still answer HTTP 200 at
+`http://localhost:5173/` and its API proxy. No commit or publication was performed.
+
+## XTB report-based accounts — 2026-10-11
+
+The default workspace now replaces manual/search-based additions with XTB report import.
+It supports multiple isolated local accounts, official broker logos, CSV paste/upload,
+XLSX and ZIP, preview/confirmation, deduplication and atomic conflict rejection.
+Bossa is selectable but clearly marked as awaiting an importer. Earlier manual holdings
+remain downloadable and are not automatically combined. No broker connection was added.
+
+Open-position snapshots and complete execution ledgers retain unsold stocks/ETFs and
+reconcile partial sales. Closed-only reports leave current holdings unknown. The supplied
+private ZIP was checked directly: it contains one XLSX with closed positions and cash
+operations and no open positions. No private source file or account data was checked in.
+CFD records remain separate from physical positions and have no fabricated spot valuation.
+
+Imported physical quotes reuse the public daily-close adapter, with catalog/listing and
+currency validation, explicit refresh and optional 15-minute visible-page refresh.
+Outages retain prior prices; native-currency totals and split review are implemented.
+Limits include 20 instruments per refresh, no GBX scaling, no imported-portfolio VaR/ES
+integration, no CFD contract risk, no durable authenticated storage or backup restore.
+See `docs/xtb-report-import.md` for supported formats and recommended next work.
+
+Verified final state: 623 service-free Python tests passed (1 deselected, 20 subtests),
+strict API/risk typing for 67 files, Ruff, frontend lint/production build and 4 browser
+tests across desktop/mobile with axe passed. Security, documentation and whitespace
+checks passed. Exact outcomes and corrected initial failures are in `docs/progress.md`.
+Existing unrelated owner work is preserved; nothing was committed or published.
+
+## Public Bossa / XTB instrument catalog — 2026-10-11
+
+The owner requested every Bossa and XTB instrument, including equities and derivatives.
+The new `/instruments` page and two `/api/v1/broker-catalog` GET routes provide 18,409
+validated public reference entries: 12,599 XTB Poland, 5,632 dated Bossa foreign entries
+and 178 BOSSAFX CFD specifications. Search, type/broker/market filters, pagination,
+source dates, counts, hashes and distinct equity/CFD identities are implemented.
+The packaged data requires no live provider for application startup or tests.
+
+The complete request is **not fulfilled**: eight public Bossa domestic groups returned
+empty lists, including options and futures. These are marked unavailable, not complete.
+An official export or recovered public feed is required for those entries. The existing
+40-stock valuation flow is preserved; broad catalog membership does not implement
+portfolio valuation, live quotes, option Greeks, margin or financing for these entries.
+No broker account connectivity, publication or commit was added. See `docs/broker-catalog.md`.
+
+Verified: 22 scoped Python tests, strict API/tooling typechecks, frontend lint/build,
+four new desktop/mobile catalog tests with axe scans, and four existing stock browser
+tests passed. Ruff, documentation and security gates passed; exact commands and corrected
+initial failures are recorded in `docs/progress.md`. Other pre-existing owner edits remain.
+
+## Additive Treasury and liquidity lab — 2026-10-10
+
+The owner requested small, useful additions from an external LLM proposal, with a banking
+internship demonstration in mind. Existing uncommitted stock-workspace changes were preserved.
+The new `/treasury` route adds editable regular fixed-coupon bonds, Macaulay/modified duration,
+convexity, signed/gross DV01, five full-repricing rate shocks, net DV01 limits, a separate
+supplied-volume equity liquidity book, data-quality gates and a self-contained HTML export.
+The stock page and research sidebar link to the lab. No migrations or new dependencies were added.
+
+All examples are synthetic; user inputs remain unverified. No live yield, historical crisis replay,
+durable account storage, regulatory IRRBB compliance or bank-wide NII/EVE is claimed. The requested
+feature gap matrix, methods, three reproducible illustrations and interview walkthrough are in
+`docs/treasury-lab.md`. New endpoints are `POST /api/v1/treasury/analyze` and
+`POST /api/v1/treasury/report`; OpenAPI and route-contract tests include both.
+
+Verified: 598 Python tests plus 20 subtests passed, one service integration test deselected;
+all 11 strict typecheck groups passed; Ruff lint and formatting passed. Frontend lint/build and
+20 Vitest tests passed; all 44 desktop/mobile browser regressions passed, including the four new
+Treasury tests and axe checks. Documentation (56 Markdown files), security scan and diff whitespace
+checks passed. Exact commands and initial corrected failures are in `docs/progress.md`.
+The actual application screenshot is
+`docs/images/quantops-treasury-lab.png`; a sample HTML report was exported to the chat artifact folder.
+
+Work remains local and uncommitted on `agent/portfolio-polish`. Reading PR #11 through the local
+GitHub CLI failed due to network connectivity; its body and remote branch were not modified.
+The original release Definition of Done remains open.
+
+## Stock-only personal start — 2026-10-05
+
+The latest local changes make `/` and `/stocks` a portfolio-tracking start: create a browser-local
+user, complete risk and instrument-knowledge questions, then manually add existing stock holdings
+to an empty portfolio. The fixed catalog contains 20 US and 20 Polish equities. The previous
+ledger remains at `/investor`, with its tests following that route. See `docs/stocks-start.md`.
+
+The questionnaire tailors educational detail and flags willingness/capacity or liquidity issues;
+it does not recommend assets. Current quantities, actual/estimated/unknown cost basis, dated
+historical closes and per-position refresh are supported. Native USD/PLN totals remain separate.
+CSV and broker imports, other instrument types and hosted accounts remain deferred in this flow.
+
+Verification: 564 Python tests plus 20 subtests passed (one external-service test deselected),
+strict API/risk typechecks passed, and frontend lint/build plus 20 Vitest tests passed. All 36 prior browser tests
+passed; all four new desktop/mobile start tests passed after correcting test selectors, including
+axe checks for the start, questionnaire and portfolio. Live Yahoo lookups returned valid closes
+and currencies for all 40 catalog symbols; historical Apple and PKO reference dates were checked.
+The full hosted Definition of Done remains open. These changes have not yet been committed.
 
 ## Investor workspace publication — 2026-10-05
 

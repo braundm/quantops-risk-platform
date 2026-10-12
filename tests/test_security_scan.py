@@ -38,3 +38,15 @@ def test_sensitive_filename_and_large_file_are_rejected(tmp_path: Path) -> None:
         "disallowed_sensitive_filename",
         f"file_exceeds_{MAXIMUM_FILE_BYTES}_bytes",
     ]
+
+
+def test_large_catalog_exception_still_scans_for_secrets(tmp_path: Path) -> None:
+    catalog = tmp_path / "apps/api/quantops_api/data/broker_catalog.json"
+    catalog.parent.mkdir(parents=True)
+    token = "gh" + "p_" + ("A" * 36)
+    catalog.write_text(" " * MAXIMUM_FILE_BYTES + token, encoding="utf-8")
+
+    findings = scan_paths((catalog,), tmp_path)
+
+    assert [finding.code for finding in findings] == ["github_classic_token"]
+    assert all(token not in finding.render() for finding in findings)

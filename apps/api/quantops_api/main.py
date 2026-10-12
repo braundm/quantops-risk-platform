@@ -7,6 +7,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from quantops_api import __version__
+from quantops_api.api.broker_catalog import router as broker_catalog_router
 from quantops_api.api.investor import router as investor_router
 from quantops_api.api.middleware import FixedWindowRateLimiter, request_context_middleware
 from quantops_api.api.problems import install_problem_handlers
@@ -16,6 +17,9 @@ from quantops_api.api.retail_history import router as retail_history_router
 from quantops_api.api.retail_lab import router as retail_lab_router
 from quantops_api.api.retail_planning import router as retail_planning_router
 from quantops_api.api.router import router
+from quantops_api.api.stocks import router as stocks_router
+from quantops_api.api.treasury import router as treasury_router
+from quantops_api.api.xtb import router as xtb_router
 from quantops_api.application.ai_service import DeterministicAiApplicationService
 from quantops_api.application.demo_service import DemoQuantOpsService
 from quantops_api.settings import Settings, get_settings
@@ -88,6 +92,10 @@ def create_app(
     application.include_router(retail_forecast_router)
     application.include_router(retail_planning_router)
     application.include_router(investor_router)
+    application.include_router(stocks_router)
+    application.include_router(broker_catalog_router)
+    application.include_router(treasury_router)
+    application.include_router(xtb_router)
     return application
 
 

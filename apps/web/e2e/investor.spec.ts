@@ -2,7 +2,7 @@ import AxeBuilder from "@axe-core/playwright";
 import { expect, test } from "@playwright/test";
 
 test("sourced investor workspace, readable charts and accessible navigation", async ({ page }, testInfo) => {
-  await page.goto("/");
+  await page.goto("/investor");
   await expect(page.getByRole("heading", { name: "Twój portfel. Pełniejszy obraz." })).toBeVisible();
   await expect(page.locator(".iv-position-card")).toHaveCount(6);
   await expect(page.locator(".iv-provenance")).toContainText("Fikcyjne transakcje");
@@ -26,7 +26,7 @@ test("sourced investor workspace, readable charts and accessible navigation", as
 });
 
 test("transactions, saved scenarios and backup survive reload", async ({ page }) => {
-  await page.goto("/");
+  await page.goto("/investor");
   await expect(page.locator(".iv-position-card")).toHaveCount(6);
   await page.getByRole("link", { name: "Portfel i transakcje", exact: true }).click();
   await page.getByLabel("Rodzaj wpisu").selectOption("fee");
@@ -60,7 +60,7 @@ test("transactions, saved scenarios and backup survive reload", async ({ page })
 });
 
 test("CSV duplicate import cannot overwrite the last valid saved portfolio", async ({ page }) => {
-  await page.goto("/");
+  await page.goto("/investor");
   await expect(page.locator(".iv-position-card")).toHaveCount(6);
   await page.getByRole("link", { name: "Portfel i transakcje", exact: true }).click();
   const previous = await page.evaluate(() => localStorage.getItem("quantops.investor-workspace.v1"));

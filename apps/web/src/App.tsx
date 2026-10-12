@@ -20,6 +20,9 @@ import { PortfolioPage } from "./pages/PortfolioPage";
 import { ScenarioPage } from "./pages/ScenarioPage";
 import { RetailPage } from "./pages/RetailPage";
 import { InvestorPage } from "./pages/InvestorPage";
+import { StocksPage } from "./pages/StocksPage";
+import { TreasuryPage } from "./pages/TreasuryPage";
+import { BrokerCatalogPage } from "./pages/BrokerCatalogPage";
 
 type DataRoute = "dashboard" | "portfolio" | "scenarios" | "pipelines" | "evidence" | "briefs" | "market";
 
@@ -104,9 +107,12 @@ function NotFoundPage() {
 
 export function App() {
   const path = window.location.pathname.replace(/\/$/, "") || "/";
-  if (path === "/" || path === "/investor") return <InvestorPage />;
+  if (path === "/" || path === "/stocks") return <StocksPage />;
+  if (path === "/investor") return <InvestorPage />;
   if (path === "/personal") return <RetailPage />;
   if (path === "/research") return <LandingPage />;
+  if (path === "/treasury") return <Shell path={path}><TreasuryPage /></Shell>;
+  if (path === "/instruments") return <Shell path={path}><BrokerCatalogPage /></Shell>;
 
   const route = routeFor(path);
   const content = (() => {

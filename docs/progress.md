@@ -1,8 +1,300 @@
 # QuantOps implementation progress
 
-Last updated: 2026-10-05
+Last updated: 2026-10-11
 
 This file records observed results only. An unchecked item is not implemented or has not yet met its exit evidence.
+
+## Default local accounts and supplied synthetic workbook — 2026-10-11
+
+Implemented the owner's explicit request for `admin`/`admin` (empty) and `admin1`/`admin1`
+(preloaded). Source: `C:/Users/domin/Downloads/quantum_ops_portfolio_test.xlsx`; the financial
+sections explicitly say DEMO / SYNTHETIC and provenance states it is not an XTB-issued statement.
+The normal parser and merger generated a normalized fixture with 20 open lots / 9 instruments,
+26 closed positions and 76 cash operations (122 records). No workbook instruction was executed;
+no embedded price was represented as a verified provider quote. Source SHA-256 is retained.
+
+Initialization runs only on the loopback development server, preserves existing login/UUID owners
+and never overwrites edits or imports on reload. The normal registration password minimum remains
+ten characters. Local credentials remain a UI gate, not server authentication or admin permissions.
+Parser compatibility adds the known seven-column Sources provenance sheet and the open-position
+footer. Both accounts and their synthetic origin are visible on the login/workspace screens.
+
+Observed checks, using the repository Python environment and bundled Node/pnpm runtime:
+
+```text
+.venv/Scripts/python.exe scripts/build_local_demo.py SOURCE apps/web/src/data/localDemo.json
+# open=20, closed=26, cash=76, unique_symbols=9
+.venv/Scripts/python.exe -m pytest apps/api/tests/test_xtb_reports.py -q -p no:cacheprovider
+# 21 passed in 1.51s
+.venv/Scripts/python.exe -m ruff check scripts/build_local_demo.py apps/api/tests/test_xtb_reports.py apps/api/quantops_api/application/xtb_reports.py
+# All checks passed
+.venv/Scripts/python.exe -m mypy scripts/build_local_demo.py apps/api/quantops_api
+# Success: no issues found in 43 source files
+pnpm --filter @quantops/web test
+# 23 passed in 4 test files
+pnpm --filter @quantops/web lint
+# exit 0, no warnings
+pnpm --filter @quantops/web typecheck
+# exit 0
+pnpm --filter @quantops/web build
+# exit 0, Vite production bundle built
+pnpm --filter @quantops/web exec playwright test e2e/local-demo.spec.ts e2e/local-login.spec.ts e2e/stocks.spec.ts --workers=2
+# 10 passed (46.2s), desktop/mobile Chromium, isolated ports 8017/4187
+pnpm --filter @quantops/web exec playwright test e2e/local-demo.spec.ts --workers=2
+# 2 passed (7.3s), after test typing correction
+.venv/Scripts/python.exe scripts/security_scan.py
+# Passed: no high-confidence secret or hygiene findings
+.venv/Scripts/python.exe scripts/docs_check.py
+# Passed for 59 Markdown files
+git diff --check
+# exit 0; existing OpenAPI CRLF normalization warning only
+```
+
+Initial test assumptions were corrected: analysis retains 20 lots while valuation groups nine
+instruments, and the navigation label is Historia importów. Strict ESLint required explicit
+storage types in the new browser test; final checks above passed without suppressions.
+Visual inspection of `artifacts/default-portfolio-mobile-chromium.png` confirmed the synthetic
+notice, portfolio rows and contained horizontally scrolling table. Browser checks include axe
+WCAG A/AA and page overflow checks. Default-account unit/browser tests demonstrate account
+isolation, owner-login collision preservation, production initialization exclusion and retained
+edits/import history across reload.
+
+The owner's existing local API process was verified by executable/arguments and restarted with
+the updated parser. HTTP checks through the live localhost:5173 proxy imported the actual attached
+workbook successfully (20/26/76); web and API health returned 200. No market-provider call was needed.
+Working tree and diff were inspected, preserving prior owner changes; no commit or publication.
+
+## Local login, optional questionnaire and workspace navigation — 2026-10-11
+
+Implemented local login/password registration with confirmation, lowercase unique logins,
+PBKDF2/SHA-256 password verifiers (600,000 iterations), random per-account salts, tab-local
+session state and logout. Plaintext passwords never enter localStorage or API requests.
+The UI and docs disclose that this is a client-controlled local access gate, not server
+authentication or encrypted report storage. No cloud, broker connectivity or paid service
+was introduced. Existing unprotected profiles can be selected explicitly during registration,
+preserving their UUID, previous positions and XTB report accounts.
+
+The questionnaire is optional, initially collapsed and immediately skippable. Skip persists
+and does not affect financial calculations or access to imports. Settings allows later
+completion/editing. Broker setup supports XTB and Bossa together, with Bossa import still
+marked unavailable. Broker preferences are editable without removing existing reports.
+The six-view layout separates Overview, Portfolio, Brokers/accounts, Import, History and
+Settings, adds current-view navigation, next-action cards and an import history table.
+Account creation opens Import; confirmation opens Portfolio. Previous calculation,
+deduplication, account isolation and provider-outage behavior remain exercised by tests.
+
+Observed verification:
+
+```text
+pnpm --filter @quantops/web typecheck
+# exit 0: TypeScript passed
+pnpm --filter @quantops/web lint
+# exit 0: no errors or warnings (including final state)
+pnpm --filter @quantops/web build
+# exit 0: final TypeScript/Vite production build, 70 modules transformed
+pnpm --filter @quantops/web test
+# exit 0: 3 files passed, 20 tests passed
+QUANTOPS_E2E_API_PORT=8017 QUANTOPS_E2E_WEB_PORT=4187 pnpm --filter @quantops/web exec playwright test stocks.spec.ts local-login.spec.ts --workers=2
+# exit 0: 8 passed in 41.5s, desktop/mobile Chromium
+QUANTOPS_E2E_API_PORT=8017 QUANTOPS_E2E_WEB_PORT=4187 pnpm --filter @quantops/web exec playwright test local-login.spec.ts --workers=2
+# exit 0: 4 passed in 13.7s after final optional-questionnaire presentation/copy adjustment
+.venv/Scripts/python.exe scripts/security_scan.py
+# exit 0: no high-confidence secret or hygiene findings
+.venv/Scripts/python.exe scripts/docs_check.py
+# exit 0: documentation checks passed for 59 Markdown files
+git diff --check
+# exit 0: no whitespace errors
+HTTP GET http://localhost:5173/ and http://localhost:5173/api/v1/health
+# both HTTP 200; existing local runtime remains running
+```
+
+Tests use visibly synthetic accounts/passwords and report fixtures. They cover confirmation
+mismatch, rejected passwords, session removal, reload, logout/login, questionnaire skip/later
+completion, multi-broker preferences, migration with retained reports and the existing XTB
+import/valuation workflow. Axe WCAG A/AA scans and horizontal overflow checks passed on tested
+screens. The first browser run found two equally named logout controls on desktop; the sidebar
+control now opens account settings, leaving one clear logout action. No tests were suppressed.
+No backend calculation changed, so the earlier 623-test Python result was not rerun for this
+frontend-only change. Auth and account screenshots were captured with synthetic data and
+visually inspected. Unrelated owner changes were preserved; no commit or publication occurred.
+
+## XTB report import and separate local accounts — 2026-10-11
+
+Implemented the report-first `/` and `/stocks` workspace: XTB/Bossa brand selection,
+multiple XTB accounts, CSV paste/file upload, XLSX/ZIP, bounded stateless parsing,
+preview and explicit snapshot/history confirmation. Bossa import remains unavailable.
+The private owner ZIP was read in memory and verified to contain closed-position and
+cash-operation history only; current holdings correctly remain unknown. No private
+report, account number or financial amount is retained in repository fixtures.
+
+Idempotent event merging, conflicting-history rejection, older-snapshot rejection,
+full/empty snapshot replacement and complete-ledger average-cost reconstruction are
+implemented. Unsold buys remain open; partial sells reduce units, oversells reject
+atomically. CFD direction and quantity remain separate from physical shares, even when
+tickers match. Closed P/L is not added to its matching cash settlement. Quote refresh
+reuses the existing provider adapter with reviewed listing and currency mapping,
+preserves old quotes on provider failure and displays separate native-currency totals.
+Splits suppress cost comparison. User-controlled 15-minute refresh requires a visible
+page; quotes are completed daily closes, not live prices. Existing manual data is retained.
+
+Final verification commands and observed results:
+
+```text
+.venv/Scripts/python.exe -m pytest -m "not integration and not e2e" -q -p no:cacheprovider
+# exit 0: 623 passed, 1 deselected, 20 subtests passed in 22.39s
+.venv/Scripts/python.exe -m mypy apps/api/quantops_api packages/risk_engine/src/quantops_risk
+# exit 0: no issues found in 67 source files
+.venv/Scripts/python.exe -m ruff check apps/api/quantops_api apps/api/tests/test_xtb_reports.py packages/risk_engine/src/quantops_risk
+# exit 0: all checks passed
+pnpm --filter @quantops/web lint
+# exit 0: no ESLint errors or warnings
+pnpm --filter @quantops/web build
+# exit 0: TypeScript and Vite production build passed; 66 modules transformed
+QUANTOPS_E2E_API_PORT=8017 QUANTOPS_E2E_WEB_PORT=4187 pnpm --filter @quantops/web exec playwright test stocks.spec.ts --workers=2
+# exit 0: 4 passed in 16.8s, desktop/mobile Chromium including axe WCAG A/AA scans
+.venv/Scripts/python.exe scripts/security_scan.py
+# exit 0: no high-confidence secret or hygiene findings
+.venv/Scripts/python.exe scripts/docs_check.py
+# exit 0: documentation checks passed for 58 Markdown files
+git diff --check
+# exit 0: no whitespace errors
+```
+
+Browser tests cover preview before persistence, unsold positions, repeat import, multiple
+same-currency accounts, profile isolation, reload, provider failure and closed-only file
+upload. Backend synthetic tests also exercise XLSX with incorrect A1-only dimensions,
+ZIP boundaries, formula/entity rejection, localized CSV, bad/future numbers/dates,
+conflicts, partial closes, complete sale, same-time numeric execution ordering and CFD
+separation. The checked-in OpenAPI snapshot was regenerated and verified by the full suite.
+
+Initial failures were corrected: CSV sniffing originally rejected metadata rows with fewer
+columns; it now detects the table header. Strict typing exposed an optional date and legacy
+currency annotation. ESLint rejected FileReader stringification. The first browser run
+used obsolete catalog query parameters; the corrected test uses the actual API query.
+Sandboxed pnpm failed with EPERM and was rerun outside that restriction. No test was
+suppressed to pass; the earlier manual-entry browser scenarios were replaced because
+the owner explicitly requested report-only additions. Final screenshots use synthetic
+data and were visually inspected. No live provider was required by the test suites.
+
+Remaining: durable protected storage and backup restore, complete cash/corporate-action
+reconciliation, bounded quote queue for more than 20 symbols, reviewed GBX/alias mappings,
+FX normalization and imported exposure integration with concentration, VaR/ES and
+scenarios. CFD financing/multipliers/margin, options and Bossa import need dedicated
+verified contracts and data. This change does not complete a release milestone.
+No commit, PR update or publication was performed; unrelated owner edits remain.
+
+## Public broker catalog — 2026-10-11
+
+The requested full Bossa/XTB coverage is partially delivered. Added 18,409 packaged
+public reference instruments and an accessible `/instruments` browser, searchable by
+name/symbol/ISIN with broker/type/market filters, pagination and source details.
+All advertised XTB Poland pages were downloaded (12,599 records); all 111 Bossa
+foreign PDF table pages were parsed and checked against per-page ISIN counts (5,632);
+all public BOSSAFX embedded specification records were normalized (178).
+Eight Bossa domestic group endpoints returned empty lists; their coverage remains
+unavailable. Options/futures were not manufactured and broader position valuation
+remains deferred. No milestone completion, account access, commit or publication is claimed.
+
+Observed checks from the repository root:
+
+```text
+.venv\Scripts\python.exe scripts/fetch_xtb_catalog.py
+# exit 0: ten categories downloaded, 12,599 advertised entries; four concurrent public reads
+# Bossa PDF, BOSSAFX page and domestic endpoints were downloaded with explicit httpx reads.
+# scripts/fetch_bossa_catalog.py now records the same fixed URLs for reproducibility;
+# its live network workflow was not rerun after adding the script.
+
+.venv\Scripts\python.exe scripts/extract_bossa_pdf.py
+# exit 0: 5,632 records / 111 table pages, using bundled pdfplumber via PYTHONPATH
+.venv\Scripts\python.exe scripts/build_broker_catalog.py
+# exit 0: 18,409 validated entries; overall coverage remains partial
+
+.venv\Scripts\python.exe -m pytest -p no:cacheprovider apps/api/tests/test_stocks.py apps/api/tests/test_broker_catalog.py apps/api/tests/test_health.py tests/test_bossa_pdf_parser.py -q
+# exit 0: 22 passed in 4.36 seconds; includes seven new API/parser tests and OpenAPI equality
+
+.venv\Scripts\python.exe scripts/typecheck.py --group api --group tooling
+# exit 0: strict API (53 source files) and tooling (15 source files) checks
+
+pnpm --filter @quantops/web lint
+pnpm --filter @quantops/web build
+# exit 0: ESLint, TypeScript and production Vite build
+pnpm --filter @quantops/web exec playwright test e2e/broker-catalog.spec.ts --workers=2
+# exit 0: four desktop/mobile tests, including equity/CFD separation, source gaps,
+# derivative details, pagination, service errors and axe accessibility checks (10.0 seconds)
+pnpm --filter @quantops/web exec playwright test e2e/stocks.spec.ts --workers=2
+# exit 0: four existing desktop/mobile stock regressions (11.0 seconds)
+
+.venv\Scripts\ruff.exe check apps/api/quantops_api/application/broker_catalog.py apps/api/quantops_api/api/broker_catalog.py apps/api/tests/test_broker_catalog.py scripts/fetch_xtb_catalog.py scripts/fetch_bossa_catalog.py scripts/build_broker_catalog.py scripts/extract_bossa_pdf.py tests/test_bossa_pdf_parser.py
+.venv\Scripts\ruff.exe format --check apps/api/quantops_api/application/broker_catalog.py apps/api/quantops_api/api/broker_catalog.py apps/api/tests/test_broker_catalog.py scripts/fetch_xtb_catalog.py scripts/fetch_bossa_catalog.py scripts/build_broker_catalog.py scripts/extract_bossa_pdf.py tests/test_bossa_pdf_parser.py
+# exit 0: new Python sources linted and formatted
+.venv\Scripts\python.exe scripts/docs_check.py
+.venv\Scripts\python.exe scripts/security_scan.py
+git diff --check
+# exit 0: 57 Markdown files, repository hygiene/secret gate and whitespace checks
+```
+
+Corrected initial findings: the supplied PDF skill path was stale; the installed
+26.1009.11318 skill/runtime was located. Plain pypdf text and table borders merged
+some PDF cells; the final parser uses pdfplumber text, explicit page-market inheritance,
+all source receipt categories and strict ISIN row counts. Ruff/mypy found import,
+formatting and reused-variable issues, which were fixed. Two initial browser tests
+could not match the source selector's exact accessible label; an explicit label fixed
+both, without weakening assertions. A rendered Bossa input page and actual desktop
+catalog screenshot were inspected. No delivered PDF was authored.
+
+Sandbox DNS, pnpm workspace access and TestClient execution required scoped escalated
+reruns. The initial restricted TestClient run stalled; the successful 22-test run used
+the same test contracts outside that restriction. Downloaded raw pages/PDFs and browser
+traces remain in ignored generated/test directories; the curated normalized snapshot
+is the intended packaged source artifact. Existing owner changes were preserved.
+
+## Stock-only users and manual holdings — 2026-10-05
+
+- [x] Add a local user start, risk/knowledge questionnaire and empty portfolio at `/` and `/stocks`.
+- [x] Isolate holdings by UUID profile and preserve the last valid save on validation/provider errors.
+- [x] Add 20 US and 20 Polish equities, historical reference lookup and explicit cost basis choice.
+- [x] Keep native USD and PLN values separate and suppress unknown/split-affected cost comparisons.
+- [x] Mark CSV, broker imports and other instruments as deferred in the new flow.
+- [x] Preserve the prior investor ledger at `/investor`, retaining its full browser assertions.
+
+Observed verification:
+
+```text
+.venv\Scripts\python.exe -m pytest apps/api/tests/test_stocks.py packages/risk_engine/tests/test_stock_holdings.py -q -o cache_dir=.pytest_cache_publish
+# exit 0; 15 passed
+.venv\Scripts\python.exe -m pytest -m "not integration and not e2e" -q -o cache_dir=.pytest_cache_publish
+# exit 0; 564 passed, 1 deselected, 20 subtests passed in 24.70s
+.venv\Scripts\python.exe scripts/typecheck.py --group api --group risk
+# exit 0; both strict groups passed
+.venv\Scripts\ruff.exe check .
+.venv\Scripts\ruff.exe format --check .
+# exit 0; 231 files formatted
+pnpm --filter @quantops/web lint
+pnpm --filter @quantops/web build
+# exit 0; lint, TypeScript and Vite build passed
+pnpm --filter @quantops/web test
+# exit 0; 3 files, 20 Vitest tests passed
+pnpm --filter @quantops/web test:e2e --workers=2
+# 36 prior tests passed; four new tests failed due to label-text selectors
+pnpm --filter @quantops/web test:e2e e2e/stocks.spec.ts --workers=2
+# exit 0; four new desktop/mobile tests passed after switching to accessible combobox roles
+# extended rerun: four passed in 16.3s, including axe on start/survey/portfolio and stale-quote invalidation
+# final rerun after profile explanations and form reset: four passed in 17.4s; lint/build also passed
+.venv\Scripts\python.exe scripts/docs_check.py
+.venv\Scripts\python.exe scripts/security_scan.py
+git diff --check
+# exit 0; 55 Markdown files; no high-confidence secrets/hygiene findings; no whitespace errors
+```
+
+The first API typecheck found a test accessing a non-exported module import; the test now patches
+the explicit httpx import and both strict groups pass. No assertions or timeouts were weakened.
+Live read-only Yahoo checks succeeded for all 40 allowlisted tickers using a 2026-10-01 request
+date, with latest closes dated 2026-10-02 and the correct native currency. Additional API probes
+checked historical Apple and PKO closes for 2025-04-04 and the renamed EBP.WA mapping. This live
+evidence is separate from offline unit/browser fixtures, which remain visibly synthetic.
+Desktop and mobile start/portfolio screenshots were inspected. The API was restarted on port
+8000 with the new routes and the frontend remains available on port 5173. No hosted user storage,
+broker connectivity or full retail MVP completion is claimed.
 
 ## Investor workspace pre-publication verification — 2026-10-05
 
@@ -805,3 +1097,103 @@ Connect the generated TypeScript client to the live API boundary, then implement
 PostgreSQL-backed critical application path and Redpanda adapter. On a Docker-capable clean host,
 repeat migrations, persistence/Redpanda integration, image, and Compose smoke tests. Keep the
 release tag and remaining service-dependent evidence unchecked until those gates pass.
+# Additive Treasury and liquidity lab — 2026-10-10
+
+Scope: preserve the current stock/investor work and add a bounded banking-risk demonstration,
+without replacing the architecture or implementing every item in the imported LLM backlog.
+The pre-implementation gap assessment and intentional deferrals are in `treasury-lab.md`.
+
+Implemented: pure Decimal regular-bond pricing, Macaulay/modified duration, convexity and DV01;
+signed/gross book aggregation; -100/-50/+50/+100/+200bp full repricing and position contributions;
+absolute net DV01 limits; separate constant-ADV equity liquidation, participation choices,
+dated-history validation, stale/insufficient states, coverage and liquidation limits; editable
+`/treasury` UI, synthetic cases, read-only calculation endpoints and escaped HTML export with
+complete reproduction inputs. No new dependency, migration or provider integration.
+
+Observed verification:
+
+```text
+.venv\Scripts\python.exe -m pytest -p no:cacheprovider -m "not integration and not e2e" -q
+# exit 0: 598 passed, 1 deselected, 20 subtests passed (25.35 seconds)
+# Includes 34 new Treasury/liquidity/API tests; no external provider calls required.
+
+.venv\Scripts\python.exe scripts/typecheck.py
+# exit 0: all 11 isolated strict groups passed
+
+.venv\Scripts\ruff.exe check .
+.venv\Scripts\ruff.exe format --check .
+# exit 0: all lint checks passed; 238 Python files formatted
+
+pnpm --filter @quantops/web lint
+pnpm --filter @quantops/web build
+pnpm --filter @quantops/web test
+# exit 0: ESLint, TypeScript/Vite production build, 3 Vitest files / 20 tests
+
+pnpm --filter @quantops/web exec playwright test e2e/treasury.spec.ts --workers=2
+# exit 0: 4 desktop/mobile tests, including automated accessibility checks and HTML download
+
+pnpm --filter @quantops/web exec playwright test --workers=2
+# exit 0: all 44 desktop/mobile regressions passed (1.8 minutes)
+
+.venv\Scripts\python.exe scripts/docs_check.py
+.venv\Scripts\python.exe scripts/security_scan.py
+# exit 0: 56 Markdown files; deterministic repository hygiene/secret-pattern gate passed
+
+git diff --check
+# exit 0: no whitespace errors
+```
+
+Initial failures were corrected: strict TypeScript flagged unchecked array access; report export
+exposed a missing postponed type annotation import; Ruff found long strings/import ordering.
+The first sandboxed Python test run stalled at the web client, and sandboxed pnpm could not resolve
+the workspace path. Replacement checks ran outside that restriction. A subsequent pytest-cache
+Windows permission failure was avoided with `-p no:cacheprovider`; test selection was unchanged.
+The initial two report-download browser failures were resolved by the same report import fix;
+the complete new-browser suite then passed. No tests were weakened.
+
+Artifacts: `docs/images/quantops-treasury-lab.png` was captured from actual API-backed application
+results and visually inspected. `quantops-treasury-report.html` was exported to the chat's artifact
+folder, with synthetic provenance and reproduction inputs. Screenshot capture is opt-in through
+`QUANTOPS_CAPTURE_TREASURY=1`; optional report retention uses `QUANTOPS_TREASURY_REPORT_PATH`.
+
+`git status`, branch and diff were inspected. The current branch remains `agent/portfolio-polish`.
+`gh pr view 11 --json title,body,headRefName,state,isDraft` failed to connect to `api.github.com`;
+no remote verification, PR update, publication, merge or commit is claimed. Existing owner edits
+remain in the working tree. Full release and external-service gates remain open.
+# GitHub publication verification — 2026-10-12
+
+The owner explicitly requested all current changes be published to the existing GitHub
+repository. Publication uses `agent/portfolio-polish` and draft PR #11. Full release
+Definition of Done and service-dependent gates remain open.
+
+Observed commands and outcomes:
+
+```text
+.venv\Scripts\python.exe -m pytest -p no:cacheprovider -m "not integration and not e2e" -q
+# exit 0: 626 passed, 1 deselected, 20 subtests passed in 32.57 seconds
+.venv\Scripts\python.exe scripts/typecheck.py
+# exit 0: all 11 isolated strict groups passed
+pnpm --filter @quantops/web lint
+pnpm --filter @quantops/web test
+pnpm --filter @quantops/web build
+# exit 0: ESLint, 23 tests in 4 files, TypeScript/Vite production build
+pnpm --filter @quantops/web exec playwright test --workers=2
+# exit 0: all 54 desktop/mobile browser tests passed in 2.3 minutes
+.venv\Scripts\python.exe -m pytest -p no:cacheprovider tests/test_security_scan.py -q
+# exit 0: 4 passed, including the new large-catalog secret detection regression
+.venv\Scripts\ruff.exe check .
+.venv\Scripts\ruff.exe format --check .
+# exit 0: all checks passed; 255 files formatted
+.venv\Scripts\python.exe scripts/docs_check.py
+# exit 0: 59 Markdown files
+.venv\Scripts\python.exe scripts/security_scan.py
+# exit 0: no high-confidence secret or hygiene findings
+```
+
+Initial environment failures: sandbox blocked Git index writes and pnpm path resolution,
+stalled Python web-client tests and prevented pytest temporary-directory creation.
+Authorized elevated reruns succeeded. The initial tracked-file scan omitted untracked
+files; after staging all files it correctly rejected the 6,864,239-byte public catalog.
+Its documented reproducible source snapshot now has an explicit size exception, with
+secret detection retained and regression-tested. One extra blank line in the stock
+catalog was removed to satisfy Ruff format. No assertions or test selections were weakened.

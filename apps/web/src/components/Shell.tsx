@@ -25,6 +25,8 @@ const navigation: readonly NavigationItem[] = [
   },
   { href: "/forecast", label: "Forecast quiz", group: "Research", icon: "forecast" },
   { href: "/market", label: "Market data", group: "Research", icon: "market" },
+  { href: "/instruments", label: "Bossa / XTB catalog", group: "Research", icon: "market" },
+  { href: "/treasury", label: "Treasury & liquidity", group: "Research", icon: "scenario" },
   { href: "/models", label: "Models", group: "Research", icon: "model" },
   { href: "/pipelines", label: "Data quality", group: "Assurance", icon: "pipeline" },
   { href: "/evidence", label: "Evidence", group: "Assurance", icon: "evidence" },
@@ -74,6 +76,8 @@ function isCurrent(path: string, href: string): boolean {
 }
 
 export function Shell({ path, children }: ShellProps) {
+  const treasury = path === "/treasury";
+  const catalog = path === "/instruments";
   return (
     <div className="app-shell">
       <a className="skip-link" href="#main-content">
@@ -90,8 +94,8 @@ export function Shell({ path, children }: ShellProps) {
         <div className="demo-identity" aria-label="Current environment">
           <span className="status-dot" aria-hidden="true" />
           <span>
-            <strong>Synthetic demo</strong>
-            <small>Historical replay · local</small>
+            <strong>{catalog ? "Public specifications" : treasury ? "Treasury research" : "Synthetic demo"}</strong>
+            <small>{catalog ? "Bossa / XTB · partial coverage" : treasury ? "Supplied inputs · local" : "Historical replay · local"}</small>
           </span>
         </div>
 
@@ -128,7 +132,7 @@ export function Shell({ path, children }: ShellProps) {
         <header className="topbar">
           <div>
             <span className="topbar-label">Environment</span>
-            <strong>Deterministic fixture 1.0.0</strong>
+            <strong>{catalog ? "Public instrument catalog" : treasury ? "Treasury and liquidity lab" : "Deterministic fixture 1.0.0"}</strong>
           </div>
           <div className="topbar-actions">
             <a className="quiet-link" href="/forecast">
@@ -144,7 +148,7 @@ export function Shell({ path, children }: ShellProps) {
           {children}
         </main>
         <footer className="app-footer">
-          <span>QuantOps synthetic market-risk observability</span>
+          <span>{catalog ? "QuantOps public reference data · partial coverage" : treasury ? "QuantOps Treasury research · unverified inputs" : "QuantOps synthetic market-risk observability"}</span>
           <span>All timestamps shown in UTC</span>
         </footer>
       </div>

@@ -1,6 +1,7 @@
 # Investor workspace: prices, ownership and calculations
 
-The default `/` and `/investor` routes are a Polish, browser-local portfolio workspace. The older
+The `/investor` route is a Polish, browser-local portfolio workspace. The default `/` now serves
+the [stock-only user start](stocks-start.md). The older
 workshop is retained at `/personal` and the synthetic research application at `/research`.
 The API is stateless: browser storage and downloaded JSON backups provide persistence, not hosted
 accounts or database-backed user identity. All analysis runs through deterministic Python code.

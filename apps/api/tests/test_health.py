@@ -95,6 +95,19 @@ def test_openapi_contains_the_required_versioned_routes() -> None:
         "/api/v1/investor/analyze",
         "/api/v1/investor/refresh",
         "/api/v1/investor/csv-preview",
+        "/api/v1/stocks/catalog",
+        "/api/v1/broker-catalog",
+        "/api/v1/broker-catalog/{instrument_id}",
+        "/api/v1/stocks/profile",
+        "/api/v1/stocks/quote",
+        "/api/v1/stocks/value",
+        "/api/v1/treasury/analyze",
+        "/api/v1/treasury/report",
+        "/api/v1/xtb/preview",
+        "/api/v1/xtb/merge",
+        "/api/v1/xtb/analyze",
+        "/api/v1/xtb/quote",
+        "/api/v1/xtb/value",
     }
     with TestClient(create_app()) as client:
         response = client.get("/openapi.json")

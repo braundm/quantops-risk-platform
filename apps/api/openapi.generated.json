@@ -887,6 +887,86 @@
         "title": "AuditEventResponse",
         "type": "object"
       },
+      "BondResult": {
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "metrics": {
+            "$ref": "#/components/schemas/BondSensitivity"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "quantity": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Quantity",
+            "type": "string"
+          },
+          "signed_dv01": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Signed Dv01",
+            "type": "string"
+          },
+          "value": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Value",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "quantity",
+          "metrics",
+          "value",
+          "signed_dv01"
+        ],
+        "title": "BondResult",
+        "type": "object"
+      },
+      "BondSensitivity": {
+        "properties": {
+          "convexity": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Convexity",
+            "type": "string"
+          },
+          "dv01": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Dv01",
+            "type": "string"
+          },
+          "macaulay_duration": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Macaulay Duration",
+            "type": "string"
+          },
+          "modified_duration": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Modified Duration",
+            "type": "string"
+          },
+          "price": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Price",
+            "type": "string"
+          }
+        },
+        "required": [
+          "price",
+          "macaulay_duration",
+          "modified_duration",
+          "convexity",
+          "dv01"
+        ],
+        "title": "BondSensitivity",
+        "type": "object"
+      },
       "BookResult": {
         "properties": {
           "annual_volatility": {
@@ -1147,6 +1227,278 @@
         "title": "CanonicalUnit",
         "type": "string"
       },
+      "CatalogInstrument": {
+        "additionalProperties": false,
+        "properties": {
+          "broker": {
+            "enum": [
+              "bossa",
+              "xtb"
+            ],
+            "title": "Broker",
+            "type": "string"
+          },
+          "close_only": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Close Only"
+          },
+          "currency": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Currency"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "instrument_type": {
+            "enum": [
+              "equity",
+              "etf",
+              "etc",
+              "etn",
+              "etp",
+              "bond",
+              "option",
+              "future",
+              "cfd",
+              "right",
+              "warrant",
+              "certificate",
+              "other"
+            ],
+            "title": "Instrument Type",
+            "type": "string"
+          },
+          "isin": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Isin"
+          },
+          "market": {
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Market",
+            "type": "string"
+          },
+          "name": {
+            "maxLength": 500,
+            "minLength": 1,
+            "title": "Name",
+            "type": "string"
+          },
+          "source_category": {
+            "title": "Source Category",
+            "type": "string"
+          },
+          "source_id": {
+            "title": "Source Id",
+            "type": "string"
+          },
+          "specifications": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "title": "Specifications",
+            "type": "object"
+          },
+          "symbol": {
+            "maxLength": 80,
+            "minLength": 1,
+            "title": "Symbol",
+            "type": "string"
+          },
+          "valuation_status": {
+            "const": "reference_only",
+            "default": "reference_only",
+            "title": "Valuation Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "broker",
+          "symbol",
+          "name",
+          "instrument_type",
+          "market",
+          "source_id",
+          "source_category"
+        ],
+        "title": "CatalogInstrument",
+        "type": "object"
+      },
+      "CatalogPage": {
+        "additionalProperties": false,
+        "properties": {
+          "coverage": {
+            "default": "partial",
+            "title": "Coverage",
+            "type": "string"
+          },
+          "instrument_types": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Instrument Types",
+            "type": "array"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/CatalogInstrument"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "limit": {
+            "title": "Limit",
+            "type": "integer"
+          },
+          "markets": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Markets",
+            "type": "array"
+          },
+          "offset": {
+            "title": "Offset",
+            "type": "integer"
+          },
+          "schema_version": {
+            "default": "broker-catalog@1.0.0",
+            "title": "Schema Version",
+            "type": "string"
+          },
+          "sources": {
+            "items": {
+              "$ref": "#/components/schemas/CatalogSource"
+            },
+            "title": "Sources",
+            "type": "array"
+          },
+          "total": {
+            "title": "Total",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "total",
+          "offset",
+          "limit",
+          "items",
+          "sources",
+          "markets",
+          "instrument_types"
+        ],
+        "title": "CatalogPage",
+        "type": "object"
+      },
+      "CatalogSource": {
+        "additionalProperties": false,
+        "properties": {
+          "broker": {
+            "enum": [
+              "bossa",
+              "xtb"
+            ],
+            "title": "Broker",
+            "type": "string"
+          },
+          "count": {
+            "minimum": 0.0,
+            "title": "Count",
+            "type": "integer"
+          },
+          "effective_date": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Effective Date"
+          },
+          "expected_count": {
+            "anyOf": [
+              {
+                "minimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Expected Count"
+          },
+          "fetched_at": {
+            "format": "date-time",
+            "title": "Fetched At",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "note": {
+            "title": "Note",
+            "type": "string"
+          },
+          "sha256": {
+            "pattern": "^[a-f0-9]{64}$",
+            "title": "Sha256",
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "source_complete",
+              "partial",
+              "unavailable"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "url": {
+            "title": "Url",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "broker",
+          "url",
+          "fetched_at",
+          "sha256",
+          "count",
+          "status",
+          "note"
+        ],
+        "title": "CatalogSource",
+        "type": "object"
+      },
       "ClaimType": {
         "enum": [
           "metric",
@@ -1334,6 +1686,61 @@
           "importable"
         ],
         "title": "CsvPreview",
+        "type": "object"
+      },
+      "CurrencyValue": {
+        "additionalProperties": false,
+        "properties": {
+          "cost": {
+            "anyOf": [
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cost"
+          },
+          "currency": {
+            "enum": [
+              "USD",
+              "PLN"
+            ],
+            "title": "Currency",
+            "type": "string"
+          },
+          "estimated_cost": {
+            "title": "Estimated Cost",
+            "type": "boolean"
+          },
+          "unrealized_change": {
+            "anyOf": [
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Unrealized Change"
+          },
+          "value": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Value",
+            "type": "string"
+          }
+        },
+        "required": [
+          "currency",
+          "value",
+          "cost",
+          "unrealized_change",
+          "estimated_cost"
+        ],
+        "title": "CurrencyValue",
         "type": "object"
       },
       "CurvePoint": {
@@ -2605,6 +3012,273 @@
         "title": "Holding",
         "type": "object"
       },
+      "ImportedHolding": {
+        "additionalProperties": false,
+        "properties": {
+          "asset_type": {
+            "title": "Asset Type",
+            "type": "string"
+          },
+          "cost": {
+            "anyOf": [
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cost"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "opened_at": {
+            "format": "date-time",
+            "title": "Opened At",
+            "type": "string"
+          },
+          "quantity": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Quantity",
+            "type": "string"
+          },
+          "side": {
+            "title": "Side",
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "spot",
+              "derivative_unavailable",
+              "classification_required"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "symbol": {
+            "title": "Symbol",
+            "type": "string"
+          }
+        },
+        "required": [
+          "symbol",
+          "name",
+          "asset_type",
+          "side",
+          "quantity",
+          "cost",
+          "opened_at",
+          "status"
+        ],
+        "title": "ImportedHolding",
+        "type": "object"
+      },
+      "ImportedQuote": {
+        "additionalProperties": false,
+        "properties": {
+          "quote": {
+            "$ref": "#/components/schemas/StockQuote-Input"
+          },
+          "symbol": {
+            "title": "Symbol",
+            "type": "string"
+          }
+        },
+        "required": [
+          "symbol",
+          "quote"
+        ],
+        "title": "ImportedQuote",
+        "type": "object"
+      },
+      "ImportedTotals": {
+        "additionalProperties": false,
+        "properties": {
+          "cost": {
+            "anyOf": [
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cost"
+          },
+          "currency": {
+            "title": "Currency",
+            "type": "string"
+          },
+          "unrealized": {
+            "anyOf": [
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Unrealized"
+          },
+          "value": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Value",
+            "type": "string"
+          }
+        },
+        "required": [
+          "currency",
+          "value",
+          "cost",
+          "unrealized"
+        ],
+        "title": "ImportedTotals",
+        "type": "object"
+      },
+      "ImportedValuation": {
+        "additionalProperties": false,
+        "properties": {
+          "coverage": {
+            "title": "Coverage",
+            "type": "string"
+          },
+          "methodology": {
+            "default": "imported-spot@1.0.0",
+            "title": "Methodology",
+            "type": "string"
+          },
+          "origin": {
+            "default": "user_supplied_report_and_price_snapshot",
+            "title": "Origin",
+            "type": "string"
+          },
+          "positions": {
+            "items": {
+              "$ref": "#/components/schemas/ImportedValue"
+            },
+            "title": "Positions",
+            "type": "array"
+          },
+          "totals": {
+            "items": {
+              "$ref": "#/components/schemas/ImportedTotals"
+            },
+            "title": "Totals",
+            "type": "array"
+          }
+        },
+        "required": [
+          "coverage",
+          "positions",
+          "totals"
+        ],
+        "title": "ImportedValuation",
+        "type": "object"
+      },
+      "ImportedValue": {
+        "additionalProperties": false,
+        "properties": {
+          "asset_type": {
+            "title": "Asset Type",
+            "type": "string"
+          },
+          "cost": {
+            "anyOf": [
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cost"
+          },
+          "currency": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Currency"
+          },
+          "price_date": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Price Date"
+          },
+          "quantity": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Quantity",
+            "type": "string"
+          },
+          "side": {
+            "title": "Side",
+            "type": "string"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          },
+          "symbol": {
+            "title": "Symbol",
+            "type": "string"
+          },
+          "unrealized": {
+            "anyOf": [
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Unrealized"
+          },
+          "value": {
+            "anyOf": [
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Value"
+          }
+        },
+        "required": [
+          "symbol",
+          "asset_type",
+          "side",
+          "quantity",
+          "currency",
+          "value",
+          "cost",
+          "unrealized",
+          "price_date",
+          "status"
+        ],
+        "title": "ImportedValue",
+        "type": "object"
+      },
       "InstrumentModel-Input": {
         "additionalProperties": false,
         "properties": {
@@ -3115,6 +3789,272 @@
         "title": "LabRound",
         "type": "object"
       },
+      "LiquidityEstimate": {
+        "properties": {
+          "adv": {
+            "anyOf": [
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Adv"
+          },
+          "days": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Days"
+          },
+          "fraction_five_days": {
+            "anyOf": [
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fraction Five Days"
+          },
+          "fraction_one_day": {
+            "anyOf": [
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fraction One Day"
+          },
+          "observations": {
+            "title": "Observations",
+            "type": "integer"
+          },
+          "position_to_adv": {
+            "anyOf": [
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Position To Adv"
+          },
+          "status": {
+            "enum": [
+              "valid",
+              "insufficient"
+            ],
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "status",
+          "observations"
+        ],
+        "title": "LiquidityEstimate",
+        "type": "object"
+      },
+      "LiquidityPosition-Input": {
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "name": {
+            "maxLength": 80,
+            "minLength": 1,
+            "title": "Name",
+            "type": "string"
+          },
+          "price_date": {
+            "format": "date",
+            "title": "Price Date",
+            "type": "string"
+          },
+          "quantity": {
+            "anyOf": [
+              {
+                "exclusiveMinimum": 0.0,
+                "type": "number"
+              },
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}|(?=[\\d.]{1,25}0*$)\\d{0,14}\\.\\d{0,10}0*$)",
+                "type": "string"
+              }
+            ],
+            "title": "Quantity"
+          },
+          "reference_price": {
+            "anyOf": [
+              {
+                "exclusiveMinimum": 0.0,
+                "type": "number"
+              },
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}|(?=[\\d.]{1,25}0*$)\\d{0,14}\\.\\d{0,10}0*$)",
+                "type": "string"
+              }
+            ],
+            "title": "Reference Price"
+          },
+          "sessions": {
+            "items": {
+              "$ref": "#/components/schemas/VolumeSession-Input"
+            },
+            "maxItems": 252,
+            "title": "Sessions",
+            "type": "array"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "quantity",
+          "reference_price",
+          "price_date",
+          "sessions"
+        ],
+        "title": "LiquidityPosition",
+        "type": "object"
+      },
+      "LiquidityPosition-Output": {
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "name": {
+            "maxLength": 80,
+            "minLength": 1,
+            "title": "Name",
+            "type": "string"
+          },
+          "price_date": {
+            "format": "date",
+            "title": "Price Date",
+            "type": "string"
+          },
+          "quantity": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}|(?=[\\d.]{1,25}0*$)\\d{0,14}\\.\\d{0,10}0*$)",
+            "title": "Quantity",
+            "type": "string"
+          },
+          "reference_price": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}|(?=[\\d.]{1,25}0*$)\\d{0,14}\\.\\d{0,10}0*$)",
+            "title": "Reference Price",
+            "type": "string"
+          },
+          "sessions": {
+            "items": {
+              "$ref": "#/components/schemas/VolumeSession-Output"
+            },
+            "maxItems": 252,
+            "title": "Sessions",
+            "type": "array"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "quantity",
+          "reference_price",
+          "price_date",
+          "sessions"
+        ],
+        "title": "LiquidityPosition",
+        "type": "object"
+      },
+      "LiquidityResult": {
+        "additionalProperties": false,
+        "properties": {
+          "estimate": {
+            "$ref": "#/components/schemas/LiquidityEstimate"
+          },
+          "first_date": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "First Date"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "last_date": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Date"
+          },
+          "limit_status": {
+            "enum": [
+              "OK",
+              "WARNING",
+              "BREACH",
+              "INSUFFICIENT"
+            ],
+            "title": "Limit Status",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "valid",
+              "stale",
+              "insufficient"
+            ],
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "estimate",
+          "status",
+          "limit_status",
+          "first_date",
+          "last_date"
+        ],
+        "title": "LiquidityResult",
+        "type": "object"
+      },
       "MainFactor": {
         "additionalProperties": false,
         "properties": {
@@ -3335,6 +4275,55 @@
         "title": "MarketPoint",
         "type": "object"
       },
+      "MergeRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "complete_ledger": {
+            "default": false,
+            "title": "Complete Ledger",
+            "type": "boolean"
+          },
+          "complete_snapshot": {
+            "default": false,
+            "title": "Complete Snapshot",
+            "type": "boolean"
+          },
+          "current": {
+            "$ref": "#/components/schemas/XtbBook-Input"
+          },
+          "preview": {
+            "$ref": "#/components/schemas/XtbPreview-Input"
+          }
+        },
+        "required": [
+          "current",
+          "preview"
+        ],
+        "title": "MergeRequest",
+        "type": "object"
+      },
+      "MergeResult": {
+        "additionalProperties": false,
+        "properties": {
+          "analysis": {
+            "$ref": "#/components/schemas/XtbAnalysis"
+          },
+          "book": {
+            "$ref": "#/components/schemas/XtbBook-Output"
+          },
+          "duplicates": {
+            "title": "Duplicates",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "book",
+          "duplicates",
+          "analysis"
+        ],
+        "title": "MergeResult",
+        "type": "object"
+      },
       "ModelCatalogResponse": {
         "additionalProperties": false,
         "properties": {
@@ -3365,6 +4354,77 @@
           "detail"
         ],
         "title": "ModelCatalogResponse",
+        "type": "object"
+      },
+      "OwnedStock": {
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "price_basis": {
+            "enum": [
+              "actual",
+              "reference",
+              "unknown"
+            ],
+            "title": "Price Basis",
+            "type": "string"
+          },
+          "purchase_price": {
+            "anyOf": [
+              {
+                "exclusiveMinimum": 0.0,
+                "type": "number"
+              },
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}|(?=[\\d.]{1,25}0*$)\\d{0,14}\\.\\d{0,10}0*$)",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Purchase Price"
+          },
+          "purchased": {
+            "format": "date",
+            "title": "Purchased",
+            "type": "string"
+          },
+          "quantity": {
+            "anyOf": [
+              {
+                "exclusiveMinimum": 0.0,
+                "type": "number"
+              },
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}|(?=[\\d.]{1,25}0*$)\\d{0,14}\\.\\d{0,10}0*$)",
+                "type": "string"
+              }
+            ],
+            "title": "Quantity"
+          },
+          "quote": {
+            "$ref": "#/components/schemas/StockQuote-Input"
+          },
+          "symbol": {
+            "maxLength": 20,
+            "title": "Symbol",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "symbol",
+          "quantity",
+          "purchased",
+          "price_basis",
+          "quote"
+        ],
+        "title": "OwnedStock",
         "type": "object"
       },
       "Page_AuditEventResponse_": {
@@ -4366,6 +5426,25 @@
         "title": "PositionResult",
         "type": "object"
       },
+      "PositionValue": {
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "mark": {
+            "$ref": "#/components/schemas/StockValue"
+          }
+        },
+        "required": [
+          "id",
+          "mark"
+        ],
+        "title": "PositionValue",
+        "type": "object"
+      },
       "PositionWrite": {
         "additionalProperties": false,
         "properties": {
@@ -4651,6 +5730,45 @@
         "title": "Preferences",
         "type": "object"
       },
+      "PreviewRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "account_number": {
+            "pattern": "^[0-9]{1,20}$",
+            "title": "Account Number",
+            "type": "string"
+          },
+          "content_base64": {
+            "maxLength": 11200000,
+            "title": "Content Base64",
+            "type": "string"
+          },
+          "currency": {
+            "title": "Currency",
+            "type": "string"
+          },
+          "filename": {
+            "maxLength": 240,
+            "minLength": 1,
+            "title": "Filename",
+            "type": "string"
+          },
+          "observed_at": {
+            "format": "date-time",
+            "title": "Observed At",
+            "type": "string"
+          }
+        },
+        "required": [
+          "account_number",
+          "currency",
+          "observed_at",
+          "filename",
+          "content_base64"
+        ],
+        "title": "PreviewRequest",
+        "type": "object"
+      },
       "PriceBarResponse": {
         "additionalProperties": false,
         "properties": {
@@ -4867,6 +5985,207 @@
           "code"
         ],
         "title": "ProblemIssue",
+        "type": "object"
+      },
+      "ProfileAnswers": {
+        "additionalProperties": false,
+        "properties": {
+          "bonds": {
+            "enum": [
+              "none",
+              "basic",
+              "experienced"
+            ],
+            "title": "Bonds",
+            "type": "string"
+          },
+          "capacity_pct": {
+            "maximum": 100.0,
+            "minimum": 0.0,
+            "title": "Capacity Pct",
+            "type": "integer"
+          },
+          "etfs": {
+            "enum": [
+              "none",
+              "basic",
+              "experienced"
+            ],
+            "title": "Etfs",
+            "type": "string"
+          },
+          "futures": {
+            "enum": [
+              "none",
+              "basic",
+              "experienced"
+            ],
+            "title": "Futures",
+            "type": "string"
+          },
+          "goal": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Goal",
+            "type": "string"
+          },
+          "horizon_months": {
+            "maximum": 1200.0,
+            "minimum": 1.0,
+            "title": "Horizon Months",
+            "type": "integer"
+          },
+          "knows_diversification": {
+            "title": "Knows Diversification",
+            "type": "boolean"
+          },
+          "knows_leverage": {
+            "title": "Knows Leverage",
+            "type": "boolean"
+          },
+          "knows_loss": {
+            "title": "Knows Loss",
+            "type": "boolean"
+          },
+          "needs_cash_soon": {
+            "title": "Needs Cash Soon",
+            "type": "boolean"
+          },
+          "options": {
+            "enum": [
+              "none",
+              "basic",
+              "experienced"
+            ],
+            "title": "Options",
+            "type": "string"
+          },
+          "stocks": {
+            "enum": [
+              "none",
+              "basic",
+              "experienced"
+            ],
+            "title": "Stocks",
+            "type": "string"
+          },
+          "willingness_pct": {
+            "maximum": 100.0,
+            "minimum": 0.0,
+            "title": "Willingness Pct",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "goal",
+          "horizon_months",
+          "willingness_pct",
+          "capacity_pct",
+          "needs_cash_soon",
+          "stocks",
+          "bonds",
+          "etfs",
+          "options",
+          "futures",
+          "knows_loss",
+          "knows_diversification",
+          "knows_leverage"
+        ],
+        "title": "ProfileAnswers",
+        "type": "object"
+      },
+      "ProfileResult": {
+        "additionalProperties": false,
+        "properties": {
+          "available_tools": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Available Tools",
+            "type": "array"
+          },
+          "deferred_instruments": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Deferred Instruments",
+            "type": "array"
+          },
+          "flags": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Flags",
+            "type": "array"
+          },
+          "learning_level": {
+            "enum": [
+              "introductory",
+              "standard",
+              "detailed"
+            ],
+            "title": "Learning Level",
+            "type": "string"
+          },
+          "learning_topics": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Learning Topics",
+            "type": "array"
+          }
+        },
+        "required": [
+          "learning_level",
+          "flags",
+          "learning_topics",
+          "available_tools"
+        ],
+        "title": "ProfileResult",
+        "type": "object"
+      },
+      "RateScenario": {
+        "additionalProperties": false,
+        "properties": {
+          "after": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "After",
+            "type": "string"
+          },
+          "before": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Before",
+            "type": "string"
+          },
+          "pnl": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Pnl",
+            "type": "string"
+          },
+          "pnl_by_position": {
+            "additionalProperties": {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            },
+            "propertyNames": {
+              "format": "uuid"
+            },
+            "title": "Pnl By Position",
+            "type": "object"
+          },
+          "shock_bp": {
+            "title": "Shock Bp",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "shock_bp",
+          "before",
+          "after",
+          "pnl",
+          "pnl_by_position"
+        ],
+        "title": "RateScenario",
         "type": "object"
       },
       "ReadinessResponse": {
@@ -5848,6 +7167,266 @@
         "title": "Series",
         "type": "object"
       },
+      "Stock": {
+        "properties": {
+          "currency": {
+            "title": "Currency",
+            "type": "string"
+          },
+          "market": {
+            "title": "Market",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "symbol": {
+            "title": "Symbol",
+            "type": "string"
+          }
+        },
+        "required": [
+          "symbol",
+          "name",
+          "market",
+          "currency"
+        ],
+        "title": "Stock",
+        "type": "object"
+      },
+      "StockQuote-Input": {
+        "additionalProperties": false,
+        "properties": {
+          "corporate_action_review": {
+            "default": false,
+            "title": "Corporate Action Review",
+            "type": "boolean"
+          },
+          "fetched_at": {
+            "format": "date-time",
+            "title": "Fetched At",
+            "type": "string"
+          },
+          "latest_close": {
+            "anyOf": [
+              {
+                "exclusiveMinimum": 0.0,
+                "type": "number"
+              },
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}|(?=[\\d.]{1,25}0*$)\\d{0,14}\\.\\d{0,10}0*$)",
+                "type": "string"
+              }
+            ],
+            "title": "Latest Close"
+          },
+          "latest_date": {
+            "format": "date",
+            "title": "Latest Date",
+            "type": "string"
+          },
+          "provider": {
+            "default": "Yahoo Finance",
+            "title": "Provider",
+            "type": "string"
+          },
+          "purchase_reference_close": {
+            "anyOf": [
+              {
+                "exclusiveMinimum": 0.0,
+                "type": "number"
+              },
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}|(?=[\\d.]{1,25}0*$)\\d{0,14}\\.\\d{0,10}0*$)",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Purchase Reference Close"
+          },
+          "purchase_reference_date": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Purchase Reference Date"
+          },
+          "requested_date": {
+            "format": "date",
+            "title": "Requested Date",
+            "type": "string"
+          },
+          "source_url": {
+            "title": "Source Url",
+            "type": "string"
+          },
+          "stock": {
+            "$ref": "#/components/schemas/Stock"
+          },
+          "warnings": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Warnings",
+            "type": "array"
+          }
+        },
+        "required": [
+          "stock",
+          "requested_date",
+          "purchase_reference_date",
+          "purchase_reference_close",
+          "latest_date",
+          "latest_close",
+          "fetched_at",
+          "source_url"
+        ],
+        "title": "StockQuote",
+        "type": "object"
+      },
+      "StockQuote-Output": {
+        "additionalProperties": false,
+        "properties": {
+          "corporate_action_review": {
+            "default": false,
+            "title": "Corporate Action Review",
+            "type": "boolean"
+          },
+          "fetched_at": {
+            "format": "date-time",
+            "title": "Fetched At",
+            "type": "string"
+          },
+          "latest_close": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}|(?=[\\d.]{1,25}0*$)\\d{0,14}\\.\\d{0,10}0*$)",
+            "title": "Latest Close",
+            "type": "string"
+          },
+          "latest_date": {
+            "format": "date",
+            "title": "Latest Date",
+            "type": "string"
+          },
+          "provider": {
+            "default": "Yahoo Finance",
+            "title": "Provider",
+            "type": "string"
+          },
+          "purchase_reference_close": {
+            "anyOf": [
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}|(?=[\\d.]{1,25}0*$)\\d{0,14}\\.\\d{0,10}0*$)",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Purchase Reference Close"
+          },
+          "purchase_reference_date": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Purchase Reference Date"
+          },
+          "requested_date": {
+            "format": "date",
+            "title": "Requested Date",
+            "type": "string"
+          },
+          "source_url": {
+            "title": "Source Url",
+            "type": "string"
+          },
+          "stock": {
+            "$ref": "#/components/schemas/Stock"
+          },
+          "warnings": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Warnings",
+            "type": "array"
+          }
+        },
+        "required": [
+          "stock",
+          "requested_date",
+          "purchase_reference_date",
+          "purchase_reference_close",
+          "latest_date",
+          "latest_close",
+          "fetched_at",
+          "source_url"
+        ],
+        "title": "StockQuote",
+        "type": "object"
+      },
+      "StockValue": {
+        "properties": {
+          "cost": {
+            "anyOf": [
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cost"
+          },
+          "status": {
+            "enum": [
+              "ok",
+              "unknown_cost",
+              "corporate_action_review"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "unrealized_change": {
+            "anyOf": [
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Unrealized Change"
+          },
+          "value": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Value",
+            "type": "string"
+          }
+        },
+        "required": [
+          "value",
+          "cost",
+          "unrealized_change",
+          "status"
+        ],
+        "title": "StockValue",
+        "type": "object"
+      },
       "StressResult": {
         "properties": {
           "equity_after": {
@@ -6096,6 +7675,496 @@
         "title": "TransactionPreview",
         "type": "object"
       },
+      "TreasuryBond-Input": {
+        "additionalProperties": false,
+        "properties": {
+          "coupon_rate": {
+            "anyOf": [
+              {
+                "maximum": 0.5,
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d{0,8}0*$",
+                "type": "string"
+              }
+            ],
+            "title": "Coupon Rate"
+          },
+          "face": {
+            "anyOf": [
+              {
+                "exclusiveMinimum": 0.0,
+                "maximum": 1000000000000.0,
+                "type": "number"
+              },
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d{0,8}0*$",
+                "type": "string"
+              }
+            ],
+            "title": "Face"
+          },
+          "frequency": {
+            "enum": [
+              1,
+              2,
+              4,
+              12
+            ],
+            "title": "Frequency",
+            "type": "integer"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "name": {
+            "maxLength": 80,
+            "minLength": 1,
+            "title": "Name",
+            "type": "string"
+          },
+          "quantity": {
+            "anyOf": [
+              {
+                "maximum": 1000000000.0,
+                "minimum": -1000000000.0,
+                "type": "number"
+              },
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d{0,8}0*$",
+                "type": "string"
+              }
+            ],
+            "title": "Quantity"
+          },
+          "years": {
+            "maximum": 50.0,
+            "minimum": 1.0,
+            "title": "Years",
+            "type": "integer"
+          },
+          "yield_rate": {
+            "anyOf": [
+              {
+                "maximum": 1.0,
+                "minimum": -0.1,
+                "type": "number"
+              },
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d{0,8}0*$",
+                "type": "string"
+              }
+            ],
+            "title": "Yield Rate"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "face",
+          "quantity",
+          "coupon_rate",
+          "yield_rate",
+          "years",
+          "frequency"
+        ],
+        "title": "TreasuryBond",
+        "type": "object"
+      },
+      "TreasuryBond-Output": {
+        "additionalProperties": false,
+        "properties": {
+          "coupon_rate": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d{0,8}0*$",
+            "title": "Coupon Rate",
+            "type": "string"
+          },
+          "face": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d{0,8}0*$",
+            "title": "Face",
+            "type": "string"
+          },
+          "frequency": {
+            "enum": [
+              1,
+              2,
+              4,
+              12
+            ],
+            "title": "Frequency",
+            "type": "integer"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "name": {
+            "maxLength": 80,
+            "minLength": 1,
+            "title": "Name",
+            "type": "string"
+          },
+          "quantity": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d{0,8}0*$",
+            "title": "Quantity",
+            "type": "string"
+          },
+          "years": {
+            "maximum": 50.0,
+            "minimum": 1.0,
+            "title": "Years",
+            "type": "integer"
+          },
+          "yield_rate": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d{0,8}0*$",
+            "title": "Yield Rate",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "face",
+          "quantity",
+          "coupon_rate",
+          "yield_rate",
+          "years",
+          "frequency"
+        ],
+        "title": "TreasuryBond",
+        "type": "object"
+      },
+      "TreasuryRequest-Input": {
+        "additionalProperties": false,
+        "properties": {
+          "bonds": {
+            "items": {
+              "$ref": "#/components/schemas/TreasuryBond-Input"
+            },
+            "maxItems": 30,
+            "minItems": 1,
+            "title": "Bonds",
+            "type": "array"
+          },
+          "currency": {
+            "title": "Currency",
+            "type": "string"
+          },
+          "liquidity_positions": {
+            "items": {
+              "$ref": "#/components/schemas/LiquidityPosition-Input"
+            },
+            "maxItems": 30,
+            "title": "Liquidity Positions",
+            "type": "array"
+          },
+          "max_abs_dv01": {
+            "anyOf": [
+              {
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}|(?=[\\d.]{1,25}0*$)\\d{0,14}\\.\\d{0,10}0*$)",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Max Abs Dv01"
+          },
+          "max_liquidation_days": {
+            "default": 5,
+            "maximum": 252.0,
+            "minimum": 1.0,
+            "title": "Max Liquidation Days",
+            "type": "integer"
+          },
+          "origin": {
+            "enum": [
+              "synthetic",
+              "user_supplied"
+            ],
+            "title": "Origin",
+            "type": "string"
+          },
+          "participation": {
+            "anyOf": [
+              {
+                "maximum": 0.2,
+                "minimum": 0.01,
+                "type": "number"
+              },
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d{0,4}0*$",
+                "type": "string"
+              }
+            ],
+            "default": "0.1",
+            "title": "Participation"
+          },
+          "source_note": {
+            "maxLength": 500,
+            "minLength": 1,
+            "title": "Source Note",
+            "type": "string"
+          },
+          "valuation_date": {
+            "format": "date",
+            "title": "Valuation Date",
+            "type": "string"
+          }
+        },
+        "required": [
+          "currency",
+          "valuation_date",
+          "origin",
+          "source_note",
+          "bonds"
+        ],
+        "title": "TreasuryRequest",
+        "type": "object"
+      },
+      "TreasuryRequest-Output": {
+        "additionalProperties": false,
+        "properties": {
+          "bonds": {
+            "items": {
+              "$ref": "#/components/schemas/TreasuryBond-Output"
+            },
+            "maxItems": 30,
+            "minItems": 1,
+            "title": "Bonds",
+            "type": "array"
+          },
+          "currency": {
+            "title": "Currency",
+            "type": "string"
+          },
+          "liquidity_positions": {
+            "items": {
+              "$ref": "#/components/schemas/LiquidityPosition-Output"
+            },
+            "maxItems": 30,
+            "title": "Liquidity Positions",
+            "type": "array"
+          },
+          "max_abs_dv01": {
+            "anyOf": [
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}|(?=[\\d.]{1,25}0*$)\\d{0,14}\\.\\d{0,10}0*$)",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Max Abs Dv01"
+          },
+          "max_liquidation_days": {
+            "default": 5,
+            "maximum": 252.0,
+            "minimum": 1.0,
+            "title": "Max Liquidation Days",
+            "type": "integer"
+          },
+          "origin": {
+            "enum": [
+              "synthetic",
+              "user_supplied"
+            ],
+            "title": "Origin",
+            "type": "string"
+          },
+          "participation": {
+            "default": "0.1",
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d{0,4}0*$",
+            "title": "Participation",
+            "type": "string"
+          },
+          "source_note": {
+            "maxLength": 500,
+            "minLength": 1,
+            "title": "Source Note",
+            "type": "string"
+          },
+          "valuation_date": {
+            "format": "date",
+            "title": "Valuation Date",
+            "type": "string"
+          }
+        },
+        "required": [
+          "currency",
+          "valuation_date",
+          "origin",
+          "source_note",
+          "bonds"
+        ],
+        "title": "TreasuryRequest",
+        "type": "object"
+      },
+      "TreasuryResult": {
+        "additionalProperties": false,
+        "properties": {
+          "assumptions": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Assumptions",
+            "type": "array"
+          },
+          "bonds": {
+            "items": {
+              "$ref": "#/components/schemas/BondResult"
+            },
+            "title": "Bonds",
+            "type": "array"
+          },
+          "currency": {
+            "title": "Currency",
+            "type": "string"
+          },
+          "dv01_limit_status": {
+            "enum": [
+              "OK",
+              "WARNING",
+              "BREACH",
+              "NOT_SET"
+            ],
+            "title": "Dv01 Limit Status",
+            "type": "string"
+          },
+          "generated_at": {
+            "format": "date-time",
+            "title": "Generated At",
+            "type": "string"
+          },
+          "gross_dv01": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Gross Dv01",
+            "type": "string"
+          },
+          "gross_value": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Gross Value",
+            "type": "string"
+          },
+          "inputs": {
+            "$ref": "#/components/schemas/TreasuryRequest-Output"
+          },
+          "liquidatable_five_days_pct": {
+            "anyOf": [
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Liquidatable Five Days Pct"
+          },
+          "liquidatable_one_day_pct": {
+            "anyOf": [
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Liquidatable One Day Pct"
+          },
+          "liquidity": {
+            "items": {
+              "$ref": "#/components/schemas/LiquidityResult"
+            },
+            "title": "Liquidity",
+            "type": "array"
+          },
+          "liquidity_coverage_pct": {
+            "anyOf": [
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Liquidity Coverage Pct"
+          },
+          "methodology_version": {
+            "default": "treasury@1.0.0",
+            "title": "Methodology Version",
+            "type": "string"
+          },
+          "net_value": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Net Value",
+            "type": "string"
+          },
+          "origin": {
+            "enum": [
+              "synthetic",
+              "user_supplied"
+            ],
+            "title": "Origin",
+            "type": "string"
+          },
+          "scenarios": {
+            "items": {
+              "$ref": "#/components/schemas/RateScenario"
+            },
+            "title": "Scenarios",
+            "type": "array"
+          },
+          "signed_dv01": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Signed Dv01",
+            "type": "string"
+          },
+          "source_note": {
+            "title": "Source Note",
+            "type": "string"
+          },
+          "valuation_date": {
+            "format": "date",
+            "title": "Valuation Date",
+            "type": "string"
+          }
+        },
+        "required": [
+          "generated_at",
+          "currency",
+          "valuation_date",
+          "origin",
+          "source_note",
+          "bonds",
+          "net_value",
+          "gross_value",
+          "signed_dv01",
+          "gross_dv01",
+          "dv01_limit_status",
+          "scenarios",
+          "liquidity",
+          "liquidity_coverage_pct",
+          "liquidatable_one_day_pct",
+          "liquidatable_five_days_pct",
+          "assumptions",
+          "inputs"
+        ],
+        "title": "TreasuryResult",
+        "type": "object"
+      },
       "Uncertainty": {
         "additionalProperties": false,
         "properties": {
@@ -6163,6 +8232,42 @@
         "title": "ValidationError",
         "type": "object"
       },
+      "ValueResult": {
+        "additionalProperties": false,
+        "properties": {
+          "model_version": {
+            "default": "stock-holdings@1.0.0",
+            "title": "Model Version",
+            "type": "string"
+          },
+          "positions": {
+            "items": {
+              "$ref": "#/components/schemas/PositionValue"
+            },
+            "title": "Positions",
+            "type": "array"
+          },
+          "quote_provenance": {
+            "const": "client_supplied_snapshot",
+            "default": "client_supplied_snapshot",
+            "title": "Quote Provenance",
+            "type": "string"
+          },
+          "totals": {
+            "items": {
+              "$ref": "#/components/schemas/CurrencyValue"
+            },
+            "title": "Totals",
+            "type": "array"
+          }
+        },
+        "required": [
+          "positions",
+          "totals"
+        ],
+        "title": "ValueResult",
+        "type": "object"
+      },
       "VersionResponse": {
         "additionalProperties": false,
         "properties": {
@@ -6186,6 +8291,56 @@
           "methodology_version"
         ],
         "title": "VersionResponse",
+        "type": "object"
+      },
+      "VolumeSession-Input": {
+        "additionalProperties": false,
+        "properties": {
+          "date": {
+            "format": "date",
+            "title": "Date",
+            "type": "string"
+          },
+          "volume": {
+            "anyOf": [
+              {
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}|(?=[\\d.]{1,25}0*$)\\d{0,14}\\.\\d{0,10}0*$)",
+                "type": "string"
+              }
+            ],
+            "title": "Volume"
+          }
+        },
+        "required": [
+          "date",
+          "volume"
+        ],
+        "title": "VolumeSession",
+        "type": "object"
+      },
+      "VolumeSession-Output": {
+        "additionalProperties": false,
+        "properties": {
+          "date": {
+            "format": "date",
+            "title": "Date",
+            "type": "string"
+          },
+          "volume": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}|(?=[\\d.]{1,25}0*$)\\d{0,14}\\.\\d{0,10}0*$)",
+            "title": "Volume",
+            "type": "string"
+          }
+        },
+        "required": [
+          "date",
+          "volume"
+        ],
+        "title": "VolumeSession",
         "type": "object"
       },
       "Workspace-Input": {
@@ -6314,6 +8469,660 @@
         "title": "WorkspaceResult",
         "type": "object"
       },
+      "XtbAnalysis": {
+        "additionalProperties": false,
+        "properties": {
+          "cash_count": {
+            "title": "Cash Count",
+            "type": "integer"
+          },
+          "cash_movement": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Cash Movement",
+            "type": "string"
+          },
+          "closed_count": {
+            "title": "Closed Count",
+            "type": "integer"
+          },
+          "currency": {
+            "title": "Currency",
+            "type": "string"
+          },
+          "holdings": {
+            "items": {
+              "$ref": "#/components/schemas/ImportedHolding"
+            },
+            "title": "Holdings",
+            "type": "array"
+          },
+          "holdings_status": {
+            "enum": [
+              "snapshot",
+              "reconstructed",
+              "incomplete",
+              "unknown"
+            ],
+            "title": "Holdings Status",
+            "type": "string"
+          },
+          "reported_realized_pnl": {
+            "anyOf": [
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reported Realized Pnl"
+          },
+          "warnings": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Warnings",
+            "type": "array"
+          }
+        },
+        "required": [
+          "holdings",
+          "closed_count",
+          "cash_count",
+          "reported_realized_pnl",
+          "cash_movement",
+          "currency",
+          "holdings_status",
+          "warnings"
+        ],
+        "title": "XtbAnalysis",
+        "type": "object"
+      },
+      "XtbBook-Input": {
+        "additionalProperties": false,
+        "properties": {
+          "account_number": {
+            "pattern": "^[0-9]{1,20}$",
+            "title": "Account Number",
+            "type": "string"
+          },
+          "currency": {
+            "title": "Currency",
+            "type": "string"
+          },
+          "ledger_complete": {
+            "default": false,
+            "title": "Ledger Complete",
+            "type": "boolean"
+          },
+          "open_snapshot_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Open Snapshot At"
+          },
+          "records": {
+            "items": {
+              "$ref": "#/components/schemas/XtbRecord-Input"
+            },
+            "maxItems": 20000,
+            "title": "Records",
+            "type": "array"
+          }
+        },
+        "required": [
+          "account_number",
+          "currency"
+        ],
+        "title": "XtbBook",
+        "type": "object"
+      },
+      "XtbBook-Output": {
+        "additionalProperties": false,
+        "properties": {
+          "account_number": {
+            "pattern": "^[0-9]{1,20}$",
+            "title": "Account Number",
+            "type": "string"
+          },
+          "currency": {
+            "title": "Currency",
+            "type": "string"
+          },
+          "ledger_complete": {
+            "default": false,
+            "title": "Ledger Complete",
+            "type": "boolean"
+          },
+          "open_snapshot_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Open Snapshot At"
+          },
+          "records": {
+            "items": {
+              "$ref": "#/components/schemas/XtbRecord-Output"
+            },
+            "maxItems": 20000,
+            "title": "Records",
+            "type": "array"
+          }
+        },
+        "required": [
+          "account_number",
+          "currency"
+        ],
+        "title": "XtbBook",
+        "type": "object"
+      },
+      "XtbPreview-Input": {
+        "additionalProperties": false,
+        "properties": {
+          "book": {
+            "$ref": "#/components/schemas/XtbBook-Input"
+          },
+          "cash_count": {
+            "title": "Cash Count",
+            "type": "integer"
+          },
+          "closed_count": {
+            "title": "Closed Count",
+            "type": "integer"
+          },
+          "fill_count": {
+            "title": "Fill Count",
+            "type": "integer"
+          },
+          "has_open_section": {
+            "title": "Has Open Section",
+            "type": "boolean"
+          },
+          "open_count": {
+            "title": "Open Count",
+            "type": "integer"
+          },
+          "report_hash": {
+            "title": "Report Hash",
+            "type": "string"
+          },
+          "sheets": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Sheets",
+            "type": "array"
+          },
+          "snapshot_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Snapshot At"
+          },
+          "warnings": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Warnings",
+            "type": "array"
+          }
+        },
+        "required": [
+          "book",
+          "report_hash",
+          "sheets",
+          "has_open_section",
+          "warnings",
+          "closed_count",
+          "open_count",
+          "fill_count",
+          "cash_count"
+        ],
+        "title": "XtbPreview",
+        "type": "object"
+      },
+      "XtbPreview-Output": {
+        "additionalProperties": false,
+        "properties": {
+          "book": {
+            "$ref": "#/components/schemas/XtbBook-Output"
+          },
+          "cash_count": {
+            "title": "Cash Count",
+            "type": "integer"
+          },
+          "closed_count": {
+            "title": "Closed Count",
+            "type": "integer"
+          },
+          "fill_count": {
+            "title": "Fill Count",
+            "type": "integer"
+          },
+          "has_open_section": {
+            "title": "Has Open Section",
+            "type": "boolean"
+          },
+          "open_count": {
+            "title": "Open Count",
+            "type": "integer"
+          },
+          "report_hash": {
+            "title": "Report Hash",
+            "type": "string"
+          },
+          "sheets": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Sheets",
+            "type": "array"
+          },
+          "snapshot_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Snapshot At"
+          },
+          "warnings": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Warnings",
+            "type": "array"
+          }
+        },
+        "required": [
+          "book",
+          "report_hash",
+          "sheets",
+          "has_open_section",
+          "warnings",
+          "closed_count",
+          "open_count",
+          "fill_count",
+          "cash_count"
+        ],
+        "title": "XtbPreview",
+        "type": "object"
+      },
+      "XtbRecord-Input": {
+        "additionalProperties": false,
+        "properties": {
+          "account_number": {
+            "pattern": "^[0-9]{1,20}$",
+            "title": "Account Number",
+            "type": "string"
+          },
+          "asset_type": {
+            "default": "unknown",
+            "enum": [
+              "equity",
+              "etf",
+              "cfd",
+              "unknown"
+            ],
+            "title": "Asset Type",
+            "type": "string"
+          },
+          "cash_amount": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,18}|(?=[\\d.]{1,37}0*$)\\d{0,18}\\.\\d{0,18}0*$)",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cash Amount"
+          },
+          "close_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Close At"
+          },
+          "close_price": {
+            "anyOf": [
+              {
+                "exclusiveMinimum": 0.0,
+                "type": "number"
+              },
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,18}|(?=[\\d.]{1,37}0*$)\\d{0,18}\\.\\d{0,18}0*$)",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Close Price"
+          },
+          "event_at": {
+            "format": "date-time",
+            "title": "Event At",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "closed",
+              "open",
+              "fill",
+              "cash"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "name": {
+            "default": "",
+            "maxLength": 200,
+            "title": "Name",
+            "type": "string"
+          },
+          "observed_at": {
+            "format": "date-time",
+            "title": "Observed At",
+            "type": "string"
+          },
+          "operation": {
+            "default": "",
+            "maxLength": 100,
+            "title": "Operation",
+            "type": "string"
+          },
+          "price": {
+            "anyOf": [
+              {
+                "exclusiveMinimum": 0.0,
+                "type": "number"
+              },
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,18}|(?=[\\d.]{1,37}0*$)\\d{0,18}\\.\\d{0,18}0*$)",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Price"
+          },
+          "quantity": {
+            "anyOf": [
+              {
+                "exclusiveMinimum": 0.0,
+                "type": "number"
+              },
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,18}|(?=[\\d.]{1,37}0*$)\\d{0,18}\\.\\d{0,18}0*$)",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Quantity"
+          },
+          "reported_pnl": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,18}|(?=[\\d.]{1,37}0*$)\\d{0,18}\\.\\d{0,18}0*$)",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reported Pnl"
+          },
+          "side": {
+            "anyOf": [
+              {
+                "enum": [
+                  "BUY",
+                  "SELL"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Side"
+          },
+          "source_id": {
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Source Id",
+            "type": "string"
+          },
+          "symbol": {
+            "default": "",
+            "maxLength": 80,
+            "title": "Symbol",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "account_number",
+          "kind",
+          "source_id",
+          "event_at",
+          "observed_at"
+        ],
+        "title": "XtbRecord",
+        "type": "object"
+      },
+      "XtbRecord-Output": {
+        "additionalProperties": false,
+        "properties": {
+          "account_number": {
+            "pattern": "^[0-9]{1,20}$",
+            "title": "Account Number",
+            "type": "string"
+          },
+          "asset_type": {
+            "default": "unknown",
+            "enum": [
+              "equity",
+              "etf",
+              "cfd",
+              "unknown"
+            ],
+            "title": "Asset Type",
+            "type": "string"
+          },
+          "cash_amount": {
+            "anyOf": [
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,18}|(?=[\\d.]{1,37}0*$)\\d{0,18}\\.\\d{0,18}0*$)",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cash Amount"
+          },
+          "close_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Close At"
+          },
+          "close_price": {
+            "anyOf": [
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,18}|(?=[\\d.]{1,37}0*$)\\d{0,18}\\.\\d{0,18}0*$)",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Close Price"
+          },
+          "event_at": {
+            "format": "date-time",
+            "title": "Event At",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "closed",
+              "open",
+              "fill",
+              "cash"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "name": {
+            "default": "",
+            "maxLength": 200,
+            "title": "Name",
+            "type": "string"
+          },
+          "observed_at": {
+            "format": "date-time",
+            "title": "Observed At",
+            "type": "string"
+          },
+          "operation": {
+            "default": "",
+            "maxLength": 100,
+            "title": "Operation",
+            "type": "string"
+          },
+          "price": {
+            "anyOf": [
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,18}|(?=[\\d.]{1,37}0*$)\\d{0,18}\\.\\d{0,18}0*$)",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Price"
+          },
+          "quantity": {
+            "anyOf": [
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,18}|(?=[\\d.]{1,37}0*$)\\d{0,18}\\.\\d{0,18}0*$)",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Quantity"
+          },
+          "reported_pnl": {
+            "anyOf": [
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,18}|(?=[\\d.]{1,37}0*$)\\d{0,18}\\.\\d{0,18}0*$)",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reported Pnl"
+          },
+          "side": {
+            "anyOf": [
+              {
+                "enum": [
+                  "BUY",
+                  "SELL"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Side"
+          },
+          "source_id": {
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Source Id",
+            "type": "string"
+          },
+          "symbol": {
+            "default": "",
+            "maxLength": 80,
+            "title": "Symbol",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "account_number",
+          "kind",
+          "source_id",
+          "event_at",
+          "observed_at"
+        ],
+        "title": "XtbRecord",
+        "type": "object"
+      },
       "quantops_api__api__investor__CsvRequest": {
         "additionalProperties": false,
         "properties": {
@@ -6342,6 +9151,86 @@
           "text"
         ],
         "title": "CsvRequest",
+        "type": "object"
+      },
+      "quantops_api__api__stocks__QuoteRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "purchased": {
+            "format": "date",
+            "title": "Purchased",
+            "type": "string"
+          },
+          "symbol": {
+            "maxLength": 20,
+            "title": "Symbol",
+            "type": "string"
+          }
+        },
+        "required": [
+          "symbol",
+          "purchased"
+        ],
+        "title": "QuoteRequest",
+        "type": "object"
+      },
+      "quantops_api__api__stocks__ValueRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "positions": {
+            "items": {
+              "$ref": "#/components/schemas/OwnedStock"
+            },
+            "maxItems": 100,
+            "title": "Positions",
+            "type": "array"
+          }
+        },
+        "required": [
+          "positions"
+        ],
+        "title": "ValueRequest",
+        "type": "object"
+      },
+      "quantops_api__api__xtb__QuoteRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "book": {
+            "$ref": "#/components/schemas/XtbBook-Input"
+          },
+          "symbol": {
+            "maxLength": 80,
+            "minLength": 1,
+            "title": "Symbol",
+            "type": "string"
+          }
+        },
+        "required": [
+          "book",
+          "symbol"
+        ],
+        "title": "QuoteRequest",
+        "type": "object"
+      },
+      "quantops_api__api__xtb__ValueRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "book": {
+            "$ref": "#/components/schemas/XtbBook-Input"
+          },
+          "marks": {
+            "items": {
+              "$ref": "#/components/schemas/ImportedQuote"
+            },
+            "maxItems": 1000,
+            "title": "Marks",
+            "type": "array"
+          }
+        },
+        "required": [
+          "book"
+        ],
+        "title": "ValueRequest",
         "type": "object"
       }
     }
@@ -6656,6 +9545,185 @@
         "summary": "List Audit Events",
         "tags": [
           "audit"
+        ]
+      }
+    },
+    "/api/v1/broker-catalog": {
+      "get": {
+        "operationId": "search_catalog_api_v1_broker_catalog_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "q",
+            "required": false,
+            "schema": {
+              "default": "",
+              "maxLength": 120,
+              "title": "Q",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "broker",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "enum": [
+                    "bossa",
+                    "xtb"
+                  ],
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Broker"
+            }
+          },
+          {
+            "in": "query",
+            "name": "instrument_type",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "enum": [
+                    "equity",
+                    "etf",
+                    "etc",
+                    "etn",
+                    "etp",
+                    "bond",
+                    "option",
+                    "future",
+                    "cfd",
+                    "right",
+                    "warrant",
+                    "certificate",
+                    "other"
+                  ],
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Instrument Type"
+            }
+          },
+          {
+            "in": "query",
+            "name": "market",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 100,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Market"
+            }
+          },
+          {
+            "in": "query",
+            "name": "offset",
+            "required": false,
+            "schema": {
+              "default": 0,
+              "maximum": 100000,
+              "minimum": 0,
+              "title": "Offset",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 50,
+              "maximum": 100,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CatalogPage"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Search Catalog",
+        "tags": [
+          "Public instrument catalog"
+        ]
+      }
+    },
+    "/api/v1/broker-catalog/{instrument_id}": {
+      "get": {
+        "operationId": "catalog_detail_api_v1_broker_catalog__instrument_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "instrument_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Instrument Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CatalogInstrument"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Catalog Detail",
+        "tags": [
+          "Public instrument catalog"
         ]
       }
     },
@@ -11416,6 +14484,236 @@
         ]
       }
     },
+    "/api/v1/stocks/catalog": {
+      "get": {
+        "operationId": "stock_catalog_api_v1_stocks_catalog_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/Stock"
+                  },
+                  "title": "Response Stock Catalog Api V1 Stocks Catalog Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Stock Catalog",
+        "tags": [
+          "Stock-only workspace"
+        ]
+      }
+    },
+    "/api/v1/stocks/profile": {
+      "post": {
+        "operationId": "assess_profile_api_v1_stocks_profile_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProfileAnswers"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProfileResult"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Assess Profile",
+        "tags": [
+          "Stock-only workspace"
+        ]
+      }
+    },
+    "/api/v1/stocks/quote": {
+      "post": {
+        "operationId": "stock_quote_api_v1_stocks_quote_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/quantops_api__api__stocks__QuoteRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StockQuote-Output"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Stock Quote",
+        "tags": [
+          "Stock-only workspace"
+        ]
+      }
+    },
+    "/api/v1/stocks/value": {
+      "post": {
+        "operationId": "value_holdings_api_v1_stocks_value_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/quantops_api__api__stocks__ValueRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValueResult"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Value Holdings",
+        "tags": [
+          "Stock-only workspace"
+        ]
+      }
+    },
+    "/api/v1/treasury/analyze": {
+      "post": {
+        "operationId": "analyze_treasury_api_v1_treasury_analyze_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TreasuryRequest-Input"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TreasuryResult"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Analyze Treasury",
+        "tags": [
+          "Treasury research"
+        ]
+      }
+    },
+    "/api/v1/treasury/report": {
+      "post": {
+        "operationId": "treasury_report_api_v1_treasury_report_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TreasuryRequest-Input"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "text/html": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Treasury Report",
+        "tags": [
+          "Treasury research"
+        ]
+      }
+    },
     "/api/v1/version": {
       "get": {
         "operationId": "version_api_v1_version_get",
@@ -11514,6 +14812,211 @@
         "summary": "Version",
         "tags": [
           "operations"
+        ]
+      }
+    },
+    "/api/v1/xtb/analyze": {
+      "post": {
+        "operationId": "analyze_report_api_v1_xtb_analyze_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/XtbBook-Input"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/XtbAnalysis"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Analyze Report",
+        "tags": [
+          "Imported XTB reports"
+        ]
+      }
+    },
+    "/api/v1/xtb/merge": {
+      "post": {
+        "operationId": "merge_report_api_v1_xtb_merge_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MergeRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MergeResult"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Merge Report",
+        "tags": [
+          "Imported XTB reports"
+        ]
+      }
+    },
+    "/api/v1/xtb/preview": {
+      "post": {
+        "operationId": "preview_report_api_v1_xtb_preview_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PreviewRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/XtbPreview-Output"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Preview Report",
+        "tags": [
+          "Imported XTB reports"
+        ]
+      }
+    },
+    "/api/v1/xtb/quote": {
+      "post": {
+        "operationId": "quote_imported_api_v1_xtb_quote_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/quantops_api__api__xtb__QuoteRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StockQuote-Output"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Quote Imported",
+        "tags": [
+          "Imported XTB reports"
+        ]
+      }
+    },
+    "/api/v1/xtb/value": {
+      "post": {
+        "operationId": "value_imported_api_v1_xtb_value_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/quantops_api__api__xtb__ValueRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ImportedValuation"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Value Imported",
+        "tags": [
+          "Imported XTB reports"
         ]
       }
     }

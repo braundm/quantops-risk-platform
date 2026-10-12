@@ -1,0 +1,8 @@
+.broker-catalog-page .catalog-notice { border-left: 4px solid #e8c675; }
+.broker-catalog-page .catalog-name { text-align: left; min-width: 240px; max-width: 400px; white-space: normal; }
+.catalog-sources { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
+.catalog-sources article { border: 1px solid #526b7c; border-radius: 8px; padding: 16px; }
+.catalog-sources h3 { font-size: 1rem; margin: 0; }
+.catalog-sources p { font-size: .85rem; }
+.catalog-spec { display: grid; grid-template-columns: minmax(120px, 1fr) 2fr; gap: 16px; border-bottom: 1px solid #526b7c; padding: 10px 0; }
+.catalog-spec dd { margin: 0; overflow-wrap: anywhere; }

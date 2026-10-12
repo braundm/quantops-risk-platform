@@ -7,15 +7,26 @@
 [![React](https://img.shields.io/badge/React-19-149ECA?logo=react&logoColor=white)](https://react.dev/)
 [![License](https://img.shields.io/badge/License-MIT-5bceae)](LICENSE)
 
-QuantOps is a production-style portfolio project for reproducible multi-asset market-risk research. It combines deterministic synthetic data, versioned financial analytics, traceable evidence, stress testing, a leakage-safe ML lifecycle, and a bounded AI analyst that can explain—but never invent or execute—risk decisions.
+QuantOps is a portfolio and market-risk research application. Track owned stocks, review portfolio
+performance and VaR/Expected Shortfall, run asset and FX scenarios, and inspect bond duration,
+DV01 and rate shocks in the Treasury lab. Yahoo Finance daily closes can be consumed explicitly;
+offline research fixtures and Treasury examples are visibly synthetic. Versioned calculations,
+traceable evidence and a bounded AI analyst support deeper engineering review.
 
 ![QuantOps risk dashboard](docs/images/quantops-dashboard.png)
 
-> **Observed status:** the Polish investor workspace uses sourced historical market closes and visibly fictional transactions, with a dated ledger, performance charts, diversification, risk, saved scenarios and browser-local backups. The research demo retains synthetic fixtures. Infrastructure-dependent production readiness is not claimed. See [implementation progress](docs/progress.md).
+> **Observed status:** the default workspace imports XTB CSV/XLSX/ZIP reports into separate local accounts, previews and deduplicates events, and tracks identified unsold stocks/ETFs with dated reference prices. Closed-only reports leave current holdings unknown. Bossa import and complete imported-portfolio risk remain open. See [report import and limits](docs/xtb-report-import.md).
 
 ## Personal portfolio: first working flow
 
-The default `/` and `/investor` pages provide eight clear sections: overview, dated transactions,
+The default `/` and `/stocks` pages provide local login/password onboarding, an optional
+questionnaire, broker selection and report-based XTB accounts. The workspace separates overview,
+portfolio, accounts, import, history and settings. Questionnaire answers support explanations and
+learning rather than investment recommendations. Yahoo Finance daily closes include dates and
+source links; purchases and quantities come from the report. Multiple accounts, preview and
+overlapping import detection are supported. See [report import and limitations](docs/xtb-report-import.md).
+
+The previous `/investor` page provides eight sections: overview, dated transactions,
 diversification, return and risk, saved scenarios, cash budget and costs, learning, and data settings.
 The example holds Apple, Microsoft, SPY, TLT, modeled EUR/USD and a December 2026 WTI futures
 contract. Ownership is fictional; the bundled Yahoo Finance closing-price snapshot is sourced.
@@ -29,6 +40,9 @@ pnpm --filter @quantops/web dev --host 127.0.0.1
 ```
 
 Open `http://localhost:5173/`. No database, Docker, broker credentials or market provider is needed.
+Loopback development offers `admin` / `admin` (empty) and `admin1` / `admin1` (the owner's explicitly
+synthetic portfolio workbook). Existing profiles are preserved; these defaults grant no server
+permissions and are not initialized in production. See [local workspace](docs/local-workspace.md).
 The checked-in price snapshot works offline. Explicit price refresh requires internet access and
 retains the last valid snapshot on failure. CSV transactions, named scenarios, browser-local save,
 JSON backup/restore, fees and external flows are supported. Storage is local to this browser;
@@ -36,7 +50,17 @@ there are no hosted accounts. See [investor methods and limitations](docs/invest
 the [previous workshop guide](docs/retail-first-flow.md) and its
 [synthetic positions CSV](data/retail-synthetic-positions.csv).
 
-## The problem
+## Treasury and liquidity research
+
+Open `/treasury` for an editable fixed-coupon bond book, Macaulay/modified duration, convexity,
+signed and gross DV01, full repricing under five yield shocks, research limits and HTML report
+export. A separate equity book estimates liquidation capacity from supplied dated volume sessions,
+with explicit stale and insufficient-data states. Three labelled synthetic cases demonstrate
+maturity, long-duration sensitivity and offsetting exposures. See the
+[methods and interview walkthrough](docs/treasury-lab.md), including the requested-feature gap
+assessment. This educational lab uses synthetic or unverified user inputs, not live bond yields.
+
+## Trusting the numbers
 
 Risk numbers are easy to display and difficult to trust. QuantOps is designed around the questions that follow a metric: Which portfolio version? Which prices? Which methodology? Was the data complete? Can the explanation be reconciled to immutable evidence?
 
@@ -182,6 +206,10 @@ infra/      optional local infrastructure profiles
 - This is a research and engineering system, not a production trading or investment-advice service.
 
 The exact completed/pending evidence is maintained in [docs/progress.md](docs/progress.md), with operational guidance in [runbooks](docs/operations/runbooks.md) and claim-to-test mapping in [engineering evidence](docs/engineering-evidence.md).
+
+The local [Bossa/XTB reference catalog](docs/broker-catalog.md) is available at
+`/instruments`, with 18,409 public specification entries and explicit coverage gaps.
+Catalog membership alone does not guarantee a supported quote mapping or derivative valuation.
 
 ## License and authorship
 
