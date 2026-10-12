@@ -49,7 +49,7 @@ jobs:
       - name: Build all workspace packages offline
         run: uv build --all-packages --offline --out-dir artifacts/python-dist
       - name: Upload Python distributions
-        uses: actions/upload-artifact@v7.0.1
+        uses: actions/upload-artifact@v7.0.2
         with:
           name: python-distributions
           path: artifacts/python-dist
@@ -85,7 +85,7 @@ jobs:
           --cov-report=xml:artifacts/python-coverage.xml
       - name: Upload Python coverage
         if: always()
-        uses: actions/upload-artifact@v7.0.1
+        uses: actions/upload-artifact@v7.0.2
         with:
           name: python-coverage
           path: artifacts/python-coverage.xml
@@ -165,7 +165,7 @@ jobs:
           apps/scheduler/tests -q
       - name: Upload event and stream coverage
         if: always()
-        uses: actions/upload-artifact@v7.0.1
+        uses: actions/upload-artifact@v7.0.2
         with:
           name: event-stream-coverage
           path: |
@@ -204,7 +204,7 @@ jobs:
           --output artifacts/ai-evaluation-report.json
       - name: Upload AI evidence
         if: always()
-        uses: actions/upload-artifact@v7.0.1
+        uses: actions/upload-artifact@v7.0.2
         with:
           name: ai-evaluation
           path: |
@@ -245,7 +245,7 @@ jobs:
           --code-revision ${{ github.sha }}
       - name: Upload ML evidence
         if: always()
-        uses: actions/upload-artifact@v7.0.1
+        uses: actions/upload-artifact@v7.0.2
         with:
           name: ml-evaluation
           path: |
@@ -283,7 +283,7 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v6.0.2
       - name: Install pinned pnpm
-        uses: pnpm/action-setup@v6.0.8
+        uses: pnpm/action-setup@v6.1.0
         with:
           version: ${{ env.PNPM_VERSION }}
           run_install: false
@@ -304,7 +304,7 @@ jobs:
       - name: Build frontend
         run: pnpm --filter @quantops/web build
       - name: Upload frontend build
-        uses: actions/upload-artifact@v7.0.1
+        uses: actions/upload-artifact@v7.0.2
         with:
           name: frontend-dist
           path: apps/web/dist
@@ -328,7 +328,7 @@ jobs:
       - name: Install locked Python workspace
         run: uv sync --locked --all-packages --all-groups
       - name: Install pinned pnpm
-        uses: pnpm/action-setup@v6.0.8
+        uses: pnpm/action-setup@v6.1.0
         with:
           version: ${{ env.PNPM_VERSION }}
           run_install: false
@@ -369,7 +369,7 @@ jobs:
         run: pnpm list --prod --depth Infinity --json > artifacts/security/node-dependencies.json
       - name: Upload security evidence
         if: always()
-        uses: actions/upload-artifact@v7.0.1
+        uses: actions/upload-artifact@v7.0.2
         with:
           name: security-evidence
           path: artifacts/security
@@ -421,7 +421,7 @@ jobs:
         run: docker rm --force quantops-api-ci quantops-web-ci 2>/dev/null || true
       - name: Upload image metadata
         if: always()
-        uses: actions/upload-artifact@v7.0.1
+        uses: actions/upload-artifact@v7.0.2
         with:
           name: docker-image-metadata
           path: artifacts/docker-images.json
