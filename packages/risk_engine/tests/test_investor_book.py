@@ -32,6 +32,26 @@ def test_cash_flows_do_not_create_investment_returns() -> None:
     assert result.profit == 0
     assert result.twr == 0
     assert result.max_drawdown == 0
+    assert result.performance is not None
+    assert result.performance.period_return == 0
+    assert result.performance.maximum_drawdown == 0
+
+
+def test_first_day_fee_is_included_in_twr_performance_summary() -> None:
+    days = [DAY + timedelta(days=i) for i in range(2)]
+    result = analyze_book(
+        [STOCK],
+        [
+            Entry("deposit", DAY, "deposit", amount_pln=D(1000)),
+            Entry("fee", DAY, "fee", amount_pln=D(10)),
+        ],
+        {"A": dict.fromkeys(days, D(100))},
+        dict.fromkeys(days, D(1)),
+        days[-1],
+    )
+    assert result.performance is not None
+    assert result.performance.period_return == pytest.approx(result.twr)
+    assert result.performance.maximum_drawdown == pytest.approx(0.01)
 
 
 def test_spot_sale_realizes_average_cost_and_fees_once() -> None:

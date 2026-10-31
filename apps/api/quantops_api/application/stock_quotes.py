@@ -130,3 +130,60 @@ def fetch_reference_quote(stock: Stock, purchased: date) -> StockQuote:
         corporate_action_review=review,
         warnings=warnings,
     )
+
+
+def fetch_adjusted_history(
+    symbol: str, currency: str, start: date, end: date
+) -> tuple[list[tuple[date, Decimal, Decimal]], datetime, list[date]]:
+    """Reuse the bounded chart adapter for split/dividend-adjusted research returns.
+
+    Raw closes are retained for point-in-time valuation. Missing adjusted observations
+    remain missing; no raw-close fallback may introduce split jumps or omit dividends.
+    The caller must supply an allowlisted stock or reviewed FX identifier.
+    """
+    if not date(1990, 1, 1) <= start < end < datetime.now(UTC).date() or (end - start).days > 1827:
+        raise ValueError("History must cover completed dates and at most five years")
+    url = f"https://query1.finance.yahoo.com/v8/finance/chart/{quote(symbol, safe='')}"
+    with httpx.Client(timeout=15, follow_redirects=False) as client:
+        response = client.get(
+            url,
+            params={
+                "period1": int(datetime.combine(start, datetime.min.time(), UTC).timestamp()),
+                "period2": int(
+                    datetime.combine(end + timedelta(days=1), datetime.min.time(), UTC).timestamp()
+                ),
+                "interval": "1d",
+                "events": "div,splits",
+            },
+            headers={"User-Agent": "QuantOps-risk-research/1.0"},
+        )
+        response.raise_for_status()
+        payload = response.json()
+    result = payload["chart"]["result"][0]
+    if result["meta"].get("symbol", symbol) != symbol:
+        raise ValueError("Provider symbol differs from the requested listing")
+    raw = dict(_rows(payload, currency, end))
+    timestamps = result.get("timestamp") or []
+    if symbol in {"PLN=X", "EUR=X", "GBP=X", "CHF=X"}:
+        # FX unit exchange rates have no share splits or distributed dividends.
+        adjusted = result["indicators"]["quote"][0].get("close") or []
+    else:
+        adjusted = result["indicators"]["adjclose"][0].get("adjclose") or []
+    rows: list[tuple[date, Decimal, Decimal]] = []
+    for timestamp, value in zip(timestamps, adjusted, strict=True):
+        day = datetime.fromtimestamp(timestamp, UTC).date()
+        if value is None or day not in raw or not start <= day <= end:
+            continue
+        amount = Decimal(str(value))
+        if not amount.is_finite() or amount <= 0:
+            raise ValueError("Adjusted prices must be finite and positive")
+        rows.append((day, raw[day], amount))
+    if not 2 <= len(rows) <= 1300:
+        raise ValueError("Insufficient or excessive adjusted history")
+    splits = sorted(
+        {
+            datetime.fromtimestamp(event["date"], UTC).date()
+            for event in result.get("events", {}).get("splits", {}).values()
+        }
+    )
+    return rows, datetime.now(UTC), splits

@@ -97,6 +97,10 @@ A one-day exception occurs when realized loss is strictly greater than the prior
 
 ## Status, versioning, and evidence
 
+The [imported portfolio workflow](imported-portfolio-risk.md) composes these functions
+under `imported-allocation-risk@1.1.0`, with explicit current-weight versus buy-and-hold
+semantics, adjusted prices, cash confirmation, one common return sample and variant isolation.
+
 Invalid, non-finite, ambiguous, or contradictory input raises a typed `RiskEngineError`. Mathematically valid calculations without enough observations return `insufficient_data` with no numerical value. Evidence identity is built separately from numerical functions using deterministic canonical payload hashes. Any formula or global convention change requires a methodology semantic-version change and updated worked examples/tests.
 
 The independently installable package also carries its scoped methodology at `packages/risk_engine/docs/risk-methodology.md` so the documentation is present in package artifacts.

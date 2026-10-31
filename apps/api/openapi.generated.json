@@ -542,6 +542,251 @@
         "title": "AiValidationResponse",
         "type": "object"
       },
+      "AllocationResult": {
+        "additionalProperties": false,
+        "properties": {
+          "curve": {
+            "items": {
+              "maxItems": 2,
+              "minItems": 2,
+              "prefixItems": [
+                {
+                  "format": "date",
+                  "type": "string"
+                },
+                {
+                  "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                  "type": "string"
+                }
+              ],
+              "type": "array"
+            },
+            "title": "Curve",
+            "type": "array"
+          },
+          "diagnostics": {
+            "$ref": "#/components/schemas/EquityDiagnostics"
+          },
+          "es_amount": {
+            "anyOf": [
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Es Amount"
+          },
+          "exposures": {
+            "additionalProperties": {
+              "additionalProperties": {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                "type": "string"
+              },
+              "type": "object"
+            },
+            "title": "Exposures",
+            "type": "object"
+          },
+          "largest_position": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Largest Position",
+            "type": "string"
+          },
+          "performance": {
+            "$ref": "#/components/schemas/PerformanceSummary"
+          },
+          "position_values": {
+            "additionalProperties": {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            },
+            "title": "Position Values",
+            "type": "object"
+          },
+          "risk": {
+            "$ref": "#/components/schemas/AllocationRisk"
+          },
+          "scenarios": {
+            "items": {
+              "$ref": "#/components/schemas/ScenarioResult"
+            },
+            "title": "Scenarios",
+            "type": "array"
+          },
+          "top_five": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Top Five",
+            "type": "string"
+          },
+          "value": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Value",
+            "type": "string"
+          },
+          "var_amount": {
+            "anyOf": [
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Var Amount"
+          },
+          "weights": {
+            "additionalProperties": {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            },
+            "title": "Weights",
+            "type": "object"
+          }
+        },
+        "required": [
+          "value",
+          "weights",
+          "position_values",
+          "var_amount",
+          "es_amount",
+          "largest_position",
+          "top_five",
+          "exposures",
+          "risk",
+          "performance",
+          "curve",
+          "scenarios",
+          "diagnostics"
+        ],
+        "title": "AllocationResult",
+        "type": "object"
+      },
+      "AllocationRisk": {
+        "properties": {
+          "annual_volatility": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Annual Volatility"
+          },
+          "components": {
+            "additionalProperties": {
+              "type": "number"
+            },
+            "title": "Components",
+            "type": "object"
+          },
+          "correlations": {
+            "items": {
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "type": "array"
+            },
+            "title": "Correlations",
+            "type": "array"
+          },
+          "es_fraction": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Es Fraction"
+          },
+          "observations": {
+            "title": "Observations",
+            "type": "integer"
+          },
+          "reconciliation_error": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reconciliation Error"
+          },
+          "required_observations": {
+            "title": "Required Observations",
+            "type": "integer"
+          },
+          "risk_shares": {
+            "additionalProperties": {
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "title": "Risk Shares",
+            "type": "object"
+          },
+          "status": {
+            "enum": [
+              "ok",
+              "insufficient_data",
+              "unstable"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "tail_count": {
+            "title": "Tail Count",
+            "type": "integer"
+          },
+          "var_fraction": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Var Fraction"
+          }
+        },
+        "required": [
+          "status",
+          "observations",
+          "required_observations",
+          "annual_volatility",
+          "var_fraction",
+          "es_fraction",
+          "tail_count",
+          "components",
+          "risk_shares",
+          "reconciliation_error",
+          "correlations"
+        ],
+        "title": "AllocationRisk",
+        "type": "object"
+      },
       "AnalysisRequest": {
         "additionalProperties": false,
         "properties": {
@@ -1115,6 +1360,16 @@
             "title": "Observations",
             "type": "integer"
           },
+          "performance": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/PerformanceSummary"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
           "positions": {
             "items": {
               "$ref": "#/components/schemas/Position"
@@ -1226,6 +1481,78 @@
         ],
         "title": "CanonicalUnit",
         "type": "string"
+      },
+      "CashBalance-Input": {
+        "additionalProperties": false,
+        "properties": {
+          "amount": {
+            "anyOf": [
+              {
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                "type": "string"
+              }
+            ],
+            "title": "Amount"
+          },
+          "as_of": {
+            "format": "date",
+            "title": "As Of",
+            "type": "string"
+          },
+          "currency": {
+            "title": "Currency",
+            "type": "string"
+          },
+          "symbol": {
+            "pattern": "^CASH:[A-Z]{3}$",
+            "title": "Symbol",
+            "type": "string"
+          }
+        },
+        "required": [
+          "symbol",
+          "currency",
+          "amount",
+          "as_of"
+        ],
+        "title": "CashBalance",
+        "type": "object"
+      },
+      "CashBalance-Output": {
+        "additionalProperties": false,
+        "properties": {
+          "amount": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Amount",
+            "type": "string"
+          },
+          "as_of": {
+            "format": "date",
+            "title": "As Of",
+            "type": "string"
+          },
+          "currency": {
+            "title": "Currency",
+            "type": "string"
+          },
+          "symbol": {
+            "pattern": "^CASH:[A-Z]{3}$",
+            "title": "Symbol",
+            "type": "string"
+          }
+        },
+        "required": [
+          "symbol",
+          "currency",
+          "amount",
+          "as_of"
+        ],
+        "title": "CashBalance",
+        "type": "object"
       },
       "CatalogInstrument": {
         "additionalProperties": false,
@@ -1510,6 +1837,89 @@
         ],
         "title": "ClaimType",
         "type": "string"
+      },
+      "ConcentrationDiagnostics": {
+        "properties": {
+          "effective_positions": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Effective Positions",
+            "type": "string"
+          },
+          "groups": {
+            "title": "Groups",
+            "type": "integer"
+          },
+          "hhi": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Hhi",
+            "type": "string"
+          },
+          "issuer_identity_coverage": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Issuer Identity Coverage",
+            "type": "string"
+          },
+          "largest": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Largest",
+            "type": "string"
+          },
+          "positions": {
+            "title": "Positions",
+            "type": "integer"
+          },
+          "top_five": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Top Five",
+            "type": "string"
+          },
+          "top_three": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Top Three",
+            "type": "string"
+          }
+        },
+        "required": [
+          "positions",
+          "groups",
+          "largest",
+          "top_three",
+          "top_five",
+          "hhi",
+          "effective_positions",
+          "issuer_identity_coverage"
+        ],
+        "title": "ConcentrationDiagnostics",
+        "type": "object"
+      },
+      "CorrelationPair": {
+        "properties": {
+          "combined_weight": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Combined Weight",
+            "type": "string"
+          },
+          "correlation": {
+            "title": "Correlation",
+            "type": "number"
+          },
+          "left": {
+            "title": "Left",
+            "type": "string"
+          },
+          "right": {
+            "title": "Right",
+            "type": "string"
+          }
+        },
+        "required": [
+          "left",
+          "right",
+          "correlation",
+          "combined_weight"
+        ],
+        "title": "CorrelationPair",
+        "type": "object"
       },
       "CostBudget": {
         "additionalProperties": false,
@@ -1917,6 +2327,292 @@
         "title": "DataQualitySummaryResponse",
         "type": "object"
       },
+      "EquityDiagnostics": {
+        "properties": {
+          "concentration": {
+            "$ref": "#/components/schemas/ConcentrationDiagnostics"
+          },
+          "diversification_ratio": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Diversification Ratio"
+          },
+          "drawdown_curve": {
+            "items": {
+              "maxItems": 2,
+              "minItems": 2,
+              "prefixItems": [
+                {
+                  "format": "date",
+                  "type": "string"
+                },
+                {
+                  "type": "number"
+                }
+              ],
+              "type": "array"
+            },
+            "title": "Drawdown Curve",
+            "type": "array"
+          },
+          "methodology": {
+            "title": "Methodology",
+            "type": "string"
+          },
+          "position_volatilities": {
+            "additionalProperties": {
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "title": "Position Volatilities",
+            "type": "object"
+          },
+          "score": {
+            "$ref": "#/components/schemas/EquityRiskScore"
+          },
+          "single_position_stress": {
+            "items": {
+              "$ref": "#/components/schemas/PositionStress"
+            },
+            "title": "Single Position Stress",
+            "type": "array"
+          },
+          "strongest_pairs": {
+            "items": {
+              "$ref": "#/components/schemas/CorrelationPair"
+            },
+            "title": "Strongest Pairs",
+            "type": "array"
+          },
+          "weighted_correlation": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Weighted Correlation"
+          }
+        },
+        "required": [
+          "methodology",
+          "concentration",
+          "score",
+          "weighted_correlation",
+          "strongest_pairs",
+          "diversification_ratio",
+          "position_volatilities",
+          "single_position_stress",
+          "drawdown_curve"
+        ],
+        "title": "EquityDiagnostics",
+        "type": "object"
+      },
+      "EquityRiskScore": {
+        "properties": {
+          "band": {
+            "anyOf": [
+              {
+                "enum": [
+                  "lower",
+                  "moderate",
+                  "elevated",
+                  "high"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Band"
+          },
+          "components": {
+            "items": {
+              "$ref": "#/components/schemas/ScoreComponent"
+            },
+            "title": "Components",
+            "type": "array"
+          },
+          "minimum_observations": {
+            "title": "Minimum Observations",
+            "type": "integer"
+          },
+          "status": {
+            "enum": [
+              "available",
+              "insufficient_data",
+              "stale_valuation",
+              "outside_equity_scope"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "value": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Value"
+          }
+        },
+        "required": [
+          "status",
+          "value",
+          "band",
+          "minimum_observations",
+          "components"
+        ],
+        "title": "EquityRiskScore",
+        "type": "object"
+      },
+      "EtfComposition-Input": {
+        "additionalProperties": false,
+        "properties": {
+          "as_of": {
+            "format": "date",
+            "title": "As Of",
+            "type": "string"
+          },
+          "holdings": {
+            "items": {
+              "$ref": "#/components/schemas/EtfHolding-Input"
+            },
+            "maxItems": 2000,
+            "minItems": 1,
+            "title": "Holdings",
+            "type": "array"
+          },
+          "source_url": {
+            "maxLength": 500,
+            "pattern": "^https://",
+            "title": "Source Url",
+            "type": "string"
+          },
+          "symbol": {
+            "maxLength": 80,
+            "title": "Symbol",
+            "type": "string"
+          }
+        },
+        "required": [
+          "symbol",
+          "source_url",
+          "as_of",
+          "holdings"
+        ],
+        "title": "EtfComposition",
+        "type": "object"
+      },
+      "EtfComposition-Output": {
+        "additionalProperties": false,
+        "properties": {
+          "as_of": {
+            "format": "date",
+            "title": "As Of",
+            "type": "string"
+          },
+          "holdings": {
+            "items": {
+              "$ref": "#/components/schemas/EtfHolding-Output"
+            },
+            "maxItems": 2000,
+            "minItems": 1,
+            "title": "Holdings",
+            "type": "array"
+          },
+          "source_url": {
+            "maxLength": 500,
+            "pattern": "^https://",
+            "title": "Source Url",
+            "type": "string"
+          },
+          "symbol": {
+            "maxLength": 80,
+            "title": "Symbol",
+            "type": "string"
+          }
+        },
+        "required": [
+          "symbol",
+          "source_url",
+          "as_of",
+          "holdings"
+        ],
+        "title": "EtfComposition",
+        "type": "object"
+      },
+      "EtfHolding-Input": {
+        "additionalProperties": false,
+        "properties": {
+          "issuer_id": {
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Issuer Id",
+            "type": "string"
+          },
+          "weight": {
+            "anyOf": [
+              {
+                "maximum": 1.0,
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                "type": "string"
+              }
+            ],
+            "title": "Weight"
+          }
+        },
+        "required": [
+          "issuer_id",
+          "weight"
+        ],
+        "title": "EtfHolding",
+        "type": "object"
+      },
+      "EtfHolding-Output": {
+        "additionalProperties": false,
+        "properties": {
+          "issuer_id": {
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Issuer Id",
+            "type": "string"
+          },
+          "weight": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Weight",
+            "type": "string"
+          }
+        },
+        "required": [
+          "issuer_id",
+          "weight"
+        ],
+        "title": "EtfHolding",
+        "type": "object"
+      },
       "Exposure": {
         "additionalProperties": false,
         "properties": {
@@ -1947,6 +2643,82 @@
           "gross_base"
         ],
         "title": "Exposure",
+        "type": "object"
+      },
+      "ExposureMetadata": {
+        "additionalProperties": false,
+        "properties": {
+          "as_of": {
+            "format": "date",
+            "title": "As Of",
+            "type": "string"
+          },
+          "economic_currency": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Economic Currency"
+          },
+          "issuer_country": {
+            "anyOf": [
+              {
+                "pattern": "^[A-Z]{2}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Issuer Country"
+          },
+          "issuer_id": {
+            "anyOf": [
+              {
+                "maxLength": 100,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Issuer Id"
+          },
+          "sector": {
+            "anyOf": [
+              {
+                "maxLength": 100,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sector"
+          },
+          "source_url": {
+            "maxLength": 500,
+            "pattern": "^https://",
+            "title": "Source Url",
+            "type": "string"
+          },
+          "symbol": {
+            "maxLength": 80,
+            "title": "Symbol",
+            "type": "string"
+          }
+        },
+        "required": [
+          "symbol",
+          "source_url",
+          "as_of"
+        ],
+        "title": "ExposureMetadata",
         "type": "object"
       },
       "ForecastAnswer": {
@@ -2647,6 +3419,67 @@
           "text"
         ],
         "title": "HistoryCsv",
+        "type": "object"
+      },
+      "HistoryFetch": {
+        "additionalProperties": false,
+        "properties": {
+          "base_currency": {
+            "default": "PLN",
+            "title": "Base Currency",
+            "type": "string"
+          },
+          "end": {
+            "format": "date",
+            "title": "End",
+            "type": "string"
+          },
+          "start": {
+            "format": "date",
+            "title": "Start",
+            "type": "string"
+          },
+          "symbols": {
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 20,
+            "minItems": 1,
+            "title": "Symbols",
+            "type": "array"
+          }
+        },
+        "required": [
+          "symbols",
+          "start",
+          "end"
+        ],
+        "title": "HistoryFetch",
+        "type": "object"
+      },
+      "HistoryFetchResult": {
+        "additionalProperties": false,
+        "properties": {
+          "failures": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "title": "Failures",
+            "type": "object"
+          },
+          "histories": {
+            "items": {
+              "$ref": "#/components/schemas/RiskHistory-Output"
+            },
+            "title": "Histories",
+            "type": "array"
+          }
+        },
+        "required": [
+          "histories",
+          "failures"
+        ],
+        "title": "HistoryFetchResult",
         "type": "object"
       },
       "HistoryPoint": {
@@ -4859,6 +5692,177 @@
         "title": "Page[ScenarioResponse]",
         "type": "object"
       },
+      "PerformanceSummary": {
+        "properties": {
+          "current_drawdown": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Current Drawdown"
+          },
+          "maximum_drawdown": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Maximum Drawdown"
+          },
+          "partial_months": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Partial Months",
+            "type": "array"
+          },
+          "partial_years": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Partial Years",
+            "type": "array"
+          },
+          "peak": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Peak"
+          },
+          "peak_to_trough_days": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Peak To Trough Days"
+          },
+          "period_return": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Period Return"
+          },
+          "recovery": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Recovery"
+          },
+          "recovery_days": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Recovery Days"
+          },
+          "trough": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Trough"
+          },
+          "worst_month": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Worst Month"
+          },
+          "worst_month_return": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Worst Month Return"
+          },
+          "worst_year": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Worst Year"
+          },
+          "worst_year_return": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Worst Year Return"
+          }
+        },
+        "required": [
+          "period_return",
+          "maximum_drawdown",
+          "current_drawdown",
+          "peak",
+          "trough",
+          "recovery",
+          "peak_to_trough_days",
+          "recovery_days",
+          "worst_month",
+          "worst_month_return",
+          "worst_year",
+          "worst_year_return",
+          "partial_months",
+          "partial_years"
+        ],
+        "title": "PerformanceSummary",
+        "type": "object"
+      },
       "PipelineRunResponse": {
         "additionalProperties": false,
         "properties": {
@@ -5424,6 +6428,43 @@
           "gross_weight"
         ],
         "title": "PositionResult",
+        "type": "object"
+      },
+      "PositionStress": {
+        "properties": {
+          "pnl": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Pnl",
+            "type": "string"
+          },
+          "portfolio_fraction": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Portfolio Fraction",
+            "type": "string"
+          },
+          "shock": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Shock",
+            "type": "string"
+          },
+          "symbol": {
+            "title": "Symbol",
+            "type": "string"
+          },
+          "value_after": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Value After",
+            "type": "string"
+          }
+        },
+        "required": [
+          "symbol",
+          "shock",
+          "pnl",
+          "portfolio_fraction",
+          "value_after"
+        ],
+        "title": "PositionStress",
         "type": "object"
       },
       "PositionValue": {
@@ -6476,6 +7517,398 @@
         "title": "RiskBriefResponse",
         "type": "object"
       },
+      "RiskHistory-Input": {
+        "additionalProperties": false,
+        "properties": {
+          "base_currency": {
+            "title": "Base Currency",
+            "type": "string"
+          },
+          "currency": {
+            "title": "Currency",
+            "type": "string"
+          },
+          "fetched_at": {
+            "format": "date-time",
+            "title": "Fetched At",
+            "type": "string"
+          },
+          "fx_source": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Fx Source",
+            "type": "string"
+          },
+          "origin": {
+            "enum": [
+              "provider",
+              "user",
+              "synthetic"
+            ],
+            "title": "Origin",
+            "type": "string"
+          },
+          "price_basis": {
+            "const": "split_dividend_adjusted",
+            "default": "split_dividend_adjusted",
+            "title": "Price Basis",
+            "type": "string"
+          },
+          "rows": {
+            "items": {
+              "$ref": "#/components/schemas/RiskPrice-Input"
+            },
+            "maxItems": 1300,
+            "minItems": 2,
+            "title": "Rows",
+            "type": "array"
+          },
+          "source": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Source",
+            "type": "string"
+          },
+          "source_url": {
+            "maxLength": 500,
+            "pattern": "^https://",
+            "title": "Source Url",
+            "type": "string"
+          },
+          "split_dates": {
+            "items": {
+              "format": "date",
+              "type": "string"
+            },
+            "maxItems": 100,
+            "title": "Split Dates",
+            "type": "array"
+          },
+          "symbol": {
+            "maxLength": 80,
+            "minLength": 1,
+            "title": "Symbol",
+            "type": "string"
+          }
+        },
+        "required": [
+          "symbol",
+          "currency",
+          "base_currency",
+          "source",
+          "source_url",
+          "fx_source",
+          "fetched_at",
+          "origin",
+          "rows"
+        ],
+        "title": "RiskHistory",
+        "type": "object"
+      },
+      "RiskHistory-Output": {
+        "additionalProperties": false,
+        "properties": {
+          "base_currency": {
+            "title": "Base Currency",
+            "type": "string"
+          },
+          "currency": {
+            "title": "Currency",
+            "type": "string"
+          },
+          "fetched_at": {
+            "format": "date-time",
+            "title": "Fetched At",
+            "type": "string"
+          },
+          "fx_source": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Fx Source",
+            "type": "string"
+          },
+          "origin": {
+            "enum": [
+              "provider",
+              "user",
+              "synthetic"
+            ],
+            "title": "Origin",
+            "type": "string"
+          },
+          "price_basis": {
+            "const": "split_dividend_adjusted",
+            "default": "split_dividend_adjusted",
+            "title": "Price Basis",
+            "type": "string"
+          },
+          "rows": {
+            "items": {
+              "$ref": "#/components/schemas/RiskPrice-Output"
+            },
+            "maxItems": 1300,
+            "minItems": 2,
+            "title": "Rows",
+            "type": "array"
+          },
+          "source": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Source",
+            "type": "string"
+          },
+          "source_url": {
+            "maxLength": 500,
+            "pattern": "^https://",
+            "title": "Source Url",
+            "type": "string"
+          },
+          "split_dates": {
+            "items": {
+              "format": "date",
+              "type": "string"
+            },
+            "maxItems": 100,
+            "title": "Split Dates",
+            "type": "array"
+          },
+          "symbol": {
+            "maxLength": 80,
+            "minLength": 1,
+            "title": "Symbol",
+            "type": "string"
+          }
+        },
+        "required": [
+          "symbol",
+          "currency",
+          "base_currency",
+          "source",
+          "source_url",
+          "fx_source",
+          "fetched_at",
+          "origin",
+          "rows"
+        ],
+        "title": "RiskHistory",
+        "type": "object"
+      },
+      "RiskPosition": {
+        "additionalProperties": false,
+        "properties": {
+          "asset_class": {
+            "enum": [
+              "equity",
+              "etf",
+              "cash"
+            ],
+            "title": "Asset Class",
+            "type": "string"
+          },
+          "currency": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Currency"
+          },
+          "economic_currency": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Economic Currency"
+          },
+          "issuer_country": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Issuer Country"
+          },
+          "issuer_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Issuer Id"
+          },
+          "listing_country": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Listing Country"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "sector": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sector"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          },
+          "symbol": {
+            "title": "Symbol",
+            "type": "string"
+          },
+          "value": {
+            "anyOf": [
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Value"
+          },
+          "weight": {
+            "anyOf": [
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Weight"
+          }
+        },
+        "required": [
+          "symbol",
+          "name",
+          "asset_class",
+          "currency",
+          "listing_country",
+          "status"
+        ],
+        "title": "RiskPosition",
+        "type": "object"
+      },
+      "RiskPrice-Input": {
+        "additionalProperties": false,
+        "properties": {
+          "adjusted_close": {
+            "anyOf": [
+              {
+                "exclusiveMinimum": 0.0,
+                "type": "number"
+              },
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,18}|(?=[\\d.]{1,37}0*$)\\d{0,18}\\.\\d{0,18}0*$)",
+                "type": "string"
+              }
+            ],
+            "title": "Adjusted Close"
+          },
+          "close": {
+            "anyOf": [
+              {
+                "exclusiveMinimum": 0.0,
+                "type": "number"
+              },
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,18}|(?=[\\d.]{1,37}0*$)\\d{0,18}\\.\\d{0,18}0*$)",
+                "type": "string"
+              }
+            ],
+            "title": "Close"
+          },
+          "date": {
+            "format": "date",
+            "title": "Date",
+            "type": "string"
+          },
+          "fx_to_base": {
+            "anyOf": [
+              {
+                "exclusiveMinimum": 0.0,
+                "type": "number"
+              },
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,18}|(?=[\\d.]{1,37}0*$)\\d{0,18}\\.\\d{0,18}0*$)",
+                "type": "string"
+              }
+            ],
+            "title": "Fx To Base"
+          }
+        },
+        "required": [
+          "date",
+          "close",
+          "adjusted_close",
+          "fx_to_base"
+        ],
+        "title": "RiskPrice",
+        "type": "object"
+      },
+      "RiskPrice-Output": {
+        "additionalProperties": false,
+        "properties": {
+          "adjusted_close": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,18}|(?=[\\d.]{1,37}0*$)\\d{0,18}\\.\\d{0,18}0*$)",
+            "title": "Adjusted Close",
+            "type": "string"
+          },
+          "close": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,18}|(?=[\\d.]{1,37}0*$)\\d{0,18}\\.\\d{0,18}0*$)",
+            "title": "Close",
+            "type": "string"
+          },
+          "date": {
+            "format": "date",
+            "title": "Date",
+            "type": "string"
+          },
+          "fx_to_base": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,18}|(?=[\\d.]{1,37}0*$)\\d{0,18}\\.\\d{0,18}0*$)",
+            "title": "Fx To Base",
+            "type": "string"
+          }
+        },
+        "required": [
+          "date",
+          "close",
+          "adjusted_close",
+          "fx_to_base"
+        ],
+        "title": "RiskPrice",
+        "type": "object"
+      },
       "RiskRecomputeRequest": {
         "additionalProperties": false,
         "properties": {
@@ -6488,6 +7921,701 @@
           }
         },
         "title": "RiskRecomputeRequest",
+        "type": "object"
+      },
+      "RiskRequest-Input": {
+        "additionalProperties": false,
+        "properties": {
+          "asset_scope": {
+            "default": "all_supported",
+            "enum": [
+              "all_supported",
+              "equities_only"
+            ],
+            "title": "Asset Scope",
+            "type": "string"
+          },
+          "base_currency": {
+            "default": "PLN",
+            "title": "Base Currency",
+            "type": "string"
+          },
+          "benchmark": {
+            "anyOf": [
+              {
+                "maxLength": 80,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Benchmark"
+          },
+          "book": {
+            "$ref": "#/components/schemas/XtbBook-Input"
+          },
+          "cash": {
+            "items": {
+              "$ref": "#/components/schemas/CashBalance-Input"
+            },
+            "maxItems": 10,
+            "title": "Cash",
+            "type": "array"
+          },
+          "cash_confirmed": {
+            "default": false,
+            "title": "Cash Confirmed",
+            "type": "boolean"
+          },
+          "confidence": {
+            "anyOf": [
+              {
+                "maximum": 0.99,
+                "minimum": 0.9,
+                "type": "number"
+              },
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                "type": "string"
+              }
+            ],
+            "default": "0.95",
+            "title": "Confidence"
+          },
+          "end": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "End"
+          },
+          "etf_compositions": {
+            "items": {
+              "$ref": "#/components/schemas/EtfComposition-Input"
+            },
+            "maxItems": 30,
+            "title": "Etf Compositions",
+            "type": "array"
+          },
+          "histories": {
+            "items": {
+              "$ref": "#/components/schemas/RiskHistory-Input"
+            },
+            "maxItems": 50,
+            "title": "Histories",
+            "type": "array"
+          },
+          "metadata": {
+            "items": {
+              "$ref": "#/components/schemas/ExposureMetadata"
+            },
+            "maxItems": 50,
+            "title": "Metadata",
+            "type": "array"
+          },
+          "scenarios": {
+            "items": {
+              "$ref": "#/components/schemas/RiskScenario-Input"
+            },
+            "maxItems": 10,
+            "title": "Scenarios",
+            "type": "array"
+          },
+          "scope": {
+            "default": "full_account",
+            "enum": [
+              "full_account",
+              "securities_only"
+            ],
+            "title": "Scope",
+            "type": "string"
+          },
+          "start": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Start"
+          },
+          "tolerance_amount": {
+            "anyOf": [
+              {
+                "exclusiveMinimum": 0.0,
+                "type": "number"
+              },
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tolerance Amount"
+          },
+          "tolerance_fraction": {
+            "anyOf": [
+              {
+                "exclusiveMinimum": 0.0,
+                "maximum": 1.0,
+                "type": "number"
+              },
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tolerance Fraction"
+          },
+          "variant": {
+            "anyOf": [
+              {
+                "additionalProperties": {
+                  "anyOf": [
+                    {
+                      "maximum": 1.0,
+                      "minimum": 0.0,
+                      "type": "number"
+                    },
+                    {
+                      "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "maxProperties": 50,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Variant"
+          }
+        },
+        "required": [
+          "book"
+        ],
+        "title": "RiskRequest",
+        "type": "object"
+      },
+      "RiskRequest-Output": {
+        "additionalProperties": false,
+        "properties": {
+          "asset_scope": {
+            "default": "all_supported",
+            "enum": [
+              "all_supported",
+              "equities_only"
+            ],
+            "title": "Asset Scope",
+            "type": "string"
+          },
+          "base_currency": {
+            "default": "PLN",
+            "title": "Base Currency",
+            "type": "string"
+          },
+          "benchmark": {
+            "anyOf": [
+              {
+                "maxLength": 80,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Benchmark"
+          },
+          "book": {
+            "$ref": "#/components/schemas/XtbBook-Output"
+          },
+          "cash": {
+            "items": {
+              "$ref": "#/components/schemas/CashBalance-Output"
+            },
+            "maxItems": 10,
+            "title": "Cash",
+            "type": "array"
+          },
+          "cash_confirmed": {
+            "default": false,
+            "title": "Cash Confirmed",
+            "type": "boolean"
+          },
+          "confidence": {
+            "default": "0.95",
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Confidence",
+            "type": "string"
+          },
+          "end": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "End"
+          },
+          "etf_compositions": {
+            "items": {
+              "$ref": "#/components/schemas/EtfComposition-Output"
+            },
+            "maxItems": 30,
+            "title": "Etf Compositions",
+            "type": "array"
+          },
+          "histories": {
+            "items": {
+              "$ref": "#/components/schemas/RiskHistory-Output"
+            },
+            "maxItems": 50,
+            "title": "Histories",
+            "type": "array"
+          },
+          "metadata": {
+            "items": {
+              "$ref": "#/components/schemas/ExposureMetadata"
+            },
+            "maxItems": 50,
+            "title": "Metadata",
+            "type": "array"
+          },
+          "scenarios": {
+            "items": {
+              "$ref": "#/components/schemas/RiskScenario-Output"
+            },
+            "maxItems": 10,
+            "title": "Scenarios",
+            "type": "array"
+          },
+          "scope": {
+            "default": "full_account",
+            "enum": [
+              "full_account",
+              "securities_only"
+            ],
+            "title": "Scope",
+            "type": "string"
+          },
+          "start": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Start"
+          },
+          "tolerance_amount": {
+            "anyOf": [
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tolerance Amount"
+          },
+          "tolerance_fraction": {
+            "anyOf": [
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tolerance Fraction"
+          },
+          "variant": {
+            "anyOf": [
+              {
+                "additionalProperties": {
+                  "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                  "type": "string"
+                },
+                "maxProperties": 50,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Variant"
+          }
+        },
+        "required": [
+          "book"
+        ],
+        "title": "RiskRequest",
+        "type": "object"
+      },
+      "RiskResult": {
+        "additionalProperties": false,
+        "properties": {
+          "after": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/AllocationResult"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "asset_scope": {
+            "enum": [
+              "all_supported",
+              "equities_only"
+            ],
+            "title": "Asset Scope",
+            "type": "string"
+          },
+          "base_currency": {
+            "title": "Base Currency",
+            "type": "string"
+          },
+          "before": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/AllocationResult"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "benchmark": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/PerformanceSummary"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "benchmark_status": {
+            "title": "Benchmark Status",
+            "type": "string"
+          },
+          "coverage_fraction": {
+            "anyOf": [
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Coverage Fraction"
+          },
+          "covered_value": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Covered Value",
+            "type": "string"
+          },
+          "etf_overlap": {
+            "items": {
+              "additionalProperties": {
+                "type": "string"
+              },
+              "type": "object"
+            },
+            "title": "Etf Overlap",
+            "type": "array"
+          },
+          "excluded": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "title": "Excluded",
+            "type": "object"
+          },
+          "history_coverage": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "title": "History Coverage",
+            "type": "object"
+          },
+          "history_dates": {
+            "title": "History Dates",
+            "type": "integer"
+          },
+          "methodology": {
+            "default": "imported-allocation-risk@1.1.0",
+            "title": "Methodology",
+            "type": "string"
+          },
+          "out_of_scope": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "title": "Out Of Scope",
+            "type": "object"
+          },
+          "period_end": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Period End"
+          },
+          "period_start": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Period Start"
+          },
+          "positions": {
+            "items": {
+              "$ref": "#/components/schemas/RiskPosition"
+            },
+            "title": "Positions",
+            "type": "array"
+          },
+          "quantity_date": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Quantity Date"
+          },
+          "return_dates": {
+            "title": "Return Dates",
+            "type": "integer"
+          },
+          "scope": {
+            "enum": [
+              "full_account",
+              "securities_only"
+            ],
+            "title": "Scope",
+            "type": "string"
+          },
+          "skipped_pairs": {
+            "title": "Skipped Pairs",
+            "type": "integer"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          },
+          "valuation_date": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Valuation Date"
+          },
+          "warnings": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Warnings",
+            "type": "array"
+          }
+        },
+        "required": [
+          "scope",
+          "asset_scope",
+          "out_of_scope",
+          "status",
+          "base_currency",
+          "valuation_date",
+          "quantity_date",
+          "period_start",
+          "period_end",
+          "coverage_fraction",
+          "covered_value",
+          "excluded",
+          "positions",
+          "before",
+          "after",
+          "benchmark",
+          "benchmark_status",
+          "history_dates",
+          "return_dates",
+          "skipped_pairs",
+          "history_coverage",
+          "etf_overlap",
+          "warnings"
+        ],
+        "title": "RiskResult",
+        "type": "object"
+      },
+      "RiskScenario-Input": {
+        "additionalProperties": false,
+        "properties": {
+          "class_shocks": {
+            "additionalProperties": {
+              "anyOf": [
+                {
+                  "exclusiveMinimum": -1.0,
+                  "maximum": 5.0,
+                  "type": "number"
+                },
+                {
+                  "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                  "type": "string"
+                }
+              ]
+            },
+            "propertyNames": {
+              "enum": [
+                "equity",
+                "etf",
+                "cash"
+              ]
+            },
+            "title": "Class Shocks",
+            "type": "object"
+          },
+          "fx_shocks": {
+            "additionalProperties": {
+              "anyOf": [
+                {
+                  "exclusiveMinimum": -1.0,
+                  "maximum": 5.0,
+                  "type": "number"
+                },
+                {
+                  "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                  "type": "string"
+                }
+              ]
+            },
+            "maxProperties": 10,
+            "title": "Fx Shocks",
+            "type": "object"
+          },
+          "name": {
+            "maxLength": 80,
+            "minLength": 1,
+            "title": "Name",
+            "type": "string"
+          },
+          "position_shocks": {
+            "additionalProperties": {
+              "anyOf": [
+                {
+                  "exclusiveMinimum": -1.0,
+                  "maximum": 5.0,
+                  "type": "number"
+                },
+                {
+                  "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                  "type": "string"
+                }
+              ]
+            },
+            "maxProperties": 50,
+            "title": "Position Shocks",
+            "type": "object"
+          }
+        },
+        "required": [
+          "name"
+        ],
+        "title": "RiskScenario",
+        "type": "object"
+      },
+      "RiskScenario-Output": {
+        "additionalProperties": false,
+        "properties": {
+          "class_shocks": {
+            "additionalProperties": {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            },
+            "propertyNames": {
+              "enum": [
+                "equity",
+                "etf",
+                "cash"
+              ]
+            },
+            "title": "Class Shocks",
+            "type": "object"
+          },
+          "fx_shocks": {
+            "additionalProperties": {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            },
+            "maxProperties": 10,
+            "title": "Fx Shocks",
+            "type": "object"
+          },
+          "name": {
+            "maxLength": 80,
+            "minLength": 1,
+            "title": "Name",
+            "type": "string"
+          },
+          "position_shocks": {
+            "additionalProperties": {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            },
+            "maxProperties": 50,
+            "title": "Position Shocks",
+            "type": "object"
+          }
+        },
+        "required": [
+          "name"
+        ],
+        "title": "RiskScenario",
         "type": "object"
       },
       "RiskSnapshotResponse": {
@@ -6948,6 +9076,103 @@
         "title": "ScenarioResponse",
         "type": "object"
       },
+      "ScenarioResult": {
+        "additionalProperties": false,
+        "properties": {
+          "exceeds_tolerance": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Exceeds Tolerance"
+          },
+          "fraction": {
+            "anyOf": [
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fraction"
+          },
+          "impacts": {
+            "additionalProperties": {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            },
+            "title": "Impacts",
+            "type": "object"
+          },
+          "kind": {
+            "title": "Kind",
+            "type": "string"
+          },
+          "largest_losses": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Largest Losses",
+            "type": "array"
+          },
+          "maximum_drawdown": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Maximum Drawdown"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "pnl": {
+            "anyOf": [
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pnl"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          },
+          "value_after": {
+            "anyOf": [
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Value After"
+          }
+        },
+        "required": [
+          "name",
+          "kind",
+          "status"
+        ],
+        "title": "ScenarioResult",
+        "type": "object"
+      },
       "ScenarioRunResponse": {
         "additionalProperties": false,
         "properties": {
@@ -7103,6 +9328,58 @@
           "value"
         ],
         "title": "ScenarioShockWrite",
+        "type": "object"
+      },
+      "ScoreComponent": {
+        "properties": {
+          "key": {
+            "title": "Key",
+            "type": "string"
+          },
+          "lower_anchor": {
+            "title": "Lower Anchor",
+            "type": "number"
+          },
+          "score": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Score"
+          },
+          "upper_anchor": {
+            "title": "Upper Anchor",
+            "type": "number"
+          },
+          "value": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Value"
+          },
+          "weight": {
+            "title": "Weight",
+            "type": "number"
+          }
+        },
+        "required": [
+          "key",
+          "value",
+          "score",
+          "weight",
+          "lower_anchor",
+          "upper_anchor"
+        ],
+        "title": "ScoreComponent",
         "type": "object"
       },
       "Series-Input": {
@@ -14974,6 +17251,136 @@
           }
         },
         "summary": "Quote Imported",
+        "tags": [
+          "Imported XTB reports"
+        ]
+      }
+    },
+    "/api/v1/xtb/risk": {
+      "post": {
+        "operationId": "risk_imported_api_v1_xtb_risk_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RiskRequest-Input"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RiskResult"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Risk Imported",
+        "tags": [
+          "Imported XTB reports"
+        ]
+      }
+    },
+    "/api/v1/xtb/risk-example": {
+      "get": {
+        "description": "A visibly synthetic analysis sandbox; it never alters imported accounts.",
+        "operationId": "risk_example_api_v1_xtb_risk_example_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "asset_scope",
+            "required": false,
+            "schema": {
+              "default": "all_supported",
+              "enum": [
+                "all_supported",
+                "equities_only"
+              ],
+              "title": "Asset Scope",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RiskRequest-Output"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Risk Example",
+        "tags": [
+          "Imported XTB reports"
+        ]
+      }
+    },
+    "/api/v1/xtb/risk-history": {
+      "post": {
+        "operationId": "history_imported_api_v1_xtb_risk_history_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/HistoryFetch"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HistoryFetchResult"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "History Imported",
         "tags": [
           "Imported XTB reports"
         ]

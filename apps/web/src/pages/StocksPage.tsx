@@ -14,6 +14,7 @@ import "../styles/workspace.css";
 const pages: { view: WorkspaceView; icon: string; name: string; detail: string }[] = [
   { view: "overview", icon: "◫", name: "Przegląd", detail: "Twoje rachunki, raporty i kolejne kroki w jednym miejscu." },
   { view: "holdings", icon: "▤", name: "Portfel", detail: "Otwarte pozycje, daty cen i pokrycie wyceny wybranego rachunku." },
+  { view: "risk", icon: "◈", name: "Analiza ryzyka", detail: "Koncentracja, historia, scenariusze i porównanie niezależnego wariantu portfela." },
   { view: "accounts", icon: "▦", name: "Brokerzy i konta", detail: "Każdy rachunek osobno — również kilka rachunków w tej samej walucie." },
   { view: "import", icon: "↥", name: "Import raportów", detail: "Wczytaj plik, sprawdź podgląd i zatwierdź zapis na wybrane konto." },
   { view: "history", icon: "◷", name: "Historia importów", detail: "Sprawdź pochodzenie danych i pobierz kopię swoich raportów." },

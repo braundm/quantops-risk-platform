@@ -1,3 +1,5 @@
+import type { PerformanceSummary } from "./portfolioRiskApi";
+
 export type InstrumentKind = "equity" | "etf" | "forex" | "future";
 export type Action = "buy" | "sell" | "deposit" | "withdrawal" | "dividend" | "fee";
 export interface Instrument { symbol: string; name: string; kind: InstrumentKind; sector: string; currency: string; multiplier: string; margin_rate: string; expiry?: string | null; spec_url?: string | null }
@@ -16,6 +18,7 @@ export interface BookResult {
   effective_positions: number | null; top_weight: number | null; risk_status: string; var95: number | null;
   es95: number | null; annual_volatility: number | null; observations: number; positions: Position[];
   curve: CurvePoint[]; market_points: MarketPoint[]; correlation_symbols: string[]; correlations: (number | null)[][]; warnings: string[];
+  performance: PerformanceSummary | null;
 }
 export interface WorkspaceResult {
   result: BookResult;

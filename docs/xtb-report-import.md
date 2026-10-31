@@ -88,11 +88,16 @@ report source and do not imply affiliation.
 
 ## Next work
 
+The [imported portfolio risk workflow](imported-portfolio-risk.md) now connects this
+importer to adjusted price/FX history, concentration, signed volatility attribution,
+VaR/ES, historical and hypothetical scenarios and independent allocation comparisons.
+Its whole-account gates require supported holdings, dated data and confirmed cash.
+
 1. Reconcile full open positions, cash balances, transfers, fees, dividends and corporate actions;
    add encrypted durable storage, access control and a tested backup restore flow.
-2. Build a dated price/FX history and bounded quote queue, then connect the imported exposure model
-   to concentration, volatility, drawdown, VaR/Expected Shortfall and scenario calculations with
-   explicit data coverage. Do not label the current spot valuation as complete portfolio risk.
+2. Extend the implemented price/FX history adapter beyond its 20-symbol fetch limit and
+   add independently verified ETF holdings and richer economic exposure metadata. Keep
+   incomplete data visibly separate from a complete portfolio analysis.
 3. Add CFD contract multipliers, financing, margin and stress calculations, then Bossa report
    adapters using verified samples. Options require contract identity, expiry, strike, multipliers
    and appropriate market data before Greeks can be calculated.

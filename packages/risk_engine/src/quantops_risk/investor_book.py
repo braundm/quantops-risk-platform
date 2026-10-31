@@ -5,7 +5,7 @@ from __future__ import annotations
 import math
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
-from datetime import date
+from datetime import date, timedelta
 from decimal import Decimal
 from itertools import pairwise
 from statistics import covariance, stdev, variance
@@ -14,6 +14,7 @@ from typing import Literal
 from .correlation import correlation_matrix
 from .exceptions import InvalidInputError
 from .expected_shortfall import historical_expected_shortfall
+from .portfolio_history import PerformanceSummary, performance_summary
 from .var import historical_var
 
 D = Decimal
@@ -121,6 +122,7 @@ class BookResult:
     correlation_symbols: list[str]
     correlations: list[list[float | None]]
     warnings: list[str]
+    performance: PerformanceSummary | None = None
 
 
 def analyze_book(
@@ -425,6 +427,12 @@ def analyze_book(
         list(correlation.instrument_ids) if correlation else [],
         [list(row) for row in correlation.matrix] if correlation else [],
         warnings,
+        performance_summary(
+            [curve[0].day - timedelta(days=1)] + [p.day for p in curve],
+            [1.0] + [p.return_index for p in curve if p.return_index is not None],
+        )
+        if valid_twr
+        else None,
     )
 
 

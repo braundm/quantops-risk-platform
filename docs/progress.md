@@ -1,6 +1,174 @@
 # QuantOps implementation progress
 
-Last updated: 2026-10-11
+Last updated: 2026-10-31
+
+## Final review and owner-authorized publication — 2026-10-31
+
+The owner explicitly requested checking all current work, committing it and publishing it
+to GitHub. The existing branch is `agent/portfolio-polish`, with open draft PR #11 against
+`main`. The remote was preserved; fetch confirmed zero divergence before the new commit.
+This explicit request permits the branch update despite the general earlier publication
+gate. It does not close release/service-dependent Definition of Done items or create a tag.
+
+Review corrections: Overview no longer reports an empty portfolio merely because its
+position table is displayed on another tab. Current quantity dates now include the latest
+relevant execution or partial closure after an imported snapshot. The original snapshot/
+first-execution anchor remains separate for split review. Added three Python regression
+cases and desktop/mobile assertions for the Overview message. Regenerated OpenAPI and
+updated the risk method version and README to match the implemented equity-only UI.
+
+Observed pre-publication verification after these corrections:
+
+```text
+.venv/Scripts/python.exe -m ruff check .
+.venv/Scripts/python.exe -m ruff format --check .
+# Passed; all 264 Python files formatted.
+.venv/Scripts/python.exe scripts/typecheck.py
+# All 11 isolated strict groups passed.
+.venv/Scripts/python.exe apps/api/scripts/export_openapi.py --output apps/api/openapi.generated.json
+.venv/Scripts/python.exe -m pytest -m "not integration and not e2e" -q -p no:cacheprovider
+# 674 passed, 1 deselected, 20 subtests passed in 27.75 seconds.
+pnpm --filter @quantops/web lint
+pnpm --filter @quantops/web build
+pnpm --filter @quantops/web test
+# Passed; final build 405 ms, 23 tests in 5.50 seconds; existing bundle-size advisory.
+$env:QUANTOPS_E2E_API_PORT='8057'
+$env:QUANTOPS_E2E_WEB_PORT='4227'
+pnpm --filter @quantops/web exec playwright test --workers=2
+# All 62 desktop/mobile checks passed in 2.3 minutes.
+```
+
+The initial full hashed Python dependency audit failed with 19 advisory entries across
+msgpack, certifi, filelock and mcp (including a duplicate certifi advisory). No finding
+was suppressed. Upgraded only these four packages: certifi 2026.6.17 to 2026.10.23,
+filelock 3.31.0 to 4.2.5, msgpack 1.2.1 to 1.2.4 and mcp 1.28.1 to 1.30.0. Added patched
+minimum constraints, retained the MCP major-version boundary, and regenerated `uv.lock`.
+The workspace was synchronized with `uv sync --locked --all-packages --all-groups`.
+Post-upgrade verification:
+
+```text
+.venv/Scripts/python.exe -m pytest -m "not integration and not e2e" -q -p no:cacheprovider
+# 674 passed, 1 deselected, 20 subtests passed in 25.08 seconds.
+.venv/Scripts/python.exe scripts/typecheck.py
+# All 11 strict groups passed, including the updated MCP SDK boundary.
+.venv/Scripts/uv.exe export --locked --all-packages --all-groups --no-emit-workspace --format requirements.txt --output-file artifacts/ci/python-requirements.txt
+.venv/Scripts/python.exe -m pip_audit --requirement artifacts/ci/python-requirements.txt --require-hashes --strict --progress-spinner off
+# Exit 0: no known vulnerabilities found.
+pnpm audit --prod
+# Exit 0: no known vulnerabilities found.
+.venv/Scripts/python.exe scripts/security_scan.py
+.venv/Scripts/python.exe scripts/docs_check.py
+git diff --check
+# All passed; documentation covers 61 Markdown files.
+```
+
+A separate scan covered all 477 cached/non-ignored untracked Git candidates with zero
+secret/hygiene findings. No private source workbook, local environment, report export,
+screenshot, build output or dependency-audit artifact is included in the publication set.
+The prepared commit includes the complete previously local import-to-risk workflow and
+its dependent source/tests/docs, plus the reviewed dependency fixes. Proposed multi-asset
+features remain future work. Hosted CI results are distinct from these verified local gates.
+
+Offline distribution verification also passed:
+
+```text
+.venv/Scripts/uv.exe build --all-packages --offline --out-dir artifacts/ci/publication-dist
+# Built all ten workspace packages as source distributions and wheels.
+# Inspected the risk wheel: equity_diagnostics.py and portfolio_history.py are included.
+```
+
+## Tabbed equity risk workspace and descriptive risk index — 2026-10-31
+
+Implemented the owner's request for an interactive equity risk dashboard. The default
+Overview presents a versioned 0–100 descriptive risk index, followed by separate tabs
+for concentration, diversification, hypothetical declines, history, allocation comparison
+and data/methods. Added HHI/effective holdings, documented issuer aggregation, selectable
+company detail, exposure bars, correlation inspection, capital-versus-risk contributions,
+single-company stresses, selectable scenarios and a drawdown curve. Reduced repeated
+header/account space specifically in this workspace and retained visible synthetic labels.
+
+The new equity-only API scope enumerates omitted instruments instead of silently claiming
+whole-account coverage. Existing mixed-scope API clients and the original mixed example
+remain supported. All numerical diagnostics and the four-component heuristic are calculated
+in the pure risk engine. Score prerequisites, thresholds, omissions and synthetic freshness
+exception are explicit in `equity-risk-dashboard.md` and the UI. No order execution,
+broker connection, probability-of-loss claim or investment recommendation was added.
+
+Observed verification using the existing workspace environment:
+
+```text
+.venv/Scripts/python.exe -m pytest -m "not integration and not e2e" -q -p no:cacheprovider
+# 671 passed, 1 deselected, 20 subtests passed in 28.82 seconds.
+# Includes updated OpenAPI, backward-compatible mixed scope and the new equity diagnostics.
+
+.venv/Scripts/python.exe scripts/typecheck.py --group risk --group api
+# Both strict groups passed: 43 risk files and 65 API files.
+
+.venv/Scripts/python.exe -m ruff check packages/risk_engine/src/quantops_risk/equity_diagnostics.py packages/risk_engine/tests/test_equity_diagnostics.py apps/api/quantops_api/application/portfolio_risk.py apps/api/quantops_api/api/xtb.py apps/api/tests/test_equity_risk_dashboard.py
+.venv/Scripts/python.exe -m ruff format --check packages/risk_engine/src/quantops_risk/equity_diagnostics.py packages/risk_engine/tests/test_equity_diagnostics.py apps/api/quantops_api/application/portfolio_risk.py apps/api/quantops_api/api/xtb.py apps/api/tests/test_equity_risk_dashboard.py
+# All lint checks passed; five Python files already formatted.
+# Files: equity_diagnostics.py, test_equity_diagnostics.py, portfolio_risk.py,
+#        api/xtb.py and test_equity_risk_dashboard.py.
+
+pnpm --filter @quantops/web lint
+pnpm --filter @quantops/web build
+# ESLint passed; TypeScript/Vite production build passed.
+# The pre-existing >500 kB initial-chunk advisory remains; no warning limit was suppressed.
+
+pnpm --filter @quantops/web test
+# 4 files / 23 tests passed in 8.59 seconds.
+
+QUANTOPS_E2E_API_PORT=8037 QUANTOPS_E2E_WEB_PORT=4207 QUANTOPS_CAPTURE_RISK=1
+pnpm --filter @quantops/web exec playwright test --workers=2
+# All 62 desktop/mobile Chromium checks passed in 2.4 minutes.
+# Risk checks include axe WCAG A/AA, keyboard tabs, correct -10% scenario P/L,
+# insufficient-score status, unknown sectors, omitted ETFs, account isolation,
+# old-price blocking, invalid variants, API failure and exported diagnostic provenance.
+```
+
+Initial failures were corrected rather than suppressed: cash warning branch placement,
+Decimal sum typing, an incorrect sign in the new conservation assertion, unnecessary
+TypeScript assertions, ambiguous status selection, and the empty-account setup's incorrect
+assumption that an analysis panel already exists before adding a report account. Vitest's
+first attempt was blocked by the restricted environment's temporary-file rename; the normal
+runtime passed all 23 tests. The full Python/browser runs above are the final behavioral gates.
+
+The verified local API used the workspace virtual-environment launcher with a bundled Python
+child process. The first restart guard correctly refused the child-only identity match; the
+parent/child commands and workspace path were then verified before restart. A read-only
+request through localhost:5173 returned HTTP 200 and a complete five-company synthetic
+analysis with score 44 and `equity-diagnostics@1.0.0`. No real-provider freshness is claimed
+by this synthetic check. Existing reports and unrelated owner edits were preserved.
+
+Final verification after the synthetic badge and compact header adjustment:
+
+```text
+$env:QUANTOPS_E2E_API_PORT='8047'
+$env:QUANTOPS_E2E_WEB_PORT='4217'
+$env:QUANTOPS_CAPTURE_RISK='1'
+pnpm --filter @quantops/web exec playwright test e2e/portfolio-risk.spec.ts --grep 'equity dashboard has' --workers=2
+# Both desktop/mobile checks passed in 11.6 seconds, including axe and chart inspection.
+
+pnpm --filter @quantops/web lint
+pnpm --filter @quantops/web build
+# Both exit 0; final bundle built in 361 ms. Existing size advisory remains.
+
+.venv/Scripts/python.exe scripts/docs_check.py
+# Passed for 61 Markdown files.
+.venv/Scripts/python.exe scripts/security_scan.py
+# Passed with no high-confidence secret/hygiene findings.
+git diff --check
+# Exit 0; existing OpenAPI line-ending normalization advisory only.
+```
+
+An additional `scan_paths` run over every cached and non-ignored untracked Git candidate
+returned zero findings without rendering matched values. Inspected actual desktop and mobile
+screenshots of the new overview and concentration layouts. Stable, ignored preview copies are
+`artifacts/equity-risk-overview.png`, `artifacts/equity-risk-concentration.png` and
+`artifacts/equity-risk-diversification.png`. Attached-browser control was unavailable during
+the final live check, so visual QA used the passing browser-test captures; the actual application
+API proxy was independently verified as described above. No commit or publication has been
+performed; release/service-dependent gates remain open.
 
 This file records observed results only. An unchecked item is not implemented or has not yet met its exit evidence.
 
@@ -1197,3 +1365,150 @@ files; after staging all files it correctly rejected the 6,864,239-byte public c
 Its documented reproducible source snapshot now has an explicit size exception, with
 secret detection retained and regression-tested. One extra blank line in the stock
 catalog was removed to satisfy Ruff format. No assertions or test selections were weakened.
+
+## Imported portfolio risk analysis — 2026-10-12
+
+Existing code/documentation were inspected before implementation: XTB parser/merger and
+native valuation, public stock/FX adapters, investor-book accounting/TWR, fixed-unit history,
+covariance, signed contributions, VaR/ES, scenarios, drawdown and report exports. The new
+workflow extends the existing account UI and XTB API boundary; core calculations remain
+framework independent. Methods, supported scope and explicit limitations are in
+`imported-portfolio-risk.md`.
+
+Observed verification:
+
+```text
+.venv\Scripts\python.exe -m pytest -p no:cacheprovider -m "not integration and not e2e" -q
+# exit 0: 654 passed, 1 deselected, 20 subtests passed in 66.12 seconds
+# Earlier complete gate: 653 passed before the additional calendar-gap invariant.
+.venv\Scripts\python.exe scripts/typecheck.py
+# exit 0: all 11 isolated strict groups passed
+.venv\Scripts\python.exe -m mypy --strict --config-file pyproject.toml --cache-dir .mypy_cache/typecheck/api apps/api
+# exit 0: 64 source files, including final Decimal monetary outputs
+.venv\Scripts\python.exe -m mypy --strict --config-file pyproject.toml --cache-dir .mypy_cache/typecheck/risk packages/risk_engine/src/quantops_risk packages/risk_engine/tests
+# exit 0: 41 source files
+.venv\Scripts\python.exe -m pytest -p no:cacheprovider apps/api/tests/test_health.py apps/api/tests/test_portfolio_risk.py apps/api/tests/test_portfolio_history_provider.py packages/risk_engine/tests/test_portfolio_history.py packages/risk_engine/tests/test_investor_book.py -q
+# exit 0: 41 passed in 5.66 seconds after final amount/schema changes
+.venv\Scripts\ruff.exe check .
+.venv\Scripts\ruff.exe format --check .
+# exit 0: all checks passed; 261 files formatted
+pnpm --filter @quantops/web lint
+pnpm --filter @quantops/web test
+pnpm --filter @quantops/web build
+# exit 0: ESLint, 23 Vitest tests in 4 files, TypeScript/Vite production build
+# Vite reports an advisory main-chunk size warning above 500 kB; build succeeds.
+$env:QUANTOPS_E2E_API_PORT='8002'; $env:QUANTOPS_E2E_WEB_PORT='4174'
+pnpm --filter @quantops/web exec playwright test --workers=2
+# exit 0: all 60 desktop/mobile browser tests passed in 3.6 minutes
+pnpm --filter @quantops/web exec playwright test e2e/portfolio-risk.spec.ts --workers=2
+# exit 0: final 6 desktop/mobile risk tests passed in 28.5 seconds with Decimal API amounts
+.venv\Scripts\python.exe scripts/docs_check.py
+# exit 0: final check covered 60 Markdown files
+.venv\Scripts\python.exe scripts/security_scan.py
+# exit 0; additional scan_paths over git ls-files --cached --others --exclude-standard:
+# zero findings, including all new untracked source files
+git diff --check
+# exit 0: no whitespace errors
+```
+
+New hand-checkable invariants cover identical assets/singular covariance, a negative hedging
+contribution, cash, exact simultaneous price/FX loss, shock precedence, unbalanced weights,
+variant/book isolation, missing histories, inconsistent FX, cash date/completeness, split
+reconciliation, adjusted dividends, unknown/supplied ETF composition, missing benchmarks,
+current valuation versus historical windows, unrecovered drawdown and multi-month gaps.
+New browser checks exercise actual report import through analysis/scenario, independent
+weight changes, report retention, source/partial states, API failure, accessibility,
+mobile overflow, chart interaction and report download.
+
+Initial findings were corrected without weakening assertions: Python typing/import/format
+issues, an unused test-loop index and an exact-label selector that could not select the
+account-currency dropdown. The first complete browser run had those two selector failures
+and one existing mobile context-teardown timeout (57 passed, 3 failed); the corrected six
+new tests and then all 60 regressions passed. A formatter-diff header was briefly introduced
+as a stray source line, caught at collection/lint, removed and followed by the successful
+654-test rerun above. UI screenshots were visually inspected on desktop and mobile.
+
+One read-only actual provider call fetched AAPL.US plus USD/PLN for 2025-10-01 through
+2026-10-09: 229 aligned observations, latest shared date 2026-10-08, no source failures.
+The provider result was not packaged as a synthetic fixture or claimed to satisfy the
+252-observation risk requirement. The running API was restarted; through localhost:5173,
+health, risk-example and risk analysis returned HTTP 200, complete status and 339 synthetic
+return observations. No live source is required by unit/browser tests.
+
+The repository secret/hygiene gate passed, including a separate scan of tracked and new
+untracked files (zero findings). No private reports or credentials were introduced. The
+working changes remain local on `agent/portfolio-polish`; no commit, push, merge or release
+tag is claimed for this scope. Remaining release/service-dependent gates remain open.
+
+## Beginner-oriented risk interface — 2026-10-12
+
+Replaced the up-front technical form with a short data/cash step and four question-based action
+cards. Clicking an action calculates through the existing API and opens the corresponding
+result. Added hypothetical 10%/20%/35% equity/ETF decline presets, signed scenario and position
+bars, allocation/comparison charts and deterministic metric-grounded conclusions. Advanced JSON,
+source metadata, VaR/ES definitions and attribution tables are expandable. Data coverage gates,
+Decimal financial calculations, exact weight totals and report isolation are preserved.
+
+Verification for this UI-only follow-up:
+
+```text
+pnpm --filter @quantops/web test
+# exit 0: 23 tests in 4 files, 10.62 seconds
+pnpm --filter @quantops/web lint
+# exit 0: zero warnings
+pnpm --filter @quantops/web build
+# exit 0: TypeScript and production build; existing >500 kB chunk advisory remains
+$env:QUANTOPS_E2E_API_PORT='8002'; $env:QUANTOPS_E2E_WEB_PORT='4174'
+$env:QUANTOPS_CAPTURE_RISK='1'
+pnpm --filter @quantops/web exec playwright test e2e/portfolio-risk.spec.ts --workers=2
+# exit 0: 6 desktop/mobile tests, 40.1 seconds
+```
+
+Browser evidence includes all four action paths, hidden advanced controls, charts and grounded
+conclusions, a hand-checkable 400 PLN preset loss with unchanged cash, exact terminal value,
+stale result removal after edits, invalid weights, insufficient data, API errors, accessibility,
+saved-report isolation and mobile overflow. Desktop/mobile screenshots were visually inspected.
+The earlier six-test pass took 38.7 seconds before the final preset assertion was added. No
+engine or API change was made in this follow-up, so backend suites were not repeated.
+
+Final build and ESLint passed after the last wording adjustment. Documentation validation
+passed for 60 Markdown files; `python scripts/security_scan.py` and a separate `scan_paths`
+over tracked plus untracked files found zero issues. `git diff --check` passed (only the
+existing OpenAPI CRLF normalization advisory). Local HTTP checks returned 200 for `/`, the
+updated frontend component and `/api/v1/health`; the served component contains the new stress
+action. The first sandboxed socket check was denied by OS permissions; the authorized
+unsandboxed read-only loopback check above succeeded. No publication was performed.
+
+## Saved-account analysis without cash entry — 2026-10-12
+
+Removed the manual cash form from the risk screen. The selected saved account is now the
+explicit default data source, with its identity and position date displayed. An analysis
+action obtains actual current holdings from the book analyzer and fetches required price/FX
+histories automatically. Closed-only instruments are excluded from fetching. Cached histories
+are reused within the account; a new import/account selection clears histories and results.
+The optional synthetic example is behind a disclosure and never silently substitutes the book.
+
+Added explicit `securities_only` API scope, echoed in results and labeled in coverage. It excludes
+unknown account cash rather than assuming zero or using cash movements as a balance. The API
+default `full_account` mode retains confirmed cash requirements. Securities scope rejects
+account cash payloads and retains history, supported-position and quantity-date gates.
+
+Initial verification: 25 scoped API/OpenAPI tests passed in 3.53 seconds; strict API mypy passed
+for 64 files; Ruff lint and format check passed for both changed Python files. Frontend build,
+ESLint and 23 unit tests passed (5.23 seconds for Vitest). Six desktop/mobile browser checks
+passed in 32.1 seconds, then 37.4/37.1 seconds after account-switch/cache assertions and the
+book-change reset. Final verification below also covers the explicit stale-price explanation.
+
+Restarted only the matching local QuantOps API process. A read-only check through the running
+frontend fetched all nine public histories for the saved synthetic account. No provider symbol
+failed; the latest common date was 2026-10-08, before its 2026-10-09 position snapshot. The API
+correctly returned `securities_only`, `partial_or_insufficient` and no portfolio metrics. The
+screen now explains that exact date mismatch rather than asking for cash or inventing prices.
+
+Final verification after the explanatory date message: all six desktop/mobile risk browser
+checks passed in 39.8 seconds, including actual import, no cash fields, one automatic history
+fetch, reuse on a second action, exact selected account in the request, account switching,
+history cache reset and blocked metrics when prices precede the position snapshot. Production
+build and ESLint passed; the existing >500 kB main-chunk advisory remains. Documentation check
+passed for 60 Markdown files. Repository security scanning plus tracked/untracked `scan_paths`
+found zero issues; `git diff --check` passed. No commit or publication was performed.

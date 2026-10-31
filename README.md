@@ -62,6 +62,13 @@ assessment. This educational lab uses synthetic or unverified user inputs, not l
 
 ## Trusting the numbers
 
+Imported accounts now connect to [portfolio risk analysis](docs/imported-portfolio-risk.md):
+base-currency concentration, signed volatility contributions, observed drawdowns, historical
+VaR/ES, hypothetical scenarios and independent before/after allocation comparisons. The
+**Analiza ryzyka** view selects the equity slice explicitly, with a descriptive 0–100 index,
+interactive concentration/correlation charts, visible missing data and a synthetic example.
+The API separately supports mixed stock/ETF allocations and confirmed cash.
+
 Risk numbers are easy to display and difficult to trust. QuantOps is designed around the questions that follow a metric: Which portfolio version? Which prices? Which methodology? Was the data complete? Can the explanation be reconciled to immutable evidence?
 
 The project deliberately does **not** connect to brokers, execute orders, forecast guaranteed returns, or provide buy/sell recommendations. Research fixtures and example ownership are fictional and marked synthetic. The investor workspace separately identifies sourced historical market prices and their retrieval dates.
@@ -101,7 +108,7 @@ The synchronous core is a modular monolith; batch, stream, scheduling, ML, AI, a
 | --- | --- |
 | Financial risk | Arithmetic/log returns, valuation, volatility, covariance/correlation, historical and parametric VaR, Expected Shortfall, drawdown, concentration, signed contributions, scenarios, and VaR backtesting |
 | Data | Fixed-seed 2,088-bar multi-regime fixture, manifests/hashes, quality cases, quarantine, lineage, and byte-reproducible generation |
-| API | 31 versioned routes, OpenAPI snapshot, RFC 9457-style errors, bounded pagination, auth boundary, ETags, idempotency, rate limiting, and JSON/CSV exports |
+| API | Versioned routes, OpenAPI snapshot, RFC 9457-style errors, bounded pagination, auth boundary, ETags, idempotency, rate limiting, and JSON/CSV exports |
 | Streaming | Six strict v1 event contracts plus broker-neutral replay, duplicate/conflict handling, lateness policy, retry/DLQ behavior, and outbox publication ordering |
 | ML | Ten point-in-time features, rule baseline, fixed-seed candidate, chronological evaluation, promotion gates, model card, reproducible artifacts, and drift checks |
 | AI | Deterministic no-key brief, ten-tool read-only broker, scoped retrieval, citation/numerical validation, safe fallback/refusal, and 44 adversarial evaluation cases |
@@ -183,7 +190,7 @@ uv run python scripts/docs_check.py
 uv run python scripts/security_scan.py
 ```
 
-The latest recorded service-free core gate passed **468 Python tests plus 20 subtests**, **14 Vitest tests**, and **14 Playwright tests** across desktop and mobile Chromium. The browser suite includes automated WCAG A/AA scans and a keyboard-only scenario/evidence journey. Package-level branch coverage is recorded in [progress](docs/progress.md). The deterministic AI report passed **44/44 cases across 20 categories**. Live database/broker tests and local container smoke checks remain explicitly pending because Docker is unavailable in the current workstation environment.
+The latest recorded local service-free gate passed **674 Python tests plus 20 subtests**, **23 Vitest tests**, and **62 Playwright tests** across desktop and mobile Chromium. The browser suite includes automated WCAG A/AA scans, keyboard navigation, imported-account isolation and risk-report export. Package-level branch coverage and exact verification evidence are recorded in [progress](docs/progress.md). The deterministic AI report passed **44/44 cases across 20 categories**. Live database/broker tests and local container smoke checks remain explicitly pending because Docker is unavailable in the current workstation environment.
 
 ## Repository map
 

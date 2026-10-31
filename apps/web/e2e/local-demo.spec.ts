@@ -16,6 +16,8 @@ test("default accounts isolate the empty portfolio from the supplied synthetic w
   await page.getByRole("button", { name: "Otwórz mój portfel" }).click();
   await expect(page.getByRole("note").filter({ hasText: "Konto testowe" })).toContainText("SYNTHETIC");
   const navigation = page.getByRole("navigation", { name: "Centrum portfela" });
+  await expect(page.getByRole("button", { name: "Przejdź do pozycji i cen →", exact: true })).toBeVisible();
+  await expect(page.getByText("W dostarczonym stanie nie ma otwartych pozycji.", { exact: true })).toHaveCount(0);
   await navigation.getByRole("button", { name: "Portfel", exact: true }).click();
   const positions = page.getByRole("region", { name: "Otwarte pozycje XTB", exact: true });
   await expect(positions.getByRole("row")).toHaveCount(10);

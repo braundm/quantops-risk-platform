@@ -3,6 +3,7 @@ import type { StockQuote } from "./stocksApi";
 export interface XtbRecord {
   id: string; kind: "open" | "closed" | "fill" | "cash"; symbol: string;
   asset_type: string; account_number: string; source_id: string; observed_at: string;
+  event_at?: string;
 }
 export interface XtbBook {
   account_number: string; currency: string; records: XtbRecord[];

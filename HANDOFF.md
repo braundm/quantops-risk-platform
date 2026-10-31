@@ -1,6 +1,131 @@
 # QuantOps handoff
 
-Last updated: 2026-10-12
+Last updated: 2026-10-31
+
+## Owner-authorized review and GitHub update — 2026-10-31
+
+The owner explicitly requested a final review, commit and GitHub publication of the
+current work. This authorizes updating the existing `agent/portfolio-polish` branch and
+draft PR #11 despite the earlier general publication gate; it does not mark the original
+release Definition of Done complete or authorize a release tag/merge.
+
+The review corrected an erroneous empty-holdings message on Overview and separated the
+latest quantity-changing event date from the original split-review anchor. Reconstructed
+holdings and subsequent partial closures now block prices older than their latest state,
+while an earlier split still requires reconciliation. The API exposes `quantity_date`.
+Regression tests cover both the stale/current execution cases and later partial closures.
+
+A dependency audit found 19 advisory entries affecting four locked packages. Updated
+certifi to 2026.10.23, filelock to 4.2.5, msgpack to 1.2.4 and the MCP SDK to 1.30.0;
+minimum-version constraints prevent selecting the vulnerable versions again. After the
+upgrade, 674 Python tests plus 20 subtests and all 11 strict typecheck groups passed;
+the full hashed Python audit and production frontend audit both reported no known
+vulnerabilities. Frontend unit/build/lint and all 62 browser regressions passed in this
+publication review. Exact commands are maintained in `docs/progress.md`.
+
+## Tabbed equity risk dashboard — 2026-10-31
+
+The owner requested a polished, interactive risk workspace for fully funded equities.
+The risk tab now starts with Overview and a descriptive 0–100 risk index, followed by
+Concentration, Diversification, Possible declines, History, Allocation comparison and
+Data/methodology. Interactive company selection, exposure bars, a correlation heatmap,
+capital/risk contribution comparisons, selectable scenarios and a drawdown chart share
+the same returned analysis. Keyboard navigation and mobile layouts are covered.
+
+The UI explicitly analyzes the equity slice (`securities_only` / `equities_only`).
+Omitted ETFs/other instruments are enumerated; unknown cash is excluded. The API keeps
+its original default mixed scope. The new synthetic demonstration has five equities,
+invented histories and explicitly synthetic issuer metadata, without changing reports.
+
+`equity-diagnostics@1.0.0` computes HHI, effective holdings, documented issuer aggregation,
+weighted correlation, diversification ratio, single-company -50% stresses and a bounded
+four-component research score in the pure risk engine. Thresholds and 25% weights are
+visible and versioned. The score is not a probability or guarantee and omits fundamentals,
+liquidity and full sector/economic risk. Short samples, stale real valuations and non-equity
+allocations receive null scores with typed statuses. Read `docs/equity-risk-dashboard.md`.
+
+Verified: 671 service-free Python tests plus 20 subtests, 23 frontend unit tests, all 62
+desktop/mobile browser checks, strict risk/API typing (43/65 files), frontend lint and
+production build. OpenAPI was regenerated and its contract gate passed. Browser checks
+include axe, keyboard tabs, exact scenario loss, stale-result removal, unknown metadata,
+account isolation and report export. The existing main-bundle size advisory remains.
+The actual localhost:5173 API proxy returned a complete five-equity synthetic analysis
+and score 44 after restarting only the verified workspace API process. Final desktop/mobile
+visual captures were inspected; the additional two focused browser checks passed in 11.6s.
+Documentation (61 files), tracked/untracked secret/hygiene scanning and whitespace checks
+passed. Exact commands and preview paths are recorded in `docs/progress.md`.
+
+Existing owner changes remain in place. No commit, GitHub publication or release tag
+was performed in this update; the original release Definition of Done remains open.
+
+## Saved-account analysis without cash entry — 2026-10-12
+
+The default risk screen uses the selected saved account directly. It displays account identity
+and the position snapshot, removes cash amount/date/confirmation fields, and fetches price/FX
+histories automatically on the first analysis action. Histories come from current holdings
+returned by the existing book analyzer, excluding closed-only instruments. Changing accounts
+or importing a new book clears results, histories and example state. The separate synthetic
+example is behind an explicit optional disclosure.
+
+The API adds an explicit `securities_only` scope, returned in reports and visibly labeled.
+Account cash is excluded rather than inferred from movements or set to a fictitious zero.
+`full_account` remains the default API scope and retains confirmed, dated cash gates.
+Securities-only requests reject account cash inputs and still require complete supported
+positions, reconciled quantities and adequate source dates. Variant cash reallocates analyzed
+capital hypothetically; it is not the account's unknown cash balance.
+
+Verified: 25 scoped API/OpenAPI tests, 23 frontend unit tests, strict API typing (64 files),
+frontend lint/build and desktop/mobile browser checks. The local API was restarted. An actual
+public-source check fetched all nine saved demo histories, but the latest shared valuation
+was 2026-10-08 before the 2026-10-09 quantity snapshot. The insufficient state is correct and
+is now explained directly with both dates. No complete result for that snapshot is claimed.
+See progress for final verification evidence. Changes remain local.
+
+## Beginner-oriented risk interface — 2026-10-12
+
+The risk workspace now starts with cash/data preparation and four question-based actions:
+stress testing, diversification, historical losses and an independent allocation comparison.
+Each action runs the existing API calculations and selects its result. Hypothetical equity/ETF
+decline presets of 10%, 20% and 35% keep FX unchanged; custom combined scenarios remain available.
+Results include signed loss/position bars, allocation and comparison charts, and deterministic
+plain-language explanations grounded in returned metrics. JSON, VaR/ES, correlation matrices,
+provenance and statistical details remain expandable. Missing coverage still blocks full results.
+
+Verified for this presentation-only follow-up: 23 frontend unit tests, six desktop/mobile risk
+browser checks, TypeScript production build and ESLint. The browser checks validate an exact
+400 PLN preset loss on 4,000 PLN equity plus 100 PLN cash, chart/conclusion visibility, hidden
+advanced controls, stale-result removal, account isolation and accessibility. Desktop/mobile
+screenshots were inspected. See `docs/progress.md` for commands and final hygiene checks.
+The financial engine and API contracts are unchanged by this follow-up. Changes remain local.
+
+## Imported portfolio risk workflow — 2026-10-12
+
+The owner requested a connected import-to-risk-to-scenario-to-variant workflow. The existing
+XTB workspace now includes **Analiza ryzyka**, using confirmed report holdings, adjusted
+price history, dated FX and explicitly confirmed cash. The stateless service composes the
+existing covariance, correlation, signed Euler contribution, VaR/ES and drawdown functions.
+It adds source-aware exposure metadata/ETF overlap, common-period benchmark comparison,
+historical/combined/user shocks, loss tolerances and independent weight variants at equal
+capital. Actual transaction-based TWR remains at `/investor` and gains episode/calendar
+performance summaries; it is never inferred from imported snapshots.
+
+Read `docs/imported-portfolio-risk.md` for methods, contracts, limits and a reproducible
+synthetic walkthrough. Missing data or unsupported instruments block whole-account claims.
+ETF composition/economic exposure remain unknown unless sourced inputs are supplied. CFD,
+direct-bond and derivative risk, automatic corporate-action ledger reconciliation, secure
+durable storage, automatic verified ETF feeds and account aggregation remain separate work.
+The analysis UI supports one cash currency per selected account; the API supports multiple
+explicit balances. Histories/drafts are held in component memory and exported explicitly.
+
+Verified: 654 service-free Python tests and 20 subtests; 23 frontend unit tests; 60 complete
+desktop/mobile browser regressions; all 11 strict typecheck groups. Final API/risk typing,
+OpenAPI and 41 scoped Python checks passed after Decimal monetary outputs were added.
+Exact commands, initial corrected failures and final UI checks are in `docs/progress.md`.
+One actual public AAPL/USD-PLN fetch succeeded with 229 aligned observations through 2026-10-08;
+this is not enough to enable the default 252-observation VaR gate. Synthetic examples remain
+explicitly marked and never overwrite stored reports. The local API was restarted and the
+frontend proxy's example/analysis returned HTTP 200. No commit or publication was performed
+for this new work, and the original release Definition of Done remains open.
 
 ## Owner-authorized GitHub publication — 2026-10-12
 

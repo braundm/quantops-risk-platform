@@ -19,6 +19,7 @@ SUFFIXES = {
     "BE": ".BR",
     "CH": ".SW",
     "PT": ".LS",
+    "UK": ".L",
 }
 
 
