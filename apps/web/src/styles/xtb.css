@@ -1,0 +1,12 @@
+.xtb-brokers { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; margin: 24px 0; }
+.xtb-broker { display: flex; flex-direction: column; align-items: flex-start; gap: 24px; padding: 28px; border: 2px solid #c7d5c9; border-radius: 16px; background: #fff; color: #234b38; text-align: left; font: inherit; cursor: pointer; }
+.xtb-broker.selected { border-color: #276745; box-shadow: 0 0 0 3px #e1ecdf; }
+.xtb-broker img { height: 42px; max-width: 160px; width: auto; }
+.xtb-broker span { font-size: .9rem; }
+.xtb-account-list { display: flex; flex-wrap: wrap; gap: 12px; margin: 20px 0; }
+.sq-app textarea { width: 100%; min-width: 0; padding: 12px; font: inherit; border: 1px solid #91a895; border-radius: 8px; background: #fff; color: #163b29; resize: vertical; }
+.sq-app .iv-form-grid input[type=file] { max-width: 100%; padding: 10px; }
+.sq-app .iv-preview .sq-check { align-items: flex-start; }
+.sq-app label.sq-check > input[type=checkbox] { width: 18px; height: 18px; min-height: 18px; margin: 0; padding: 0; flex: 0 0 18px; }
+.sq-app .iv-actions > .sq-check { flex: 1 1 240px; max-width: 360px; }
+@media (max-width: 600px) { .xtb-brokers { grid-template-columns: 1fr; } .xtb-broker { padding: 20px; gap: 16px; } }

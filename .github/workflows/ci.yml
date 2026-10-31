@@ -282,6 +282,15 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v6.0.2
+      - name: Install pinned uv and Python for the calculation API
+        uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b # v8.1.0
+        with:
+          version: ${{ env.UV_VERSION }}
+          python-version: ${{ env.PYTHON_VERSION }}
+          enable-cache: true
+          cache-dependency-glob: uv.lock
+      - name: Install locked Python workspace for browser tests
+        run: uv sync --locked --all-packages --all-groups
       - name: Install pinned pnpm
         uses: pnpm/action-setup@v6.0.8
         with:
@@ -303,12 +312,26 @@ jobs:
         run: pnpm --filter @quantops/web test
       - name: Build frontend
         run: pnpm --filter @quantops/web build
+      - name: Install Playwright Chromium
+        run: pnpm --filter @quantops/web exec playwright install --with-deps chromium
+      - name: Test critical browser paths and accessibility
+        run: pnpm --filter @quantops/web test:e2e
       - name: Upload frontend build
         uses: actions/upload-artifact@v7.0.1
         with:
           name: frontend-dist
           path: apps/web/dist
           if-no-files-found: error
+          retention-days: 14
+      - name: Upload browser test evidence
+        if: always()
+        uses: actions/upload-artifact@v7.0.1
+        with:
+          name: frontend-browser-tests
+          path: |
+            apps/web/playwright-report
+            apps/web/test-results
+          if-no-files-found: warn
           retention-days: 14
 
   security-docs:

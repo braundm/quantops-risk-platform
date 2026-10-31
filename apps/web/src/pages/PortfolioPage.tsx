@@ -42,7 +42,7 @@ export function PortfolioPage({ result }: { readonly result: DemoResult }) {
           <div><p className="panel-kicker">As-of positions</p><h2 id="positions-title">Holdings &amp; exposures</h2></div>
           <Badge>{portfolio.positions.length} fictional instruments</Badge>
         </header>
-        <div className="table-wrap positions-table">
+        <div className="table-wrap positions-table" role="region" aria-label="Portfolio positions table" tabIndex={0}>
           <table>
             <caption className="sr-only">Synthetic portfolio positions and market values</caption>
             <thead><tr><th scope="col">Instrument</th><th scope="col">Asset class</th><th scope="col">Quantity</th><th scope="col">Last price</th><th scope="col">Market value</th><th scope="col">Weight</th><th scope="col">Data</th></tr></thead>
@@ -89,7 +89,7 @@ export function PortfolioPage({ result }: { readonly result: DemoResult }) {
           <Badge tone="warning">Min n = 520</Badge>
         </header>
         <div className="correlation-layout">
-          <div className="correlation-table-wrap">
+          <div className="correlation-table-wrap" role="region" aria-label="Position correlation table" tabIndex={0}>
             <table className="correlation-table">
               <caption className="sr-only">Pairwise correlations with observation counts</caption>
               <thead><tr><td /><th scope="col">QTECH</th><th scope="col">QGOLD</th><th scope="col">QWTI</th><th scope="col">QCASH</th></tr></thead>

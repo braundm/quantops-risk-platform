@@ -27,7 +27,11 @@ EXCLUDED_DIRECTORIES = {
 }
 FALLBACK_EXCLUDED_FILES = {".env"}
 DISALLOWED_FILENAMES = {".env", "credentials.json"}
-ALLOWED_LARGE_FILES = {"data/synthetic/canonical/price_bars.json"}
+# Reviewed, reproducible data snapshots; all still undergo the secret-pattern scan.
+ALLOWED_LARGE_FILES = {
+    "data/synthetic/canonical/price_bars.json",
+    "apps/api/quantops_api/data/broker_catalog.json",
+}
 SECRET_PATTERNS: tuple[tuple[str, re.Pattern[str]], ...] = (
     (
         "private_key",

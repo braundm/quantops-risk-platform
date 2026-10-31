@@ -12,6 +12,7 @@
     "build": "pnpm --filter @quantops/web build",
     "lint": "pnpm --filter @quantops/web lint",
     "test": "pnpm --filter @quantops/web test",
+    "test:e2e": "pnpm --filter @quantops/web test:e2e",
     "typecheck": "pnpm --filter @quantops/web typecheck"
   }
 }

@@ -1,0 +1,19 @@
+.treasury-page { max-width: 1400px; margin: auto; padding: 32px; line-height: 1.6; }
+.treasury-page h1 { font-size: clamp(1.8rem, 4vw, 2.7rem); margin: 8px 0; }
+.treasury-page h2 { margin-top: 0; font-size: 1.2rem; }
+.treasury-page .panel { padding: 24px; margin: 20px 0; }
+.treasury-page label { display: flex; flex-direction: column; gap: 6px; font-size: .85rem; font-weight: 650; }
+.treasury-page input, .treasury-page select, .treasury-page textarea { width: 100%; min-width: 0; padding: 10px; border: 1px solid #526b7c; border-radius: 6px; background: #0a1721; color: #e8eef3; font: inherit; }
+.treasury-page textarea { resize: vertical; font-family: Consolas, monospace; }
+.treasury-page fieldset { border: 1px solid #526b7c; border-radius: 8px; margin: 18px 0; padding: 18px; min-width: 0; }
+.treasury-fields { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 16px; margin-bottom: 16px; }
+.treasury-actions { display: flex; flex-wrap: wrap; gap: 12px; margin: 16px 0; }
+.treasury-summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 16px; }
+.treasury-summary strong { font-size: 1.3rem; overflow-wrap: anywhere; }
+.treasury-table { max-width: 100%; overflow: auto; }
+.treasury-table table { border-collapse: collapse; width: 100%; white-space: nowrap; }
+.treasury-table td, .treasury-table th { text-align: right; padding: 12px; border-bottom: 1px solid #314553; }
+.treasury-table th:first-child { text-align: left; }
+.treasury-page button:disabled { opacity: .6; cursor: default; }
+.treasury-error { padding: 16px; color: #f5b0ad; background: #40252a; border-radius: 8px; }
+@media (max-width: 600px) { .treasury-page { padding: 16px; } .treasury-page .panel { padding: 16px; } .treasury-fields { grid-template-columns: 1fr; } }

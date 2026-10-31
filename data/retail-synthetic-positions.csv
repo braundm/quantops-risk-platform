@@ -1,0 +1,5 @@
+account,symbol,asset_class,currency,quantity,price,multiplier,as_of,source
+Demo,QGLOBAL,etf,USD,100,100,1,2026-01-02T16:00:00Z,synthetic
+Demo,QEURO,equity,EUR,100,50,1,2026-01-02T16:00:00Z,synthetic
+Demo,QPOL,equity,PLN,100,100,1,2026-01-02T16:00:00Z,synthetic
+Demo,CASH-PLN,cash,PLN,10000,1,1,2026-01-02T16:00:00Z,synthetic

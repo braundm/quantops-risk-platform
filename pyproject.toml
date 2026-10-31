@@ -8,7 +8,7 @@ dependencies = []
 [dependency-groups]
 dev = [
   "hypothesis>=6.139,<7",
-  "httpx2==2.7.0",
+  "httpx2==2.12.0",
   "mypy==2.3.0",
   "pip-audit>=2.9,<3",
   "pytest==9.1.1",
@@ -19,6 +19,16 @@ dev = [
 
 [tool.uv]
 package = false
+constraint-dependencies = [
+  "certifi>=2026.10.18",
+  "cryptography>=50.0.0",
+  "filelock>=4.2.1,<5",
+  "httpcore2>=2.10.0",
+  "msgpack>=1.2.3,<2",
+  "pip>=26.2",
+  "pyjwt>=2.15.0",
+  "urllib3>=2.8.0",
+]
 
 [tool.uv.workspace]
 members = [

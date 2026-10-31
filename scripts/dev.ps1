@@ -131,7 +131,7 @@ switch ($Command) {
         Invoke-EventTests
         Invoke-McpTests
     }
-    "test-e2e" { Invoke-Pnpm @("--filter", "@quantops/web", "test") }
+    "test-e2e" { Invoke-Pnpm @("--filter", "@quantops/web", "test:e2e") }
     "test-performance" {
         Invoke-Uv @(
             "run", "python", "packages/risk_engine/benchmarks/benchmark_risk_engine.py"

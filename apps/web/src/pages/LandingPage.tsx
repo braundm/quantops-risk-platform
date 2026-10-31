@@ -39,6 +39,7 @@ export function LandingPage() {
           Quant<span>Ops</span>
         </a>
         <nav aria-label="Landing navigation">
+          <a href="/forecast">Forecast quiz</a>
           <a href="/methodology">Methodology</a>
           <a href="/architecture">Architecture</a>
           <a className="button button-secondary" href="/dashboard">

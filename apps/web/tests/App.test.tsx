@@ -15,7 +15,7 @@ afterEach(() => {
 
 describe("QuantOps frontend", () => {
   it("explains the product boundary and provides a keyboard-reachable demo entry", () => {
-    goTo("/");
+    goTo("/research");
     render(<App />);
 
     expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent("See the risk.Trace the reason.");

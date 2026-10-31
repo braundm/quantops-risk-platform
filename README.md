@@ -7,17 +7,71 @@
 [![React](https://img.shields.io/badge/React-19-149ECA?logo=react&logoColor=white)](https://react.dev/)
 [![License](https://img.shields.io/badge/License-MIT-5bceae)](LICENSE)
 
-QuantOps is a production-style portfolio project for reproducible multi-asset market-risk research. It combines deterministic synthetic data, versioned financial analytics, traceable evidence, stress testing, a leakage-safe ML lifecycle, and a bounded AI analyst that can explain—but never invent or execute—risk decisions.
+QuantOps is a portfolio and market-risk research application. Track owned stocks, review portfolio
+performance and VaR/Expected Shortfall, run asset and FX scenarios, and inspect bond duration,
+DV01 and rate shocks in the Treasury lab. Yahoo Finance daily closes can be consumed explicitly;
+offline research fixtures and Treasury examples are visibly synthetic. Versioned calculations,
+traceable evidence and a bounded AI analyst support deeper engineering review.
 
 ![QuantOps risk dashboard](docs/images/quantops-dashboard.png)
 
-> **Observed status:** the deterministic domain, risk, data-quality, API, UI, ML, AI, event-contract, broker-neutral streaming, scheduling-core, and read-only MCP boundaries are implemented and tested. The UI currently uses a typed local demo adapter and the API uses a deterministic process-local service. Live PostgreSQL, Redpanda, Airflow, MLflow, and observability profiles remain environment-dependent and are not claimed as verified. See [implementation progress](docs/progress.md).
+> **Observed status:** the default workspace imports XTB CSV/XLSX/ZIP reports into separate local accounts, previews and deduplicates events, and tracks identified unsold stocks/ETFs with dated reference prices. Closed-only reports leave current holdings unknown. Bossa import and complete imported-portfolio risk remain open. See [report import and limits](docs/xtb-report-import.md).
 
-## The problem
+## Personal portfolio: first working flow
+
+The default `/` and `/stocks` pages provide local login/password onboarding, an optional
+questionnaire, broker selection and report-based XTB accounts. The workspace separates overview,
+portfolio, accounts, import, history and settings. Questionnaire answers support explanations and
+learning rather than investment recommendations. Yahoo Finance daily closes include dates and
+source links; purchases and quantities come from the report. Multiple accounts, preview and
+overlapping import detection are supported. See [report import and limitations](docs/xtb-report-import.md).
+
+The previous `/investor` page provides eight sections: overview, dated transactions,
+diversification, return and risk, saved scenarios, cash budget and costs, learning, and data settings.
+The example holds Apple, Microsoft, SPY, TLT, modeled EUR/USD and a December 2026 WTI futures
+contract. Ownership is fictional; the bundled Yahoo Finance closing-price snapshot is sourced.
+The previous personal workshop remains at `/personal`, and the research landing at `/research`.
+
+After workspace setup, run these commands in two terminals from the repository root:
+
+```powershell
+.venv\Scripts\python.exe -m uvicorn quantops_api.main:app --host 127.0.0.1 --port 8000
+pnpm --filter @quantops/web dev --host 127.0.0.1
+```
+
+Open `http://localhost:5173/`. No database, Docker, broker credentials or market provider is needed.
+Loopback development offers `admin` / `admin` (empty) and `admin1` / `admin1` (the owner's explicitly
+synthetic portfolio workbook). Existing profiles are preserved; these defaults grant no server
+permissions and are not initialized in production. See [local workspace](docs/local-workspace.md).
+The checked-in price snapshot works offline. Explicit price refresh requires internet access and
+retains the last valid snapshot on failure. CSV transactions, named scenarios, browser-local save,
+JSON backup/restore, fees and external flows are supported. Storage is local to this browser;
+there are no hosted accounts. See [investor methods and limitations](docs/investor-workspace.md),
+the [previous workshop guide](docs/retail-first-flow.md) and its
+[synthetic positions CSV](data/retail-synthetic-positions.csv).
+
+## Treasury and liquidity research
+
+Open `/treasury` for an editable fixed-coupon bond book, Macaulay/modified duration, convexity,
+signed and gross DV01, full repricing under five yield shocks, research limits and HTML report
+export. A separate equity book estimates liquidation capacity from supplied dated volume sessions,
+with explicit stale and insufficient-data states. Three labelled synthetic cases demonstrate
+maturity, long-duration sensitivity and offsetting exposures. See the
+[methods and interview walkthrough](docs/treasury-lab.md), including the requested-feature gap
+assessment. This educational lab uses synthetic or unverified user inputs, not live bond yields.
+
+## Trusting the numbers
+
+Imported accounts now connect to [portfolio risk analysis](docs/imported-portfolio-risk.md):
+base-currency concentration, signed volatility contributions, observed drawdowns, historical
+VaR/ES, hypothetical scenarios and independent before/after allocation comparisons. The
+**Analiza ryzyka** view selects the equity slice explicitly, with a descriptive 0–100 index,
+interactive concentration/correlation charts, visible missing data and a synthetic example.
+The API separately supports mixed stock/ETF allocations and confirmed cash.
 
 Risk numbers are easy to display and difficult to trust. QuantOps is designed around the questions that follow a metric: Which portfolio version? Which prices? Which methodology? Was the data complete? Can the explanation be reconciled to immutable evidence?
 
-The project deliberately does **not** connect to brokers, execute orders, forecast guaranteed returns, or provide buy/sell recommendations. Every bundled market record, portfolio, and research document is fictional and marked synthetic.
+The project deliberately does **not** connect to brokers, execute orders, forecast guaranteed returns, or provide buy/sell recommendations. Research fixtures and example ownership are fictional and marked synthetic. The investor workspace separately identifies sourced historical market prices and their retrieval dates.
 
 ## Five-minute demo story
 
@@ -54,12 +108,12 @@ The synchronous core is a modular monolith; batch, stream, scheduling, ML, AI, a
 | --- | --- |
 | Financial risk | Arithmetic/log returns, valuation, volatility, covariance/correlation, historical and parametric VaR, Expected Shortfall, drawdown, concentration, signed contributions, scenarios, and VaR backtesting |
 | Data | Fixed-seed 2,088-bar multi-regime fixture, manifests/hashes, quality cases, quarantine, lineage, and byte-reproducible generation |
-| API | 31 versioned routes, OpenAPI snapshot, RFC 9457-style errors, bounded pagination, auth boundary, ETags, idempotency, rate limiting, and JSON/CSV exports |
+| API | Versioned routes, OpenAPI snapshot, RFC 9457-style errors, bounded pagination, auth boundary, ETags, idempotency, rate limiting, and JSON/CSV exports |
 | Streaming | Six strict v1 event contracts plus broker-neutral replay, duplicate/conflict handling, lateness policy, retry/DLQ behavior, and outbox publication ordering |
 | ML | Ten point-in-time features, rule baseline, fixed-seed candidate, chronological evaluation, promotion gates, model card, reproducible artifacts, and drift checks |
 | AI | Deterministic no-key brief, ten-tool read-only broker, scoped retrieval, citation/numerical validation, safe fallback/refusal, and 44 adversarial evaluation cases |
 | MCP | Exactly three bounded read-only tools and one fixed methodology resource over local stdio |
-| Product UI | Responsive research dashboard, portfolios, scenarios, evidence, data quality, model/drift, audit, methodology, and architecture views |
+| Product UI | Responsive research dashboard, portfolios, scenarios, evidence, data quality, model/drift, audit, methodology, and architecture views, covered by desktop/mobile Playwright and axe checks |
 
 ## Why this stack
 
@@ -130,12 +184,13 @@ uv run pytest -m "not integration and not e2e"
 pnpm lint
 pnpm typecheck
 pnpm test
+pnpm test:e2e
 pnpm build
 uv run python scripts/docs_check.py
 uv run python scripts/security_scan.py
 ```
 
-The latest recorded service-free core gate passed **428 Python tests plus 20 subtests** before the final scheduler/tooling additions; package-level branch coverage is recorded in [progress](docs/progress.md). The deterministic AI report passed **44/44 cases across 20 categories**. Live database/broker tests and container smoke checks remain explicitly pending because Docker is unavailable in the current build environment.
+The latest recorded local service-free gate passed **674 Python tests plus 20 subtests**, **23 Vitest tests**, and **62 Playwright tests** across desktop and mobile Chromium. The browser suite includes automated WCAG A/AA scans, keyboard navigation, imported-account isolation and risk-report export. Package-level branch coverage and exact verification evidence are recorded in [progress](docs/progress.md). The deterministic AI report passed **44/44 cases across 20 categories**. Live database/broker tests and local container smoke checks remain explicitly pending because Docker is unavailable in the current workstation environment.
 
 ## Repository map
 
@@ -158,6 +213,10 @@ infra/      optional local infrastructure profiles
 - This is a research and engineering system, not a production trading or investment-advice service.
 
 The exact completed/pending evidence is maintained in [docs/progress.md](docs/progress.md), with operational guidance in [runbooks](docs/operations/runbooks.md) and claim-to-test mapping in [engineering evidence](docs/engineering-evidence.md).
+
+The local [Bossa/XTB reference catalog](docs/broker-catalog.md) is available at
+`/instruments`, with 18,409 public specification entries and explicit coverage gaps.
+Catalog membership alone does not guarantee a supported quote mapping or derivative valuation.
 
 ## License and authorship
 

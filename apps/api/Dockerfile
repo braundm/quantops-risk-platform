@@ -1,45 +1,29 @@
 FROM python:3.12.11-slim-bookworm AS builder
 
 ENV PIP_DISABLE_PIP_VERSION_CHECK=1 \
-    PIP_NO_CACHE_DIR=1
+    PIP_NO_CACHE_DIR=1 \
+    UV_PYTHON_DOWNLOADS=never \
+    UV_LINK_MODE=copy
 
-WORKDIR /build
-COPY packages/data_contracts/pyproject.toml /build/data_contracts/pyproject.toml
-COPY packages/data_contracts/README.md /build/data_contracts/README.md
-COPY packages/data_contracts/src /build/data_contracts/src
-RUN python -m pip wheel --wheel-dir /wheels /build/data_contracts
-
-COPY packages/domain/pyproject.toml /build/domain/pyproject.toml
-COPY packages/domain/quantops_domain /build/domain/quantops_domain
-RUN python -m pip wheel --wheel-dir /wheels /build/domain
-
-COPY packages/risk_engine/pyproject.toml /build/risk_engine/pyproject.toml
-COPY packages/risk_engine/README.md /build/risk_engine/README.md
-COPY packages/risk_engine/src /build/risk_engine/src
-RUN python -m pip wheel --find-links /wheels --wheel-dir /wheels /build/risk_engine
-
-COPY packages/ai_engine/pyproject.toml /build/ai_engine/pyproject.toml
-COPY packages/ai_engine/README.md /build/ai_engine/README.md
-COPY packages/ai_engine/src /build/ai_engine/src
-COPY packages/ai_engine/evals /build/ai_engine/evals
-RUN python -m pip wheel --find-links /wheels --wheel-dir /wheels /build/ai_engine
-
-COPY apps/api/pyproject.toml /build/api/pyproject.toml
-COPY apps/api/quantops_api /build/api/quantops_api
-RUN python -m pip wheel --find-links /wheels --wheel-dir /wheels /build/api
+RUN python -m pip install uv==0.11.29
+WORKDIR /app
+COPY pyproject.toml uv.lock ./
+COPY apps ./apps
+COPY packages ./packages
+COPY pipelines ./pipelines
+COPY ml ./ml
+# Install the API closure once from the audited lock, independent of the source tree.
+RUN uv sync --locked --package quantops-api --no-dev --no-editable --python /usr/local/bin/python
 
 FROM python:3.12.11-slim-bookworm AS runtime
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
-    PATH="/opt/venv/bin:$PATH"
+    PATH="/app/.venv/bin:$PATH"
 
-RUN python -m venv /opt/venv \
-    && addgroup --system quantops \
+RUN addgroup --system quantops \
     && adduser --system --ingroup quantops --home /app quantops
-COPY --from=builder /wheels /wheels
-RUN python -m pip install --no-cache-dir /wheels/* \
-    && rm -rf /wheels
+COPY --from=builder /app/.venv /app/.venv
 WORKDIR /app
 USER quantops
 EXPOSE 8000
