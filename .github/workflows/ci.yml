@@ -72,6 +72,8 @@ jobs:
           cache-dependency-glob: uv.lock
       - name: Install locked Python workspace
         run: uv sync --locked --all-packages --all-groups
+      - name: Build and verify native Monte Carlo engine
+        run: uv run python scripts/build_monte_carlo.py --test
       - name: Prepare test artifacts directory
         run: mkdir -p artifacts
       - name: Run OpenAPI snapshot contract
@@ -291,6 +293,8 @@ jobs:
           cache-dependency-glob: uv.lock
       - name: Install locked Python workspace for browser tests
         run: uv sync --locked --all-packages --all-groups
+      - name: Build and verify native Monte Carlo engine
+        run: uv run python scripts/build_monte_carlo.py --test
       - name: Install pinned pnpm
         uses: pnpm/action-setup@v6.0.8
         with:

@@ -50,6 +50,15 @@ there are no hosted accounts. See [investor methods and limitations](docs/invest
 the [previous workshop guide](docs/retail-first-flow.md) and its
 [synthetic positions CSV](data/retail-synthetic-positions.csv).
 
+## Monte Carlo portfolio simulation
+
+The optional C++17 engine adds correlated portfolio paths, pointwise uncertainty
+bands, terminal-value histograms and VaR/Expected Shortfall to **Analiza ryzyka →
+Możliwe spadki**. It uses the validated allocation and historical covariance with
+an explicit assumed drift; outputs are hypothetical and synthetic inputs stay
+labeled. Build it with `python scripts/build_monte_carlo.py --test`.
+See [native Monte Carlo methodology and setup](docs/monte-carlo.md).
+
 ## Treasury and liquidity research
 
 Open `/treasury` for an editable fixed-coupon bond book, Macaulay/modified duration, convexity,

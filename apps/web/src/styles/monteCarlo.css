@@ -1,0 +1,18 @@
+.qmc-panel { display: grid; gap: 1rem; margin-top: 1.25rem; }
+.qmc-panel .iv-form-grid { align-items: end; }
+.qmc-panel > button { justify-self: start; }
+.qmc-panel select { max-width: 100%; }
+.qmc-chart { min-width: 0; display: grid; gap: .75rem; }
+.qmc-chart > label { display: grid; gap: .4rem; max-width: 30rem; }
+.qmc-chart svg { width: 100%; display: block; color: var(--iv-text, #253b39); }
+.qmc-chart svg text { fill: currentColor; font-size: 12px; }
+.qmc-frame { fill: none; stroke: currentColor; opacity: .2; }
+.qmc-band { fill: #38776c; opacity: .16; }
+.qmc-path { fill: none; stroke: #38776c; stroke-width: 1; opacity: .22; }
+.qmc-median { fill: none; stroke: #38776c; stroke-width: 2.5; }
+.qmc-reference { stroke: currentColor; opacity: .45; stroke-dasharray: 4 4; }
+.qmc-bin { fill: #38776c; }
+.qmc-panel .qr-metric-grid { grid-template-columns: repeat(3, minmax(0,1fr)); }
+@media(max-width:700px) {
+  .qmc-panel .qr-metric-grid, .qmc-panel .iv-form-grid { grid-template-columns: 1fr; }
+}

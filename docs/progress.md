@@ -1,6 +1,67 @@
 # QuantOps implementation progress
 
-Last updated: 2026-10-31
+Last updated: 2026-11-01
+## Native C++ Monte Carlo — 2026-11-01
+
+Implemented the owner-requested optional C++17 engine, native C ABI, CMake helper,
+typed ctypes/API integration, responsive research panel and reproducible JSON export.
+The existing risk package is retained. Simulation uses complete validated allocations,
+at least 252 aligned base-currency log returns, semidefinite Cholesky, explicit assumed
+drift and daily buy-and-hold GBM. FX and adjusted dividends are not counted twice.
+All-cash and singular-correlation cases work. Data gaps, non-finite inputs and large
+workloads fail explicitly; missing/incompatible native binaries return 503.
+
+Verification evidence:
+
+- .venv/Scripts/python.exe scripts/build_monte_carlo.py --test: MSVC 19.40 Release
+  DLL/executable built successfully; CTest 1/1 passed. Checks include closed-form
+  one-asset lognormal VaR/ES/mean, repeatability, zero volatility, independent
+  diversification and perfect-correlation singular covariance.
+- .venv/Scripts/python.exe -m pytest apps/api/tests/test_monte_carlo.py -q
+  -p no:cacheprovider: final 18 passed, including missing-export library handling.
+- Focused pytest over test_monte_carlo, test_portfolio_risk, test_equity_risk_dashboard,
+  test_health and packages/risk_engine/tests: 241 passed, 14 subtests passed before
+  the additional loader-only regression. The final loader change passed all 18
+  Monte Carlo tests. Cacheprovider was disabled because the pre-existing cache
+  directory is not accessible; test behavior and warnings were not suppressed.
+- Ruff check of the new Python sources, main integration and build helper: passed.
+  Strict mypy on application, native adapter and endpoint: 3 source files passed.
+- pnpm --filter @quantops/web build and lint: passed. Vite retains a non-fatal
+  bundle-size advisory (approximately 582 kB uncompressed main JS).
+- pnpm --filter @quantops/web test: 23 passed across four files.
+- pnpm --filter @quantops/web exec playwright test e2e/monte-carlo.spec.ts
+  e2e/portfolio-risk.spec.ts --workers=1: 10 passed (desktop/mobile), including
+  real native API, chart switching, independent control changes, account isolation,
+  unchanged stored reports, missing-data boundaries and axe accessibility checks.
+  Desktop path and mobile histogram screenshots were visually inspected.
+- Synthetic default smoke: 5,000 paths, 252 sessions, five assets, histogram count
+  5,000, approximately 0.35 seconds end-to-end on this host. This is an illustrative
+  measurement, not a general performance claim or comparison with Python.
+- Documentation checks: 64 Markdown files passed before this progress entry.
+  Tracked security scan and all 30 non-ignored untracked source files: zero findings.
+  git diff --check: passed. OpenAPI regenerated from the current application,
+  preserving earlier route additions and adding the new native simulation contract.
+
+Initial checks found and corrected a bubbling change event that cleared the parent
+analysis, a tiny zero-loss ES cancellation error, and missing-export library handling.
+The synthetic example is explicitly allowed to use its older dated valuation;
+stale provider/user valuations remain blocked. Mathematical/model limitations are
+documented, and no broker interaction or trade recommendations were introduced.
+The owner subsequently authorized committing and publishing this module on
+2026-11-01 as Dominik Braun. The publication excludes earlier overview/benchmark
+work and uses the configured GitHub noreply address. The separate
+ohlcv-ml-pipeline repository remains unchanged.
+
+Publication verification used an exported Git-index snapshot containing only this
+feature on the existing branch. That snapshot passed a fresh MSVC Release build
+and CTest, 23 Monte Carlo/OpenAPI API tests, strict typing for 69 API and 17 tooling
+files, frontend TypeScript/build/lint, and both desktop/mobile native simulation
+browser tests. Its 55 Markdown documents and source security scan passed.
+The CI unit and frontend jobs now build and verify the native engine before tests.
+The local dependency runner rejects junction-backed task-state directories, so
+snapshot frontend checks called the same installed TypeScript, Vite, ESLint and
+Playwright executables directly, without changing the published package scripts.
+
 
 ## Final review and owner-authorized publication — 2026-10-31
 
