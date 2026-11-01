@@ -5189,6 +5189,302 @@
         "title": "ModelCatalogResponse",
         "type": "object"
       },
+      "MonteCarloBin": {
+        "additionalProperties": false,
+        "properties": {
+          "count": {
+            "title": "Count",
+            "type": "integer"
+          },
+          "high": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "High",
+            "type": "string"
+          },
+          "low": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Low",
+            "type": "string"
+          }
+        },
+        "required": [
+          "low",
+          "high",
+          "count"
+        ],
+        "title": "MonteCarloBin",
+        "type": "object"
+      },
+      "MonteCarloPoint": {
+        "additionalProperties": false,
+        "properties": {
+          "day": {
+            "title": "Day",
+            "type": "integer"
+          },
+          "high": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "High",
+            "type": "string"
+          },
+          "low": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Low",
+            "type": "string"
+          },
+          "median": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Median",
+            "type": "string"
+          }
+        },
+        "required": [
+          "day",
+          "low",
+          "median",
+          "high"
+        ],
+        "title": "MonteCarloPoint",
+        "type": "object"
+      },
+      "MonteCarloRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "allocation": {
+            "default": "before",
+            "enum": [
+              "before",
+              "after"
+            ],
+            "title": "Allocation",
+            "type": "string"
+          },
+          "annual_drift": {
+            "default": 0.0,
+            "maximum": 0.2,
+            "minimum": -0.2,
+            "title": "Annual Drift",
+            "type": "number"
+          },
+          "days": {
+            "default": 252,
+            "maximum": 1260.0,
+            "minimum": 1.0,
+            "title": "Days",
+            "type": "integer"
+          },
+          "portfolio": {
+            "$ref": "#/components/schemas/RiskRequest-Input"
+          },
+          "seed": {
+            "default": 42,
+            "maximum": 4294967295.0,
+            "minimum": 0.0,
+            "title": "Seed",
+            "type": "integer"
+          },
+          "simulations": {
+            "default": 5000,
+            "maximum": 50000.0,
+            "minimum": 1000.0,
+            "title": "Simulations",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "portfolio"
+        ],
+        "title": "MonteCarloRequest",
+        "type": "object"
+      },
+      "MonteCarloResult": {
+        "additionalProperties": false,
+        "properties": {
+          "annual_covariance": {
+            "items": {
+              "items": {
+                "type": "number"
+              },
+              "type": "array"
+            },
+            "title": "Annual Covariance",
+            "type": "array"
+          },
+          "annual_drift": {
+            "title": "Annual Drift",
+            "type": "number"
+          },
+          "asset_scope": {
+            "title": "Asset Scope",
+            "type": "string"
+          },
+          "bands": {
+            "items": {
+              "$ref": "#/components/schemas/MonteCarloPoint"
+            },
+            "title": "Bands",
+            "type": "array"
+          },
+          "base_currency": {
+            "title": "Base Currency",
+            "type": "string"
+          },
+          "calibration_end": {
+            "format": "date",
+            "title": "Calibration End",
+            "type": "string"
+          },
+          "calibration_start": {
+            "format": "date",
+            "title": "Calibration Start",
+            "type": "string"
+          },
+          "confidence": {
+            "title": "Confidence",
+            "type": "number"
+          },
+          "days": {
+            "title": "Days",
+            "type": "integer"
+          },
+          "engine": {
+            "default": "C++17",
+            "title": "Engine",
+            "type": "string"
+          },
+          "es_amount": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Es Amount",
+            "type": "string"
+          },
+          "histogram": {
+            "items": {
+              "$ref": "#/components/schemas/MonteCarloBin"
+            },
+            "title": "Histogram",
+            "type": "array"
+          },
+          "hypothetical": {
+            "default": true,
+            "title": "Hypothetical",
+            "type": "boolean"
+          },
+          "initial_value": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Initial Value",
+            "type": "string"
+          },
+          "mean_terminal": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Mean Terminal",
+            "type": "string"
+          },
+          "methodology": {
+            "default": "correlated-gbm-cpp@1.0.0",
+            "title": "Methodology",
+            "type": "string"
+          },
+          "observations": {
+            "title": "Observations",
+            "type": "integer"
+          },
+          "probability_of_loss": {
+            "title": "Probability Of Loss",
+            "type": "number"
+          },
+          "sample_paths": {
+            "items": {
+              "items": {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                "type": "string"
+              },
+              "type": "array"
+            },
+            "title": "Sample Paths",
+            "type": "array"
+          },
+          "scope": {
+            "title": "Scope",
+            "type": "string"
+          },
+          "seed": {
+            "title": "Seed",
+            "type": "integer"
+          },
+          "simulations": {
+            "title": "Simulations",
+            "type": "integer"
+          },
+          "skipped_pairs": {
+            "title": "Skipped Pairs",
+            "type": "integer"
+          },
+          "symbols": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Symbols",
+            "type": "array"
+          },
+          "synthetic_input": {
+            "title": "Synthetic Input",
+            "type": "boolean"
+          },
+          "valuation_date": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Valuation Date"
+          },
+          "var_amount": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Var Amount",
+            "type": "string"
+          },
+          "warnings": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Warnings",
+            "type": "array"
+          }
+        },
+        "required": [
+          "synthetic_input",
+          "scope",
+          "asset_scope",
+          "base_currency",
+          "valuation_date",
+          "calibration_start",
+          "calibration_end",
+          "observations",
+          "skipped_pairs",
+          "symbols",
+          "annual_covariance",
+          "days",
+          "simulations",
+          "seed",
+          "annual_drift",
+          "confidence",
+          "initial_value",
+          "probability_of_loss",
+          "var_amount",
+          "es_amount",
+          "mean_terminal",
+          "bands",
+          "sample_paths",
+          "histogram",
+          "warnings"
+        ],
+        "title": "MonteCarloResult",
+        "type": "object"
+      },
       "OwnedStock": {
         "additionalProperties": false,
         "properties": {
@@ -17171,6 +17467,47 @@
         "summary": "Merge Report",
         "tags": [
           "Imported XTB reports"
+        ]
+      }
+    },
+    "/api/v1/xtb/monte-carlo": {
+      "post": {
+        "operationId": "monte_carlo_api_v1_xtb_monte_carlo_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MonteCarloRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MonteCarloResult"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Monte Carlo",
+        "tags": [
+          "Monte Carlo research"
         ]
       }
     },

@@ -1,0 +1,41 @@
+import AxeBuilder from "@axe-core/playwright";
+import { expect, test } from "@playwright/test";
+import type { MonteCarloResult } from "../src/data/monteCarloApi";
+
+test("native Monte Carlo uses the selected synthetic portfolio and keeps accounts unchanged", async ({ page }, testInfo) => {
+  await page.route("**/api/v1/xtb/overview", async route => {
+    const input = route.request().postDataJSON() as Record<string, unknown>;
+    await route.continue({ postData: JSON.stringify({ ...input, refresh_history: false }) });
+  });
+  await page.goto("/");
+  await page.getByLabel("Login", { exact: true }).fill("admin1");
+  await page.getByLabel("Hasło", { exact: true }).fill("admin1");
+  await page.getByRole("button", { name: "Otwórz mój portfel" }).click();
+  await page.getByRole("navigation", { name: "Centrum portfela" }).getByRole("button", { name: "Analiza ryzyka", exact: true }).click();
+  const saved = await page.evaluate(() => Object.fromEntries(Object.entries(localStorage).filter(([k]) => k.startsWith("quantops.xtb"))));
+  await page.getByRole("tabpanel").getByRole("button", { name: "Wczytaj przykład syntetyczny", exact: true }).click();
+  await page.getByRole("button", { name: "Oblicz analizę i scenariusze", exact: true }).click();
+  await expect(page.getByRole("heading", { name: "Ogólny profil ryzyka", exact: true })).toBeVisible();
+  await page.getByRole("tab", { name: /Możliwe spadki/ }).click();
+  const panel = page.getByRole("region", { name: "Symulacja Monte Carlo" });
+  await panel.getByLabel("Horyzont symulacji").selectOption("21");
+  await panel.getByLabel("Liczba scenariuszy").selectOption("1000");
+  const response = page.waitForResponse(r => r.url().endsWith("/api/v1/xtb/monte-carlo"));
+  await panel.getByRole("button", { name: "Uruchom Monte Carlo", exact: true }).click();
+  const data = await (await response).json() as MonteCarloResult;
+  expect(data.engine).toBe("C++17");
+  expect(data.synthetic_input).toBe(true);
+  expect(data.histogram.reduce((n: number,b: { count: number }) => n+b.count,0)).toBe(1000);
+  await expect(panel.getByRole("img", { name: "Ścieżki Monte Carlo i pasmo 5–95%" })).toBeVisible();
+  await panel.getByLabel("Odczyt sesji Monte Carlo").fill("10");
+  await expect(panel.getByRole("status").last()).toContainText("Sesja 10:");
+  expect((await new AxeBuilder({ page }).include(".qmc-panel").withTags(["wcag2a","wcag2aa","wcag21aa"]).analyze()).violations).toEqual([]);
+  await panel.screenshot({ path: testInfo.outputPath("monte-carlo-paths.png") });
+  await panel.getByLabel("Widok wyników").selectOption("histogram");
+  await expect(panel.getByRole("img", { name: "Rozkład wartości końcowej Monte Carlo" })).toBeVisible();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+  await panel.screenshot({ path: testInfo.outputPath("monte-carlo-distribution.png") });
+  await panel.getByLabel("Założony trend roczny").selectOption("5");
+  await expect(panel.getByRole("img")).toHaveCount(0);
+  expect(await page.evaluate(() => Object.fromEntries(Object.entries(localStorage).filter(([k]) => k.startsWith("quantops.xtb"))))).toEqual(saved);
+});

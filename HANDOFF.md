@@ -1,6 +1,33 @@
 # QuantOps handoff
 
-Last updated: 2026-10-31
+Last updated: 2026-11-01
+## C++ Monte Carlo portfolio simulation — 2026-11-01
+
+The owner requested implementation of the illustrated portfolio Monte Carlo module
+in C++. Added an optional C++17 shared library in native/monte_carlo, a no-download
+CMake build helper, a bounded ctypes adapter and POST /api/v1/xtb/monte-carlo.
+The existing imported-allocation checks remain authoritative. Calibration uses
+aligned adjusted base-currency log returns; native simulation uses correlated GBM,
+an explicit assumed drift, fixed holdings, repeatable seeds, pointwise bands,
+sample paths and signed VaR/fractional-tail ES. No silent Python fallback exists.
+
+In Analiza ryzyka → Możliwe spadki, calculate a complete allocation first and run
+Monte Carlo. The panel includes horizon/path/drift/allocation controls, path and
+histogram views, keyboard checkpoint readings, synthetic labels and JSON export.
+Changing simulation controls clears only its own result, not the portfolio analysis.
+Existing account storage and the owner's earlier uncommitted work are preserved.
+See docs/monte-carlo.md for build instructions, assumptions and limits.
+
+Verified locally on Windows/MSVC: Release build and CTest, 18 new API/adapter tests,
+241 focused risk/API tests plus 14 subtests before the final loader-only regression
+was added, strict typing, frontend build/lint, 23 frontend unit tests, and 10
+desktop/mobile Monte Carlo and existing risk browser tests including accessibility.
+Final missing-export loader handling is covered by the passing 18-test module suite.
+Exact commands and caveats are in docs/progress.md. Native binaries are ignored;
+other deployment hosts must build their own library. The owner authorized committing
+and publishing this module on 2026-11-01 as Dominik Braun, using the configured
+GitHub noreply address. Earlier overview/benchmark edits remain outside this commit.
+
 
 ## Owner-authorized review and GitHub update — 2026-10-31
 

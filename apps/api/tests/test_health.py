@@ -109,6 +109,7 @@ def test_openapi_contains_the_required_versioned_routes() -> None:
         "/api/v1/xtb/quote",
         "/api/v1/xtb/value",
         "/api/v1/xtb/risk",
+        "/api/v1/xtb/monte-carlo",
         "/api/v1/xtb/risk-history",
         "/api/v1/xtb/risk-example",
     }
