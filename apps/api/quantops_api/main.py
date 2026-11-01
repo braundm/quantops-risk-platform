@@ -10,6 +10,7 @@ from quantops_api import __version__
 from quantops_api.api.broker_catalog import router as broker_catalog_router
 from quantops_api.api.investor import router as investor_router
 from quantops_api.api.middleware import FixedWindowRateLimiter, request_context_middleware
+from quantops_api.api.monte_carlo import router as monte_carlo_router
 from quantops_api.api.problems import install_problem_handlers
 from quantops_api.api.retail import router as retail_router
 from quantops_api.api.retail_forecast import router as retail_forecast_router
@@ -96,6 +97,7 @@ def create_app(
     application.include_router(broker_catalog_router)
     application.include_router(treasury_router)
     application.include_router(xtb_router)
+    application.include_router(monte_carlo_router)
     return application
 
 
